@@ -1,0 +1,23 @@
+# Robots.txt for Connect Events - Beats on the Beltline
+# Allow all crawlers to index public pages
+
+User-agent: *
+Allow: /
+
+# Disallow admin, API routes, and internal pages
+Disallow: /api/
+Disallow: /admin/
+Disallow: /design-system
+
+# Common crawl optimization
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 0
+
+# Sitemap location
+Sitemap: https://connectevents.co/sitemap.xml
+

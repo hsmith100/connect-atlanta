@@ -1,0 +1,278 @@
+/* Tailwind CSS imports */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Fonts */
+@font-face {
+    font-family: 'Aharoni Bold';
+    src: url('/fonts/Aharoni Font/Aharoni Bold V3/Aharoni Bold V3.ttf') format('truetype');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Horizon';
+    src: url('/fonts/Horizon Font/horizon.otf') format('opentype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Custom base styles */
+@layer base {
+    body {
+        @apply bg-brand-bg text-brand-header;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        @apply text-brand-pink font-bold;
+    }
+
+    /* Smooth scrolling for anchor links */
+    html {
+        scroll-behavior: smooth;
+    }
+}
+
+/* Custom component styles */
+@layer components {
+
+    /* Logo font styling */
+    .font-logo {
+        font-weight: 900;
+    }
+
+    /* Festival-specific button styles */
+    .btn-festival {
+        @apply bg-brand-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-header transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+    }
+
+    .btn-festival-outline {
+        @apply border-2 border-brand-primary text-brand-primary px-6 py-3 rounded-lg font-semibold hover:bg-brand-primary hover:text-white transition-all duration-300;
+    }
+
+    /* Card styles */
+    .card-festival {
+        @apply bg-white rounded-2xl shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300 border border-brand-neutral-300;
+    }
+
+    /* Section container */
+    .section-container {
+        @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8;
+    }
+
+    /* Gradient text for titles */
+    .gradient-text {
+        @apply bg-gradient-to-r from-brand-primary via-brand-pink to-brand-accent bg-clip-text text-transparent;
+    }
+
+    /* Gradient background */
+    .gradient-bg {
+        @apply bg-gradient-to-br from-brand-header via-brand-primary to-brand-pink;
+    }
+
+    /* Accent underline for headings */
+    .accent-underline {
+        @apply relative;
+    }
+
+    .accent-underline::after {
+        content: '';
+        @apply absolute bottom-0 left-0 w-20 h-1 bg-brand-accent rounded-full;
+    }
+}
+
+/* Custom utility classes */
+@layer utilities {
+
+    /* Custom glow effect */
+    .glow {
+        box-shadow: 0 0 20px rgba(92, 225, 230, 0.5);
+    }
+
+    .glow-pink {
+        box-shadow: 0 0 20px rgba(248, 24, 137, 0.5);
+    }
+
+    .glow-purple {
+        box-shadow: 0 0 20px rgba(140, 82, 255, 0.5);
+    }
+
+    .glow-gold {
+        box-shadow: 0 0 20px rgba(217, 155, 42, 0.6);
+    }
+
+    /* Text shadow for better readability on images */
+    .text-shadow {
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    }
+
+    /* Glassmorphism effect */
+    .glass {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    /* Pink to orange gradient for section headers - sunset inspired */
+    .gradient-text-pink {
+        background: linear-gradient(135deg, #F81889 0%, #FF5722 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    /* Radial gradient backgrounds */
+    .bg-gradient-radial {
+        background-image: radial-gradient(circle, var(--tw-gradient-stops));
+    }
+
+    /* Golden gradient for hero backgrounds */
+    .hero-bg-gold {
+        @apply bg-gradient-to-b from-amber-200 via-yellow-100 to-orange-100;
+    }
+
+    /* Off-white to gold gradient for hero sections */
+    .hero-gradient-gold {
+        background: linear-gradient(to bottom, #FFFDF3 0%, #FFD983 100%);
+    }
+
+    /* White background for cards */
+    .card-bg-white {
+        @apply bg-white;
+    }
+
+    /* 3D Gradient Outline Title Effect */
+    .title-3d-outline {
+        color: transparent;
+        -webkit-text-stroke: 3px white;
+        text-stroke: 3px white;
+        text-shadow:
+            4px 4px 0px rgba(0, 0, 0, 0.1),
+            8px 8px 0px rgba(0, 0, 0, 0.05);
+        filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
+    }
+
+    /* Individual word gradients for BEATS ON THE BELTLINE */
+    .title-beats {
+        background: linear-gradient(135deg, #FEB95F 0%, #F81889 50%, #8C52FF 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+    }
+
+    .title-on-the {
+        color: white;
+        -webkit-text-stroke: 0;
+        text-stroke: 0;
+        text-shadow:
+            2px 2px 4px rgba(0, 0, 0, 0.3),
+            0 0 20px rgba(255, 255, 255, 0.5);
+    }
+
+    .title-beltline {
+        background: linear-gradient(135deg, #F81889 0%, #8C52FF 30%, #5CE1E6 70%, #8C52FF 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+    }
+}
+
+/* Animation keyframes */
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+@keyframes slide-down {
+    0% {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse-glow {
+
+    0%,
+    100% {
+        box-shadow: 0 0 20px rgba(140, 82, 255, 0.4);
+    }
+
+    50% {
+        box-shadow: 0 0 40px rgba(140, 82, 255, 0.8);
+    }
+}
+
+@keyframes pulse-glow-gold {
+
+    0%,
+    100% {
+        box-shadow: 0 0 20px rgba(217, 155, 42, 0.5);
+    }
+
+    50% {
+        box-shadow: 0 0 40px rgba(217, 155, 42, 0.9);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hero card title animations */
+.animate-slide-down {
+    animation: slide-down 0.8s ease-out forwards;
+}
+
+.animate-delay-100 {
+    animation-delay: 100ms;
+}
+
+.animate-delay-200 {
+    animation-delay: 200ms;
+}
+
+.animate-delay-300 {
+    animation-delay: 300ms;
+}
+
+.hero-card-title {
+    opacity: 0;
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.animate-pulse-glow-gold {
+    animation: pulse-glow-gold 2s ease-in-out infinite;
+}

@@ -1,0 +1,23 @@
+{
+  "name": "Connect Events - Beats on the Beltline",
+  "short_name": "Connect Events",
+  "description": "Atlanta's premier FREE outdoor electronic music experience",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#D99B2A",
+  "icons": [
+    {
+      "src": "/favicon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/favicon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

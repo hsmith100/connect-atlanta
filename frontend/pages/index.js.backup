@@ -1,0 +1,462 @@
+import { useState, useEffect, useRef } from 'react'
+import Link from 'next/link'
+import SEO from '../components/SEO'
+import Header from '../components/layout/Header'
+import Footer from '../components/layout/Footer'
+import ConnectModal from '../components/ConnectModal'
+import Image from 'next/image'
+import { Music, Headphones, Users } from 'lucide-react'
+
+export default function Home() {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [cardsVisible, setCardsVisible] = useState(false)
+  const cardsRef = useRef(null)
+
+  // Intersection Observer for cards animation
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setCardsVisible(true)
+        }
+      },
+      {
+        threshold: 0.2, // Trigger when 20% of the element is visible
+      }
+    )
+
+    const currentRef = cardsRef.current
+
+    if (currentRef) {
+      observer.observe(currentRef)
+    }
+
+    return () => {
+      if (currentRef) {
+        observer.unobserve(currentRef)
+      }
+    }
+  }, [])
+
+  return (
+    <>
+      <SEO
+        title="Beats on the Beltline | Atlanta's Premier Free Outdoor Electronic Music Experience"
+        description="Atlanta's premier free outdoor electronic music festival. Join 5,000-10,000 attendees for world-class DJs, local vendors, and community vibes along the BeltLine."
+        keywords="beats on the beltline, atlanta music festival, beltline, electronic music, free festival, atlanta edm, house music, techno"
+        canonicalUrl="http://localhost:3000"
+      />
+
+      <div className="min-h-screen bg-brand-bg">
+        <Header />
+
+        {/* Hero Section with Cards */}
+        <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-8 bg-gradient-to-b from-white to-brand-bg">
+          <div className="section-container relative z-10 w-full">
+            {/* Hero Title */}
+            <div className="text-center mb-12 md:mb-16">
+              
+              <p className="text-xl md:text-2xl text-brand-text max-w-3xl mx-auto leading-relaxed">
+                The one and only place to find the best open air Electronic Music events!
+              </p>
+            </div>
+
+            {/* Hero Cards Grid - Modern Landscape Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
+
+              {/* Beats on the Beltline Card */}
+              <a href="#experience" className="block h-full">
+                <div className="relative border-2 border-brand-neutral-100 rounded-2xl overflow-hidden hover:border-brand-primary hover:shadow-2xl transition-all group h-full">
+                  <div className="relative aspect-[4/3] md:aspect-[3/4] overflow-hidden">
+                    {/* Background Image */}
+                    <Image
+                      src="/images/RR-9.jpg"
+                      alt="Beats on the Beltline"
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    {/* Dark Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/20"></div>
+
+                    {/* Content Overlay */}
+                    <div className="absolute inset-0 p-6 flex flex-col justify-end">
+                      <div className="mb-3">
+                        <Headphones size={36} className="text-white mb-2" strokeWidth={1.5} />
+                      </div>
+                      <h2 className="font-title text-2xl md:text-3xl font-black text-white mb-3 uppercase">
+                        Beats on the Beltline
+                      </h2>
+                      <p className="text-white/90 mb-4 text-sm leading-relaxed">
+                        Atlanta's premier free outdoor electronic music experience.
+                      </p>
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setIsModalOpen(true);
+                        }}
+                        className="btn-festival w-full relative z-10"
+                      >
+                        Free Sign Up
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </a>
+
+              {/* Merch Card */}
+              <Link href="/merch" className="block h-full">
+                <div className="relative border-2 border-brand-neutral-100 rounded-2xl overflow-hidden hover:border-brand-primary hover:shadow-2xl transition-all group h-full">
+                  <div className="relative aspect-[4/3] md:aspect-[3/4] overflow-hidden">
+                    {/* Background Image */}
+                    <Image
+                      src="/images/merch/discotee.jpg"
+                      alt="Connect Merchandise"
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    {/* Dark Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/20"></div>
+
+                    {/* Content Overlay */}
+                    <div className="absolute inset-0 p-6 flex flex-col justify-end">
+                      <div className="mb-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white mb-2">
+                          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                          <line x1="3" y1="6" x2="21" y2="6"></line>
+                          <path d="M16 10a4 4 0 0 1-8 0"></path>
+                        </svg>
+                      </div>
+                      <h3 className="font-title text-2xl md:text-3xl font-black text-white mb-3 uppercase">
+                        Merch
+                      </h3>
+                      <p className="text-white/90 mb-4 text-sm leading-relaxed">
+                        Rep the festival with official gear and apparel.
+                      </p>
+                      <div className="inline-flex items-center text-white font-bold text-lg">
+                        Shop Now →
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+
+              {/* Join Us Card */}
+              <Link href="/join" className="block h-full">
+                <div className="relative border-2 border-brand-neutral-100 rounded-2xl overflow-hidden hover:border-brand-primary hover:shadow-2xl transition-all group h-full">
+                  <div className="relative aspect-[4/3] md:aspect-[3/4] overflow-hidden">
+                    {/* Background Image */}
+                    <Image
+                      src="/images/meghan.png"
+                      alt="Join Us"
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    {/* Dark Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/20"></div>
+
+                    {/* Content Overlay */}
+                    <div className="absolute inset-0 p-6 flex flex-col justify-end">
+                      <div className="mb-3">
+                        <Users size={36} className="text-white mb-2" strokeWidth={1.5} />
+                      </div>
+                      <h3 className="font-title text-2xl md:text-3xl font-black text-white mb-3 uppercase">
+                        Join Us
+                      </h3>
+                      <p className="text-white/90 mb-4 text-sm leading-relaxed">
+                        Volunteer, perform, or vend at our events.
+                      </p>
+                      <div className="inline-flex items-center text-white font-bold text-lg">
+                        Get Involved →
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+
+            </div>
+          </div>
+        </section>
+
+        {/* Connect Modal */}
+        <ConnectModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+
+        {/* About Section - The Experience */}
+        <section id="experience" className="pt-6 pb-10 bg-white">
+          <div className="section-container">
+            {/* Beats on the Beltline Title - Festival Style */}
+            <h1 className="text-center mb-4">
+              <span className="block font-festival text-6xl md:text-8xl lg:text-9xl font-black uppercase bg-gradient-to-r from-brand-primary via-brand-accent to-brand-pink bg-clip-text text-transparent">
+                Beats
+              </span>
+              <span className="block font-title text-3xl md:text-4xl lg:text-5xl font-semibold text-brand-text/70 my-2">
+                on the
+              </span>
+              <span className="block font-festival text-6xl md:text-8xl lg:text-9xl font-black uppercase bg-gradient-to-r from-brand-pink via-brand-peach to-brand-primary bg-clip-text text-transparent">
+                Beltline
+              </span>
+            </h1>
+
+            {/* Subtitle */}
+            <h2 className="font-title text-2xl md:text-3xl font-bold text-center text-brand-header mb-8 uppercase tracking-widest">
+              The Experience
+            </h2>
+
+            {/* Hero Tagline */}
+            <p className="text-xl md:text-2xl font-bold text-center text-brand-text mb-12 max-w-4xl mx-auto">
+              Atlanta's premier FREE outdoor electronic music experience
+            </p>
+
+            {/* Outlined Content Cards */}
+            <div ref={cardsRef} className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+
+              {/* The Vision */}
+              <div className={`bg-white border-2 border-brand-primary/20 rounded-2xl overflow-hidden hover:border-brand-primary transition-all hover:shadow-lg ${cardsVisible ? 'animate-[fadeInUp_0.6s_ease-out_0.1s_both]' : 'opacity-0'}`}>
+                {/* Image Header Strip - Placeholder for Vision Image */}
+                <div className="h-32 bg-gradient-to-r from-brand-primary/10 to-brand-primary/5 flex items-center justify-center">
+                  <span className="text-brand-primary/20 text-sm font-semibold">VISION IMAGE HEADER</span>
+                </div>
+                <div className="p-8">
+                  <h3 className="text-2xl font-bold text-brand-header mb-4">The Vision</h3>
+                  <p className="text-brand-header/80 leading-relaxed">
+                    A community-driven festival transforming Atlanta's iconic BeltLine into a shared cultural experience—merging music, art, and local entrepreneurship.
+                  </p>
+                </div>
+              </div>
+
+              {/* The Music */}
+              <div className={`bg-white border-2 border-brand-accent/20 rounded-2xl overflow-hidden hover:border-brand-accent transition-all hover:shadow-lg ${cardsVisible ? 'animate-[fadeInUp_0.6s_ease-out_0.3s_both]' : 'opacity-0'}`}>
+                {/* Image Header Strip - Placeholder for Music Image */}
+                <div className="h-32 bg-gradient-to-r from-brand-accent/10 to-brand-accent/5 flex items-center justify-center">
+                  <span className="text-brand-accent/20 text-sm font-semibold">MUSIC IMAGE HEADER</span>
+                </div>
+                <div className="p-8">
+                  <h3 className="text-2xl font-bold text-brand-header mb-4">The Music</h3>
+                  <p className="text-brand-header/80 leading-relaxed mb-4">
+                    25–35 of Atlanta's top DJs across house, techno, drum & bass, and bass music.
+                  </p>
+                  <p className="text-brand-primary font-semibold">
+                    Large-format LED visuals • Immersive stage design
+                  </p>
+                </div>
+              </div>
+
+              {/* The Community */}
+              <div className={`bg-white border-2 border-brand-pink/20 rounded-2xl overflow-hidden hover:border-brand-header transition-all hover:shadow-lg ${cardsVisible ? 'animate-[fadeInUp_0.6s_ease-out_0.5s_both]' : 'opacity-0'}`}>
+                {/* Image Header Strip - Placeholder for Community Image */}
+                <div className="h-32 bg-gradient-to-r from-brand-pink/10 to-brand-pink/5 flex items-center justify-center">
+                  <span className="text-brand-pink/20 text-sm font-semibold">COMMUNITY IMAGE HEADER</span>
+                </div>
+                <div className="p-8">
+                  <h3 className="text-2xl font-bold text-brand-header mb-4">The Community</h3>
+                  <p className="text-brand-header/80 leading-relaxed">
+                    30+ local vendors, food partners, and creative businesses. Keeping dance culture accessible, authentic, and community-anchored.
+                  </p>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
+        {/* Upcoming Events Section */}
+        <section id="events" className="py-10 bg-white">
+          <div className="section-container">
+            <h2 className="font-title text-5xl md:text-7xl font-black text-center mb-10 text-brand-header uppercase">
+              Upcoming Events
+            </h2>
+
+            <div className="max-w-md mx-auto">
+              <div className="bg-white border-2 border-brand-neutral-100 rounded-2xl overflow-hidden hover:border-brand-primary hover:shadow-xl transition-all">
+                <div className="relative aspect-square bg-brand-bg-cream flex items-center justify-center">
+                  <span className="text-7xl md:text-8xl font-black text-brand-primary/80 text-center">Spring 2026</span>
+                  <span className="bg-brand-primary text-white absolute top-4 right-4 font-semibold px-6 py-2 rounded-full">FREE</span>
+                </div>
+                <div className="p-8">
+                  <h3 className="text-2xl font-bold text-brand-header mb-4 text-center">
+                    Beats on the Beltline
+                  </h3>
+                  <p className="text-brand-text mb-6 text-center">
+                    Join us for an unforgettable day of music, art, and community along the BeltLine.
+                  </p>
+                  <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="btn-festival w-full"
+                  >
+                    Learn More
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Past Events Section */}
+        <section className="py-10 bg-brand-bg">
+          <div className="section-container">
+            <h2 className="font-title text-5xl md:text-7xl font-black text-center mb-10 text-brand-header uppercase">
+              PAST EVENTS
+            </h2>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {/* Past Event Cards - Real Flyers */}
+              {[
+                { image: '/images/events/april-2024.png', alt: 'Beats on the Beltline - April 2024', eventId: 3 },
+                { image: '/images/events/july-2024.png', alt: 'Beats on the Beltline - July 2024', eventId: 2 },
+                { image: '/images/events/september-2024.png', alt: 'Beats on the Beltline - September 2024', eventId: 1 }
+              ].map((event, idx) => (
+                <Link key={idx} href={`/events?eventId=${event.eventId}`}>
+                  <div className="card-festival group hover:scale-105 transition-transform cursor-pointer">
+                    <div className="relative aspect-square rounded-xl mb-4 overflow-hidden">
+                      <Image
+                        src={event.image}
+                        alt={event.alt}
+                        width={1080}
+                        height={1080}
+                        className="object-cover w-full h-full group-hover:scale-110 transition-transform duration-300"
+                      />
+                    </div>
+                    <h3 className="text-xl font-bold text-brand-header">
+                      Beats on the Beltline
+                    </h3>
+                    <p className="text-brand-header/70 text-sm">
+                      View photos & highlights
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Sponsors Section */}
+        <section className="py-10 bg-brand-bg-cream">
+          <div className="section-container">
+            <h2 className="font-title text-3xl md:text-4xl font-black text-center mb-6 text-brand-header uppercase">
+              Sponsors
+            </h2>
+
+            <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6 items-center max-w-5xl mx-auto">
+              {/* Sponsor Logos - Compact */}
+              {[
+                { name: 'Coke Zero', logo: '/images/sponsors/coke-zero.svg' },
+                { name: 'Deep Eddy', logo: '/images/sponsors/deep-eddy.svg' },
+                { name: 'Lunazul', logo: '/images/sponsors/lunazul.svg' },
+                { name: 'EVDY', logo: '/images/sponsors/evdy.svg' },
+                { name: 'Simply Pop', logo: '/images/sponsors/simply-pop.svg' },
+                { name: 'Nine Dot', logo: '/images/sponsors/nine-dot.svg' },
+                { name: 'Amiqo', logo: '/images/sponsors/amiqo.svg' },
+                { name: '4Ever Young', logo: '/images/sponsors/4ever-young.svg' },
+                { name: 'Sub Riot', logo: '/images/sponsors/sub-riot.svg' },
+              ].map((sponsor, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-2"
+                >
+                  <Image
+                    src={sponsor.logo}
+                    alt={sponsor.name}
+                    width={80}
+                    height={80}
+                    className="object-contain w-full h-auto opacity-80 hover:opacity-100 transition-opacity"
+                  />
+                </div>
+              ))}
+            </div>
+
+          </div>
+        </section>
+
+        {/* Connect with Us Section */}
+        <section id="join" className="py-10 bg-brand-bg">
+          <div className="section-container text-center">
+            <h2 className="font-title text-5xl md:text-7xl font-black mb-8 text-brand-header uppercase">
+              Let's Connect
+            </h2>
+
+            <div className="max-w-3xl mx-auto space-y-6 mb-12">
+              <p className="text-xl leading-relaxed text-brand-header">
+                Be part of Atlanta's most vibrant music community. Whether you're a DJ, artist, vendor, or music lover, there's a place for you at Beats on the Beltline.
+              </p>
+              <p className="text-lg leading-relaxed text-brand-header/70">
+                Stay updated on upcoming events, lineup announcements, and exclusive behind-the-scenes content. Join our community and help shape the future of free music in Atlanta.
+              </p>
+            </div>
+
+            {/* Connect Form */}
+            <div className="max-w-2xl mx-auto">
+              <form className="space-y-6 bg-white border-2 border-brand-primary/20 rounded-2xl p-8 shadow-lg">
+                {/* Name Field */}
+                <div className="text-left">
+                  <label htmlFor="name" className="block text-brand-header font-semibold mb-2">
+                    Name *
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    required
+                    className="input input-bordered w-full focus:input-primary"
+                    placeholder="Your full name"
+                  />
+                </div>
+
+                {/* Email Field */}
+                <div className="text-left">
+                  <label htmlFor="email" className="block text-brand-header font-semibold mb-2">
+                    Email *
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    required
+                    className="input input-bordered w-full focus:input-primary"
+                    placeholder="your.email@example.com"
+                  />
+                </div>
+
+                {/* Phone Field */}
+                <div className="text-left">
+                  <label htmlFor="phone" className="block text-brand-header font-semibold mb-2">
+                    Phone Number <span className="text-sm text-brand-header/60">(Optional)</span>
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    name="phone"
+                    className="input input-bordered w-full focus:input-primary"
+                    placeholder="(555) 123-4567"
+                  />
+                </div>
+
+                {/* Marketing Consent Checkbox */}
+                <div className="text-left flex items-start gap-3 pt-2">
+                  <input
+                    type="checkbox"
+                    id="marketing-consent"
+                    name="marketingConsent"
+                    className="checkbox checkbox-primary mt-1"
+                  />
+                  <label htmlFor="marketing-consent" className="text-brand-header/80 text-sm leading-relaxed cursor-pointer">
+                    I agree to receive marketing communications, event updates, and exclusive content from Beats on the Beltline. You can unsubscribe at any time.
+                  </label>
+                </div>
+
+                {/* Submit Button */}
+                <div className="pt-4">
+                  <button type="submit" className="btn-festival btn-lg w-full text-xl">
+                    CONNECT WITH US
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <Footer />
+      </div>
+    </>
+  )
+}
