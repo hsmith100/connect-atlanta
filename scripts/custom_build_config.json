@@ -1,8 +1,0 @@
-{
-  "burger_id": 41,
-  "server_ip": "54.210.148.147",
-  "ssh_key": "~/.ssh/serverburger-1-27.pem",
-  "project_name": "Custom Stack",
-  "deployment_method": "smart_rsync_restart",
-  "stack_type": "custom_build"
-}
