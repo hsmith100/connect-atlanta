@@ -97,7 +97,6 @@ export class BackendStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'ApiUrl', {
       value: this.apiUrl,
       description: 'API Gateway URL — used by CloudFront in FrontendStack',
-      exportName: 'ConnectApiUrl',
     });
   }
 }

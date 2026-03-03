@@ -10,7 +10,7 @@ import { FrontendStack } from '../lib/stacks/frontend-stack';
 //   Phase 1: DnsStack      ✅ done
 //   Phase 2: DynamoStack   ✅ done
 //   Phase 3: BackendStack  ✅ done
-//   Phase 4: FrontendStack
+//   Phase 4: FrontendStack ✅ done
 //
 // No NetworkStack — Lambda + DynamoDB communicate over HTTPS.
 // No VPC, no NAT Gateway, no RDS Proxy needed.
@@ -22,7 +22,15 @@ const env = {
   region: 'us-east-1',
 };
 
+// ── Production ────────────────────────────────────────────────────────────────
 const dnsStack = new DnsStack(app, 'ConnectDnsStack', { env });
 const dynamoStack = new DynamoStack(app, 'ConnectDynamoStack', { env });
 const backendStack = new BackendStack(app, 'ConnectBackendStack', { env, dynamoStack });
 new FrontendStack(app, 'ConnectFrontendStack', { env, dnsStack, backendStack });
+
+// ── Staging ───────────────────────────────────────────────────────────────────
+// Full staging environment — S3 + CloudFront (no custom domain) + Lambda + DynamoDB.
+// Staging CloudFront URL is shared with the team to review changes before prod.
+const stagingDynamoStack = new DynamoStack(app, 'ConnectStagingDynamoStack', { env, tablePrefix: 'staging-' });
+const stagingBackendStack = new BackendStack(app, 'ConnectStagingBackendStack', { env, dynamoStack: stagingDynamoStack });
+new FrontendStack(app, 'ConnectStagingFrontendStack', { env, backendStack: stagingBackendStack });

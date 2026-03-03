@@ -54,7 +54,8 @@ Thumbs.db
 *.sublime-project
 *.sublime-workspace
 
-# Docker
+# Docker — prod compose has committed secrets; gitignored to stop future leaks
+docker-compose.prod.yml
 *.pid
 *.seed
 *.pid.lock

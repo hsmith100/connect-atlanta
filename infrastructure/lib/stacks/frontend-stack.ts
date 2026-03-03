@@ -9,21 +9,24 @@ import { DnsStack } from './dns-stack';
 import { BackendStack } from './backend-stack';
 
 interface FrontendStackProps extends cdk.StackProps {
-  dnsStack: DnsStack;
   backendStack: BackendStack;
+  // Omit dnsStack for staging — distribution gets a plain *.cloudfront.net URL.
+  // Provide dnsStack for prod — distribution gets connectevents.co + ACM cert.
+  dnsStack?: DnsStack;
 }
 
 export class FrontendStack extends cdk.Stack {
   public readonly bucketName: string;
   public readonly distributionId: string;
+  public readonly distributionUrl: string;
 
   constructor(scope: Construct, id: string, props: FrontendStackProps) {
     super(scope, id, props);
 
     const { dnsStack, backendStack } = props;
+    const isProd = !!dnsStack;
 
     // ── S3 bucket ─────────────────────────────────────────────────────────────
-    // Private — CloudFront accesses it via OAI, never public.
     const siteBucket = new s3.Bucket(this, 'FrontendBucket', {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
       removalPolicy: cdk.RemovalPolicy.RETAIN,
@@ -48,7 +51,6 @@ export class FrontendStack extends cdk.Stack {
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
       },
       additionalBehaviors: {
-        // /api/* → API Gateway → Lambda. Caching disabled, all methods allowed.
         '/api/*': {
           origin: apiOrigin,
           viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
@@ -58,60 +60,65 @@ export class FrontendStack extends cdk.Stack {
         },
       },
       defaultRootObject: 'index.html',
-      // Route unknown paths to index.html so Next.js client-side routing works
       errorResponses: [
         { httpStatus: 403, responseHttpStatus: 200, responsePagePath: '/index.html', ttl: cdk.Duration.seconds(0) },
         { httpStatus: 404, responseHttpStatus: 200, responsePagePath: '/index.html', ttl: cdk.Duration.seconds(0) },
       ],
-      certificate: dnsStack.certificate,
-      domainNames: ['connectevents.co', 'www.connectevents.co'],
+      // Prod only — custom domain + ACM cert
+      ...(isProd && dnsStack ? {
+        certificate: dnsStack.certificate,
+        domainNames: ['connectevents.co', 'www.connectevents.co'],
+      } : {}),
     });
 
-    // ── Route53 records ───────────────────────────────────────────────────────
-    // These are added now but only go live in Phase 5 when nameservers switch.
-    const cfTarget = route53.RecordTarget.fromAlias(
-      new route53Targets.CloudFrontTarget(distribution),
-    );
+    // ── Route53 records (prod only) ───────────────────────────────────────────
+    if (isProd && dnsStack) {
+      const cfTarget = route53.RecordTarget.fromAlias(
+        new route53Targets.CloudFrontTarget(distribution),
+      );
 
-    new route53.ARecord(this, 'ApexARecord', {
-      zone: dnsStack.hostedZone,
-      target: cfTarget,
-    });
+      new route53.ARecord(this, 'ApexARecord', {
+        zone: dnsStack.hostedZone,
+        target: cfTarget,
+      });
 
-    new route53.ARecord(this, 'WwwARecord', {
-      zone: dnsStack.hostedZone,
-      recordName: 'www',
-      target: cfTarget,
-    });
+      new route53.ARecord(this, 'WwwARecord', {
+        zone: dnsStack.hostedZone,
+        recordName: 'www',
+        target: cfTarget,
+      });
 
-    // IPv6
-    new route53.AaaaRecord(this, 'ApexAaaaRecord', {
-      zone: dnsStack.hostedZone,
-      target: cfTarget,
-    });
+      new route53.AaaaRecord(this, 'ApexAaaaRecord', {
+        zone: dnsStack.hostedZone,
+        target: cfTarget,
+      });
 
-    new route53.AaaaRecord(this, 'WwwAaaaRecord', {
-      zone: dnsStack.hostedZone,
-      recordName: 'www',
-      target: cfTarget,
-    });
+      new route53.AaaaRecord(this, 'WwwAaaaRecord', {
+        zone: dnsStack.hostedZone,
+        recordName: 'www',
+        target: cfTarget,
+      });
+    }
 
     this.bucketName = siteBucket.bucketName;
     this.distributionId = distribution.distributionId;
+    this.distributionUrl = `https://${distribution.distributionDomainName}`;
 
     new cdk.CfnOutput(this, 'FrontendBucketName', {
       value: siteBucket.bucketName,
-      description: 'S3 bucket — GitHub Actions syncs the Next.js /out folder here',
+      description: 'S3 bucket — sync Next.js /out folder here after build',
     });
 
     new cdk.CfnOutput(this, 'CloudFrontDistributionId', {
       value: distribution.distributionId,
-      description: 'CloudFront distribution ID — GitHub Actions invalidates cache after deploy',
+      description: 'CloudFront distribution ID — invalidate after deploy',
     });
 
     new cdk.CfnOutput(this, 'CloudFrontUrl', {
-      value: `https://${distribution.distributionDomainName}`,
-      description: 'CloudFront URL — test the site here before Phase 5 DNS cutover',
+      value: this.distributionUrl,
+      description: isProd
+        ? 'CloudFront URL — test before DNS cutover'
+        : 'Staging URL — share this with the team to review changes',
     });
   }
 }

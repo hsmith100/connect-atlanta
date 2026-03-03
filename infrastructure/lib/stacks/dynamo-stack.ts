@@ -2,6 +2,12 @@ import * as cdk from 'aws-cdk-lib';
 import * as dynamodb from 'aws-cdk-lib/aws-dynamodb';
 import { Construct } from 'constructs';
 
+interface DynamoStackProps extends cdk.StackProps {
+  // 'staging-' for staging, '' (default) for prod.
+  // Prod tables were deployed without a prefix so we keep them as-is.
+  tablePrefix?: string;
+}
+
 export class DynamoStack extends cdk.Stack {
   public readonly eventsTable: dynamodb.Table;
   public readonly emailSignupsTable: dynamodb.Table;
@@ -10,13 +16,14 @@ export class DynamoStack extends cdk.Stack {
   public readonly artistApplicationsTable: dynamodb.Table;
   public readonly sponsorInquiriesTable: dynamodb.Table;
 
-  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+  constructor(scope: Construct, id: string, props: DynamoStackProps = {}) {
     super(scope, id, props);
+    const p = props.tablePrefix ?? '';
 
     // Events table — list and detail pages
     // GSI byDate: lists all events sorted chronologically
     this.eventsTable = new dynamodb.Table(this, 'EventsTable', {
-      tableName: 'connect-events',
+      tableName: `connect-${p}events`,
       partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
       removalPolicy: cdk.RemovalPolicy.RETAIN,
@@ -29,7 +36,7 @@ export class DynamoStack extends cdk.Stack {
 
     // Email signups — newsletter / mailing list form
     this.emailSignupsTable = new dynamodb.Table(this, 'EmailSignupsTable', {
-      tableName: 'connect-email-signups',
+      tableName: `connect-${p}email-signups`,
       partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
       removalPolicy: cdk.RemovalPolicy.RETAIN,
@@ -42,7 +49,7 @@ export class DynamoStack extends cdk.Stack {
 
     // Vendor applications
     this.vendorApplicationsTable = new dynamodb.Table(this, 'VendorApplicationsTable', {
-      tableName: 'connect-vendor-applications',
+      tableName: `connect-${p}vendor-applications`,
       partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
       removalPolicy: cdk.RemovalPolicy.RETAIN,
@@ -55,7 +62,7 @@ export class DynamoStack extends cdk.Stack {
 
     // Volunteer applications
     this.volunteerApplicationsTable = new dynamodb.Table(this, 'VolunteerApplicationsTable', {
-      tableName: 'connect-volunteer-applications',
+      tableName: `connect-${p}volunteer-applications`,
       partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
       removalPolicy: cdk.RemovalPolicy.RETAIN,
@@ -68,7 +75,7 @@ export class DynamoStack extends cdk.Stack {
 
     // Artist applications
     this.artistApplicationsTable = new dynamodb.Table(this, 'ArtistApplicationsTable', {
-      tableName: 'connect-artist-applications',
+      tableName: `connect-${p}artist-applications`,
       partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
       removalPolicy: cdk.RemovalPolicy.RETAIN,
@@ -81,7 +88,7 @@ export class DynamoStack extends cdk.Stack {
 
     // Sponsor inquiries
     this.sponsorInquiriesTable = new dynamodb.Table(this, 'SponsorInquiriesTable', {
-      tableName: 'connect-sponsor-inquiries',
+      tableName: `connect-${p}sponsor-inquiries`,
       partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
       removalPolicy: cdk.RemovalPolicy.RETAIN,
