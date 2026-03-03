@@ -139,6 +139,13 @@ export async function updateEventFlyer(
   });
 }
 
+export async function deleteEvent(adminKey: string, eventId: string): Promise<void> {
+  await fetchAPI<{ deleted: boolean }>(`/api/admin/events/${eventId}`, {
+    method: 'DELETE',
+    headers: adminHeaders(adminKey),
+  });
+}
+
 export async function updateEventGoLive(
   adminKey: string,
   eventId: string,

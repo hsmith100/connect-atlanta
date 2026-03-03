@@ -352,6 +352,25 @@ async function updateEventFlyer(event: APIGatewayProxyEventV2): Promise<APIGatew
   return ok({ updated: true });
 }
 
+async function deleteEventById(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
+  const authErr = await requireAdmin(event);
+  if (authErr) return authErr;
+
+  const id = event.pathParameters?.id;
+  if (!id) return errResponse(400, 'Missing event id');
+
+  const record = await ddb.send(new GetCommand({ TableName: EVENTS_TABLE, Key: { id } }));
+
+  if (record.Item?.flyerUrl) {
+    const flyerKey = (record.Item.flyerUrl as string).replace(/^https?:\/\/[^/]+\//, '');
+    await s3.send(new DeleteObjectCommand({ Bucket: MEDIA_BUCKET, Key: flyerKey }));
+  }
+
+  await ddb.send(new DeleteCommand({ TableName: EVENTS_TABLE, Key: { id } }));
+
+  return ok({ deleted: true });
+}
+
 // ── Router ───────────────────────────────────────────────────────────────────
 
 export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> => {
@@ -370,6 +389,7 @@ export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGateway
     if (method === 'POST' && path === '/api/admin/flyers/presign') return presignFlyer(event);
     const flyerMatch = path.match(/^\/api\/admin\/events\/([^/]+)$/);
     if (method === 'PATCH' && flyerMatch) return updateEventFlyer(event);
+    if (method === 'DELETE' && flyerMatch) return deleteEventById(event);
 
     return errResponse(404, 'Not found');
   } catch (e) {

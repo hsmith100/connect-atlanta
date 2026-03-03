@@ -12,6 +12,7 @@ import {
   updateEventFlyer,
   updateEventGoLive,
   createEvent,
+  deleteEvent,
 } from '../lib/api'
 import type { Photo, PresignRequest, PresignResponse } from '@shared/types/photos'
 import type { Event } from '@shared/types/events'
@@ -377,6 +378,7 @@ function GoLiveBadge({ goLiveAt }: { goLiveAt?: string | null }) {
 
 function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
   const [uploading, setUploading] = useState<Record<string, boolean>>({})
+  const [deleting, setDeleting] = useState<Record<string, boolean>>({})
   const [savingGoLive, setSavingGoLive] = useState<Record<string, boolean>>({})
   const [goLiveDates, setGoLiveDates] = useState<Record<string, string>>({})
   const [goLiveTimes, setGoLiveTimes] = useState<Record<string, string>>({})
@@ -458,6 +460,22 @@ function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
       setError('Failed to create event.')
     } finally {
       setSavingNew(false)
+    }
+  }
+
+  async function handleDeleteEvent(ev: Event) {
+    if (!confirm(`Delete "${ev.title}"? This cannot be undone.`)) return
+    setDeleting((prev) => ({ ...prev, [ev.id]: true }))
+    setStatusMsg('')
+    setError('')
+    try {
+      await deleteEvent(adminKey, ev.id)
+      setEvents((prev) => prev.filter((e) => e.id !== ev.id))
+      setStatusMsg(`"${ev.title}" deleted.`)
+    } catch (err) {
+      console.error('Delete event error:', err)
+      setError(`Failed to delete "${ev.title}".`)
+      setDeleting((prev) => ({ ...prev, [ev.id]: false }))
     }
   }
 
@@ -618,10 +636,20 @@ function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
                 </div>
                 {/* Event info + controls */}
                 <div className="p-4 space-y-3">
-                  <div>
-                    <p className="font-semibold text-white text-sm">{ev.title}</p>
-                    <p className="text-gray-400 text-xs">{ev.date}</p>
-                    <div className="mt-1"><GoLiveBadge goLiveAt={ev.goLiveAt} /></div>
+                  <div className="flex items-start justify-between gap-2">
+                    <div>
+                      <p className="font-semibold text-white text-sm">{ev.title}</p>
+                      <p className="text-gray-400 text-xs">{ev.date}</p>
+                      <div className="mt-1"><GoLiveBadge goLiveAt={ev.goLiveAt} /></div>
+                    </div>
+                    <button
+                      onClick={() => handleDeleteEvent(ev)}
+                      disabled={deleting[ev.id]}
+                      className="shrink-0 p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-900/30 transition-colors disabled:opacity-50"
+                      title="Delete event"
+                    >
+                      {deleting[ev.id] ? <Loader2 size={15} className="animate-spin" /> : <Trash2 size={15} />}
+                    </button>
                   </div>
                   {/* Flyer upload */}
                   <label className={`flex items-center justify-center gap-2 w-full rounded-lg px-3 py-2 text-sm font-semibold cursor-pointer transition-colors ${uploading[ev.id] ? 'bg-gray-700 opacity-50 cursor-wait' : 'bg-brand-primary hover:bg-brand-primary/90'} text-white`}>
