@@ -56,6 +56,23 @@ function adminHeaders(adminKey: string): Record<string, string> {
   return { 'x-admin-key': adminKey };
 }
 
+export async function getAdminEvents(adminKey: string): Promise<Event[]> {
+  return fetchAPI<Event[]>('/api/admin/events', {
+    headers: adminHeaders(adminKey),
+  });
+}
+
+export async function createEvent(
+  adminKey: string,
+  event: { id: string; title: string; date: string; time?: string; location?: string; goLiveAt?: string; ticketingUrl?: string },
+): Promise<void> {
+  await fetchAPI<{ created: boolean }>('/api/admin/events', {
+    method: 'POST',
+    headers: adminHeaders(adminKey),
+    body: JSON.stringify(event),
+  });
+}
+
 export async function getAdminPhotos(adminKey: string): Promise<{ photos: Photo[] }> {
   return fetchAPI<{ photos: Photo[] }>('/api/admin/photos', {
     headers: adminHeaders(adminKey),

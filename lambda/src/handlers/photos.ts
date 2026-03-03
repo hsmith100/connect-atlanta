@@ -218,6 +218,59 @@ async function deletePhotos(event: APIGatewayProxyEventV2): Promise<APIGatewayPr
   return ok({ deleted: ids.length });
 }
 
+// ── Admin: events CRUD ───────────────────────────────────────────────────────
+
+async function listAdminEvents(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
+  const authErr = await requireAdmin(event);
+  if (authErr) return authErr;
+
+  const result = await ddb.send(new QueryCommand({
+    TableName: EVENTS_TABLE,
+    IndexName: 'byDate',
+    KeyConditionExpression: 'entity = :e',
+    ExpressionAttributeValues: { ':e': 'EVENT' },
+    ScanIndexForward: false,
+  }));
+
+  return ok(result.Items ?? []);
+}
+
+async function createEvent(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
+  const authErr = await requireAdmin(event);
+  if (authErr) return authErr;
+
+  const body: {
+    id: string;
+    title: string;
+    date: string;
+    time?: string;
+    location?: string;
+    goLiveAt?: string;
+    ticketingUrl?: string;
+  } = JSON.parse(event.body ?? '{}');
+
+  if (!body.id || !body.title || !body.date) {
+    return errResponse(400, 'id, title, and date are required');
+  }
+
+  await ddb.send(new PutCommand({
+    TableName: EVENTS_TABLE,
+    Item: {
+      id: body.id,
+      entity: 'EVENT',
+      title: body.title,
+      date: body.date,
+      ...(body.time ? { time: body.time } : {}),
+      ...(body.location ? { location: body.location } : {}),
+      ...(body.goLiveAt ? { goLiveAt: body.goLiveAt } : {}),
+      ...(body.ticketingUrl ? { ticketingUrl: body.ticketingUrl } : {}),
+    },
+    ConditionExpression: 'attribute_not_exists(id)',
+  }));
+
+  return ok({ created: true });
+}
+
 // ── Admin: flyer management ───────────────────────────────────────────────────
 
 async function presignFlyer(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
@@ -251,9 +304,9 @@ async function updateEventFlyer(event: APIGatewayProxyEventV2): Promise<APIGatew
   const id = event.pathParameters?.id;
   if (!id) return errResponse(400, 'Missing event id');
 
-  const body: { flyerUrl?: string; goLiveAt?: string | null } = JSON.parse(event.body ?? '{}');
-  if (!body.flyerUrl && body.goLiveAt === undefined) {
-    return errResponse(400, 'flyerUrl or goLiveAt is required');
+  const body: { flyerUrl?: string; goLiveAt?: string | null; ticketingUrl?: string | null } = JSON.parse(event.body ?? '{}');
+  if (!body.flyerUrl && body.goLiveAt === undefined && body.ticketingUrl === undefined) {
+    return errResponse(400, 'flyerUrl, goLiveAt, or ticketingUrl is required');
   }
 
   const setParts: string[] = [];
@@ -270,6 +323,14 @@ async function updateEventFlyer(event: APIGatewayProxyEventV2): Promise<APIGatew
     } else {
       setParts.push('goLiveAt = :gla');
       values[':gla'] = body.goLiveAt;
+    }
+  }
+  if (body.ticketingUrl !== undefined) {
+    if (body.ticketingUrl === null) {
+      removeParts.push('ticketingUrl');
+    } else {
+      setParts.push('ticketingUrl = :tu');
+      values[':tu'] = body.ticketingUrl;
     }
   }
 
@@ -300,6 +361,8 @@ export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGateway
     if (method === 'POST' && path === '/api/admin/photos') return createPhotos(event);
     if (method === 'PATCH' && path === '/api/admin/photos') return updatePhotos(event);
     if (method === 'DELETE' && path === '/api/admin/photos') return deletePhotos(event);
+    if (method === 'GET' && path === '/api/admin/events') return listAdminEvents(event);
+    if (method === 'POST' && path === '/api/admin/events') return createEvent(event);
     if (method === 'POST' && path === '/api/admin/flyers/presign') return presignFlyer(event);
     const flyerMatch = path.match(/^\/api\/admin\/events\/([^/]+)$/);
     if (method === 'PATCH' && flyerMatch) return updateEventFlyer(event);

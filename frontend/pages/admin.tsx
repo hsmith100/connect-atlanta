@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { Eye, EyeOff, Trash2, Upload, Save, GripVertical, Loader2, AlertCircle, ImageIcon } from 'lucide-react'
+import { Eye, EyeOff, Trash2, Upload, Save, GripVertical, Loader2, AlertCircle, ImageIcon, Plus } from 'lucide-react'
 import {
   getAdminPhotos,
-  getEvents,
+  getAdminEvents,
   presignPhotos,
   createPhotos,
   updatePhotos,
@@ -10,6 +10,7 @@ import {
   presignFlyer,
   updateEventFlyer,
   updateEventGoLive,
+  createEvent,
 } from '../lib/api'
 import type { Photo, PresignRequest, PresignResponse } from '@shared/types/photos'
 import type { Event } from '@shared/types/events'
@@ -376,14 +377,22 @@ function GoLiveBadge({ goLiveAt }: { goLiveAt?: string | null }) {
 function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
   const [uploading, setUploading] = useState<Record<string, boolean>>({})
   const [savingGoLive, setSavingGoLive] = useState<Record<string, boolean>>({})
-  const [goLiveInputs, setGoLiveInputs] = useState<Record<string, string>>({})
+  const [goLiveDates, setGoLiveDates] = useState<Record<string, string>>({})
+  const [goLiveTimes, setGoLiveTimes] = useState<Record<string, string>>({})
+  const [showAddForm, setShowAddForm] = useState(false)
+  const emptyForm = { title: '', date: '', time: '', location: '', ticketingUrl: '', goLiveDate: '', goLiveTime: '' }
+  const [newEvent, setNewEvent] = useState(emptyForm)
+  const [savingNew, setSavingNew] = useState(false)
   const [statusMsg, setStatusMsg] = useState('')
   const [error, setError] = useState('')
 
+  const inputCls = 'w-full bg-gray-800 text-white text-sm rounded-lg px-3 py-2 border border-gray-700 focus:outline-none focus:border-brand-primary'
+
   async function handleSetGoLive(ev: Event) {
-    const raw = goLiveInputs[ev.id]
-    // empty string → clear the schedule (null), otherwise parse to ISO
-    const goLiveAt = raw ? new Date(raw).toISOString() : null
+    const existingLocal = ev.goLiveAt ? toDatetimeLocal(ev.goLiveAt) : ''
+    const date = ev.id in goLiveDates ? goLiveDates[ev.id] : existingLocal.slice(0, 10)
+    const time = ev.id in goLiveTimes ? goLiveTimes[ev.id] : existingLocal.slice(11, 16)
+    const goLiveAt = date ? new Date(`${date}T${time || '00:00'}`).toISOString() : null
     setSavingGoLive((prev) => ({ ...prev, [ev.id]: true }))
     setStatusMsg('')
     setError('')
@@ -399,28 +408,50 @@ function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
     }
   }
 
+  async function handleCreateEvent() {
+    if (!newEvent.title || !newEvent.date) { setError('Title and date are required.'); return }
+    setSavingNew(true)
+    setError('')
+    setStatusMsg('')
+    try {
+      const goLiveAt = newEvent.goLiveDate
+        ? new Date(`${newEvent.goLiveDate}T${newEvent.goLiveTime || '00:00'}`).toISOString()
+        : undefined
+      const id = crypto.randomUUID()
+      await createEvent(adminKey, {
+        id,
+        title: newEvent.title,
+        date: newEvent.date,
+        ...(newEvent.time ? { time: newEvent.time } : {}),
+        ...(newEvent.location ? { location: newEvent.location } : {}),
+        ...(newEvent.ticketingUrl ? { ticketingUrl: newEvent.ticketingUrl } : {}),
+        ...(goLiveAt ? { goLiveAt } : {}),
+      })
+      setEvents((prev) => [...prev, {
+        id, entity: 'EVENT', title: newEvent.title, date: newEvent.date,
+        time: newEvent.time || null, location: newEvent.location || null,
+        ticketingUrl: newEvent.ticketingUrl || null, goLiveAt: goLiveAt ?? null,
+      }])
+      setNewEvent(emptyForm)
+      setShowAddForm(false)
+      setStatusMsg(`Event "${newEvent.title}" created.`)
+    } catch (err) {
+      console.error('Create event error:', err)
+      setError('Failed to create event.')
+    } finally {
+      setSavingNew(false)
+    }
+  }
+
   async function handleFlyerUpload(event: Event, file: File) {
     setUploading((prev) => ({ ...prev, [event.id]: true }))
     setStatusMsg('')
     setError('')
     try {
-      // 1. Get presigned URL
-      const { uploadUrl, flyerUrl } = await presignFlyer(
-        adminKey,
-        event.id,
-        file.name,
-        file.type || 'image/jpeg',
-      )
-      // 2. PUT file directly to S3
-      const res = await fetch(uploadUrl, {
-        method: 'PUT',
-        body: file,
-        headers: { 'Content-Type': file.type || 'image/jpeg' },
-      })
+      const { uploadUrl, flyerUrl } = await presignFlyer(adminKey, event.id, file.name, file.type || 'image/jpeg')
+      const res = await fetch(uploadUrl, { method: 'PUT', body: file, headers: { 'Content-Type': file.type || 'image/jpeg' } })
       if (!res.ok) throw new Error(`S3 upload failed: ${res.status}`)
-      // 3. Update event record in DynamoDB
       await updateEventFlyer(adminKey, event.id, flyerUrl)
-      // 4. Update local state
       setEvents((prev) => prev.map((ev) => ev.id === event.id ? { ...ev, flyerUrl } : ev))
       setStatusMsg(`Flyer updated for "${event.title}".`)
     } catch (err) {
@@ -431,17 +462,20 @@ function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
     }
   }
 
-  if (events.length === 0) {
-    return (
-      <div className="p-6 text-center py-20 text-gray-500">
-        <p className="text-lg">No events in DynamoDB yet.</p>
-        <p className="text-sm mt-1">Seed the events table first.</p>
-      </div>
-    )
-  }
-
   return (
     <>
+      {/* Toolbar */}
+      <div className="px-6 py-3 border-b border-gray-800 flex items-center justify-between">
+        <span className="text-sm text-gray-400">{events.length} event{events.length !== 1 ? 's' : ''}</span>
+        <button
+          onClick={() => setShowAddForm((v) => !v)}
+          className="flex items-center gap-2 bg-brand-primary hover:bg-brand-primary/90 text-white rounded-lg px-4 py-1.5 text-sm font-semibold transition-colors"
+        >
+          <Plus size={16} /> Add Event
+        </button>
+      </div>
+
+      {/* Status bar */}
       {(statusMsg || error) && (
         <div className={`px-6 py-2 text-sm flex items-center gap-2 ${error ? 'bg-red-900/40 text-red-300' : 'bg-green-900/40 text-green-300'}`}>
           {error && <AlertCircle size={14} />}
@@ -449,66 +483,130 @@ function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
           <button onClick={() => { setError(''); setStatusMsg('') }} className="ml-auto text-xs opacity-60 hover:opacity-100">×</button>
         </div>
       )}
-      <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {events.map((ev) => (
-          <div key={ev.id} className="bg-gray-900 rounded-xl overflow-hidden border border-gray-800">
-            {/* Flyer preview */}
-            <div className="aspect-[4/5] bg-gray-800 flex items-center justify-center">
-              {ev.flyerUrl ? (
-                <img src={ev.flyerUrl} alt={ev.title} className="w-full h-full object-contain" />
-              ) : (
-                <div className="flex flex-col items-center gap-2 text-gray-600">
-                  <ImageIcon size={40} />
-                  <span className="text-xs">No flyer</span>
-                </div>
-              )}
+
+      {/* Add Event form */}
+      {showAddForm && (
+        <div className="p-6 border-b border-gray-800">
+          <div className="bg-gray-900 rounded-xl border border-gray-700 p-5 space-y-4 max-w-lg">
+            <h3 className="text-white font-semibold">New Event</h3>
+            <div>
+              <label className="block text-xs text-gray-400 mb-1">Title *</label>
+              <input type="text" value={newEvent.title} onChange={(e) => setNewEvent((p) => ({ ...p, title: e.target.value }))} placeholder="Beats on the Beltline" className={inputCls} />
             </div>
-            {/* Event info + upload */}
-            <div className="p-4 space-y-3">
-              <div>
-                <p className="font-semibold text-white text-sm">{ev.title}</p>
-                <p className="text-gray-400 text-xs">{ev.date}</p>
-                <div className="mt-1"><GoLiveBadge goLiveAt={ev.goLiveAt} /></div>
+            <div>
+              <label className="block text-xs text-gray-400 mb-1">Event Date *</label>
+              <input type="date" value={newEvent.date} onChange={(e) => setNewEvent((p) => ({ ...p, date: e.target.value }))} className={inputCls} />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-400 mb-1">Display Time</label>
+              <input type="text" value={newEvent.time} onChange={(e) => setNewEvent((p) => ({ ...p, time: e.target.value }))} placeholder="2:00 PM - 10:00 PM" className={inputCls} />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-400 mb-1">Location</label>
+              <input type="text" value={newEvent.location} onChange={(e) => setNewEvent((p) => ({ ...p, location: e.target.value }))} placeholder="Atlanta Beltline" className={inputCls} />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-400 mb-1">Ticketing / Info URL</label>
+              <input type="url" value={newEvent.ticketingUrl} onChange={(e) => setNewEvent((p) => ({ ...p, ticketingUrl: e.target.value }))} placeholder="https://..." className={inputCls} />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-400 mb-1">Go-live — leave blank for always live</label>
+              <div className="flex gap-2">
+                <input type="date" value={newEvent.goLiveDate} onChange={(e) => setNewEvent((p) => ({ ...p, goLiveDate: e.target.value }))} className={inputCls} />
+                <input type="time" value={newEvent.goLiveTime} onChange={(e) => setNewEvent((p) => ({ ...p, goLiveTime: e.target.value }))} className="w-32 shrink-0 bg-gray-800 text-white text-sm rounded-lg px-3 py-2 border border-gray-700 focus:outline-none focus:border-brand-primary" />
               </div>
-              <label className={`flex items-center justify-center gap-2 w-full rounded-lg px-3 py-2 text-sm font-semibold cursor-pointer transition-colors ${uploading[ev.id] ? 'bg-gray-700 opacity-50 cursor-wait' : 'bg-brand-primary hover:bg-brand-primary/90'} text-white`}>
-                {uploading[ev.id] ? (
-                  <><Loader2 size={14} className="animate-spin" /> Uploading…</>
-                ) : (
-                  <><Upload size={14} /> {ev.flyerUrl ? 'Replace flyer' : 'Upload flyer'}</>
-                )}
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  disabled={uploading[ev.id]}
-                  onChange={(e) => {
-                    const file = e.target.files?.[0]
-                    if (file) handleFlyerUpload(ev, file)
-                    e.target.value = ''
-                  }}
-                />
-              </label>
-              {/* Go-live scheduler */}
-              <div className="space-y-1.5">
-                <p className="text-xs text-gray-400">Go-live (local time) — leave blank for always live</p>
-                <input
-                  type="datetime-local"
-                  value={goLiveInputs[ev.id] ?? (ev.goLiveAt ? toDatetimeLocal(ev.goLiveAt) : '')}
-                  onChange={(e) => setGoLiveInputs((prev) => ({ ...prev, [ev.id]: e.target.value }))}
-                  className="w-full bg-gray-800 text-white text-xs rounded-lg px-3 py-1.5 border border-gray-700 focus:outline-none focus:border-brand-primary"
-                />
-                <button
-                  onClick={() => handleSetGoLive(ev)}
-                  disabled={savingGoLive[ev.id]}
-                  className="flex items-center justify-center gap-1.5 w-full bg-gray-700 hover:bg-gray-600 text-white rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors disabled:opacity-50"
-                >
-                  {savingGoLive[ev.id] ? <><Loader2 size={12} className="animate-spin" /> Saving…</> : <><Save size={12} /> Set Go-Live</>}
-                </button>
-              </div>
+            </div>
+            <div className="flex gap-2 pt-1">
+              <button
+                onClick={handleCreateEvent}
+                disabled={savingNew || !newEvent.title || !newEvent.date}
+                className="flex-1 flex items-center justify-center gap-2 bg-brand-primary hover:bg-brand-primary/90 text-white rounded-lg px-4 py-2 text-sm font-semibold transition-colors disabled:opacity-50"
+              >
+                {savingNew ? <><Loader2 size={14} className="animate-spin" /> Creating…</> : 'Create Event'}
+              </button>
+              <button
+                onClick={() => { setShowAddForm(false); setNewEvent(emptyForm) }}
+                className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors"
+              >
+                Cancel
+              </button>
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
+
+      {/* Events grid */}
+      {events.length === 0 ? (
+        <div className="p-6 text-center py-20 text-gray-500">
+          <p className="text-lg">No events yet.</p>
+          <p className="text-sm mt-1">Click "Add Event" to create one.</p>
+        </div>
+      ) : (
+        <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {events.map((ev) => {
+            const existingLocal = ev.goLiveAt ? toDatetimeLocal(ev.goLiveAt) : ''
+            const glDate = ev.id in goLiveDates ? goLiveDates[ev.id] : existingLocal.slice(0, 10)
+            const glTime = ev.id in goLiveTimes ? goLiveTimes[ev.id] : existingLocal.slice(11, 16)
+            return (
+              <div key={ev.id} className="bg-gray-900 rounded-xl overflow-hidden border border-gray-800">
+                {/* Flyer preview */}
+                <div className="aspect-[4/5] bg-gray-800 flex items-center justify-center">
+                  {ev.flyerUrl ? (
+                    <img src={ev.flyerUrl} alt={ev.title} className="w-full h-full object-contain" />
+                  ) : (
+                    <div className="flex flex-col items-center gap-2 text-gray-600">
+                      <ImageIcon size={40} />
+                      <span className="text-xs">No flyer</span>
+                    </div>
+                  )}
+                </div>
+                {/* Event info + controls */}
+                <div className="p-4 space-y-3">
+                  <div>
+                    <p className="font-semibold text-white text-sm">{ev.title}</p>
+                    <p className="text-gray-400 text-xs">{ev.date}</p>
+                    <div className="mt-1"><GoLiveBadge goLiveAt={ev.goLiveAt} /></div>
+                  </div>
+                  {/* Flyer upload */}
+                  <label className={`flex items-center justify-center gap-2 w-full rounded-lg px-3 py-2 text-sm font-semibold cursor-pointer transition-colors ${uploading[ev.id] ? 'bg-gray-700 opacity-50 cursor-wait' : 'bg-brand-primary hover:bg-brand-primary/90'} text-white`}>
+                    {uploading[ev.id] ? (
+                      <><Loader2 size={14} className="animate-spin" /> Uploading…</>
+                    ) : (
+                      <><Upload size={14} /> {ev.flyerUrl ? 'Replace flyer' : 'Upload flyer'}</>
+                    )}
+                    <input type="file" accept="image/*" className="hidden" disabled={uploading[ev.id]} onChange={(e) => { const file = e.target.files?.[0]; if (file) handleFlyerUpload(ev, file); e.target.value = '' }} />
+                  </label>
+                  {/* Go-live scheduler */}
+                  <div className="space-y-1.5">
+                    <p className="text-xs text-gray-400">Go-live — leave blank to clear schedule</p>
+                    <div className="flex gap-1.5">
+                      <input
+                        type="date"
+                        value={glDate}
+                        onChange={(e) => setGoLiveDates((prev) => ({ ...prev, [ev.id]: e.target.value }))}
+                        className="flex-1 bg-gray-800 text-white text-xs rounded-lg px-2 py-1.5 border border-gray-700 focus:outline-none focus:border-brand-primary"
+                      />
+                      <input
+                        type="time"
+                        value={glTime}
+                        onChange={(e) => setGoLiveTimes((prev) => ({ ...prev, [ev.id]: e.target.value }))}
+                        className="w-24 bg-gray-800 text-white text-xs rounded-lg px-2 py-1.5 border border-gray-700 focus:outline-none focus:border-brand-primary"
+                      />
+                    </div>
+                    <button
+                      onClick={() => handleSetGoLive(ev)}
+                      disabled={savingGoLive[ev.id]}
+                      className="flex items-center justify-center gap-1.5 w-full bg-gray-700 hover:bg-gray-600 text-white rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors disabled:opacity-50"
+                    >
+                      {savingGoLive[ev.id] ? <><Loader2 size={12} className="animate-spin" /> Saving…</> : <><Save size={12} /> Set Go-Live</>}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      )}
     </>
   )
 }
@@ -538,7 +636,7 @@ export default function AdminPage() {
     if (!adminKey) return
     Promise.all([
       getAdminPhotos(adminKey).then((r) => setPhotos(r.photos)),
-      getEvents().then(setEvents),
+      getAdminEvents(adminKey).then(setEvents),
     ]).catch(console.error)
   }, [adminKey])
 

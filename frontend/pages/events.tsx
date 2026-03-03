@@ -257,14 +257,16 @@ export default function Events() {
                                                         Join us for an unforgettable day of music, art, and community along Atlanta's iconic Beltline. Free admission, world-class DJs, and amazing vibes!
                                                     </p>
 
-                                                    <a
-                                                        href="https://bit.ly/botbapril"
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="btn-festival text-xl py-4 transform hover:scale-105 transition-all block text-center"
-                                                    >
-                                                        Get Info & Updates
-                                                    </a>
+                                                    {event.ticketingUrl && (
+                                                        <a
+                                                            href={event.ticketingUrl}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="btn-festival text-xl py-4 transform hover:scale-105 transition-all block text-center"
+                                                        >
+                                                            Get Info & Updates
+                                                        </a>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>

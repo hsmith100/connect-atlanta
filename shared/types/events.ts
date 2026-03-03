@@ -9,4 +9,5 @@ export interface Event {
   attendees?: string | null;
   artists?: string | null;
   goLiveAt?: string | null; // ISO datetime; if set, event hidden until this time
+  ticketingUrl?: string | null;
 }
