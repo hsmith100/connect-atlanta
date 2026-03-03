@@ -10,7 +10,7 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
 };
 
-function ok(body: unknown): APIGatewayProxyResultV2 {
+function ok(body: object): APIGatewayProxyResultV2 {
   return { statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify(body) };
 }
 

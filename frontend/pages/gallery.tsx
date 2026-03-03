@@ -4,16 +4,9 @@ import Header from '../components/layout/Header'
 import Footer from '../components/layout/Footer'
 import { Camera, Loader2, AlertCircle, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { getGallery } from '../lib/api'
+import type { Photo } from '@shared/types/photos'
 
-interface GalleryPhoto {
-  id?: string;
-  url: string;
-  thumbnail?: string;
-}
-
-interface GalleryData {
-  photos: GalleryPhoto[];
-}
+type GalleryData = { photos: Photo[] }
 
 export default function Gallery() {
   const [galleryData, setGalleryData] = useState<GalleryData | null>(null)
@@ -29,7 +22,7 @@ export default function Gallery() {
         setError(null)
         // Fetch from main events/photos folder
         const gallery = await getGallery()
-        setGalleryData(gallery as GalleryData)
+        setGalleryData(gallery)
         setLoading(false)
       } catch (err) {
         console.error('Failed to load gallery:', err)
@@ -132,7 +125,7 @@ export default function Gallery() {
                       onClick={() => openImageModal(index)}
                     >
                       <img
-                        src={photo.thumbnail || photo.url}
+                        src={photo.thumbnailUrl || photo.url}
                         alt={`Gallery photo ${index + 1}`}
                         className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                         loading="lazy"

@@ -15,6 +15,7 @@ export class DynamoStack extends cdk.Stack {
   public readonly volunteerApplicationsTable: dynamodb.Table;
   public readonly artistApplicationsTable: dynamodb.Table;
   public readonly sponsorInquiriesTable: dynamodb.Table;
+  public readonly photosTable: dynamodb.Table;
 
   constructor(scope: Construct, id: string, props: DynamoStackProps = {}) {
     super(scope, id, props);
@@ -99,6 +100,20 @@ export class DynamoStack extends cdk.Stack {
       sortKey: { name: 'createdAt', type: dynamodb.AttributeType.STRING },
     });
 
+    // Photos — curated gallery with sort order and visibility
+    // GSI byOrder: lists all photos sorted by sortOrder for gallery display
+    this.photosTable = new dynamodb.Table(this, 'PhotosTable', {
+      tableName: `connect-${p}photos`,
+      partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      removalPolicy: cdk.RemovalPolicy.RETAIN,
+    });
+    this.photosTable.addGlobalSecondaryIndex({
+      indexName: 'byOrder',
+      partitionKey: { name: 'entity', type: dynamodb.AttributeType.STRING },
+      sortKey: { name: 'sortOrder', type: dynamodb.AttributeType.NUMBER },
+    });
+
     // Outputs — table names referenced by BackendStack Lambda env vars
     new cdk.CfnOutput(this, 'EventsTableName', { value: this.eventsTable.tableName });
     new cdk.CfnOutput(this, 'EmailSignupsTableName', { value: this.emailSignupsTable.tableName });
@@ -106,5 +121,6 @@ export class DynamoStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'VolunteerApplicationsTableName', { value: this.volunteerApplicationsTable.tableName });
     new cdk.CfnOutput(this, 'ArtistApplicationsTableName', { value: this.artistApplicationsTable.tableName });
     new cdk.CfnOutput(this, 'SponsorInquiriesTableName', { value: this.sponsorInquiriesTable.tableName });
+    new cdk.CfnOutput(this, 'PhotosTableName', { value: this.photosTable.tableName });
   }
 }
