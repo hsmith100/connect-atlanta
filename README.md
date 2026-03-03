@@ -82,6 +82,68 @@ npm run sync:prod         # or sync:staging
 npm run invalidate:prod   # or invalidate:staging
 ```
 
+---
+
 ## Documentation
 
-See [`docs/`](docs/) for full project documentation including the migration plan, architecture overview, and knowledge transfer notes.
+### Migration & Architecture
+
+- **[docs/MIGRATION_PLAN.md](docs/MIGRATION_PLAN.md)** — Phase-by-phase migration plan with CDK snippets and current status
+- **[docs/CURRENT_ARCHITECTURE.md](docs/CURRENT_ARCHITECTURE.md)** — Current AWS architecture overview
+- **[docs/KNOWLEDGE_TRANSFER.md](docs/KNOWLEDGE_TRANSFER.md)** — Notes from the handoff from the previous developer
+
+### Design & Brand
+
+- **[docs/BRAND_DIRECTION_CONNECT.md](docs/BRAND_DIRECTION_CONNECT.md)** — Brand guidelines
+- **[docs/TYPOGRAPHY_GUIDE.md](docs/TYPOGRAPHY_GUIDE.md)** — Typography standards
+- **[docs/frontend/DESIGN-SYSTEM.md](docs/frontend/DESIGN-SYSTEM.md)** — Design system tokens and components
+- **[docs/frontend/CUSTOM-FONT-SETUP.md](docs/frontend/CUSTOM-FONT-SETUP.md)** — Font setup
+
+### Frontend
+
+- **[docs/frontend/HOMEPAGE-STRUCTURE.md](docs/frontend/HOMEPAGE-STRUCTURE.md)** — Homepage component structure
+- **[docs/frontend/IMAGE-ASSETS.md](docs/frontend/IMAGE-ASSETS.md)** — Image asset management
+- **[docs/frontend/SEO-IMPLEMENTATION-GUIDE.md](docs/frontend/SEO-IMPLEMENTATION-GUIDE.md)** — SEO implementation
+- **[docs/frontend/SEO-QUICK-REFERENCE.md](docs/frontend/SEO-QUICK-REFERENCE.md)** — SEO quick checklist
+
+### SEO & Analytics
+
+- **[docs/SEO_AUTHORITY_STRATEGY.md](docs/SEO_AUTHORITY_STRATEGY.md)** — SEO and authority building strategy
+- **[docs/GOOGLE_ANALYTICS_SETUP.md](docs/GOOGLE_ANALYTICS_SETUP.md)** — Google Analytics (property: G-86ZLZS2JEX)
+- **[docs/setup/GOOGLE_SEARCH_CONSOLE_SETUP.md](docs/setup/GOOGLE_SEARCH_CONSOLE_SETUP.md)** — Search Console verification
+
+### Forms & Integrations
+
+- **[docs/setup/CONTACT_FORM_IMPLEMENTATION.md](docs/setup/CONTACT_FORM_IMPLEMENTATION.md)** — Contact form setup
+- **[docs/setup/GOOGLE_SHEETS_SETUP.md](docs/setup/GOOGLE_SHEETS_SETUP.md)** — Google Sheets integration (5 sheet IDs)
+
+### Website Copy
+
+- **[docs/Website_copy/](docs/Website_copy/)** — Copywriting for site pages
+
+### Product Requirements
+
+- **[docs/PRD/](docs/PRD/)** — Product requirement documents and client feedback
+
+### Development Logs
+
+Chronological session logs from the original build:
+
+| # | Log |
+|---|---|
+| 01 | [SEO preparation](docs/dev_logs/01_SEO_preparation.md) |
+| 02 | [Design system setup](docs/dev_logs/02_design_system_setup.md) |
+| 03 | [Homepage build](docs/dev_logs/03_homepage_build.md) |
+| 04 | [About & Events pages](docs/dev_logs/04_about_events_pages.md) |
+| 05 | [Join Us page](docs/dev_logs/05_join_us_page.md) |
+| 06 | [Contact forms & hero updates](docs/dev_logs/06_contact_forms_and_hero_updates.md) |
+| 07 | [Cloudinary integration](docs/dev_logs/07_cloudinary_integration.md) |
+| 08 | [Design updates & Google Sheets](docs/dev_logs/08_design_updates_forms_google_sheets.md) |
+| 09 | [Gallery fixes & contact form email](docs/dev_logs/09_gallery_fixes_contact_form_email.md) |
+| 10 | [Sponsor inquiries](docs/dev_logs/10_sponsor_inquiries.md) |
+
+### Archive
+
+Docs from the original EC2/Docker setup kept for historical reference:
+
+- **[docs/archive/](docs/archive/)** — Old deployment instructions, Python backend API docs, implementation summaries
