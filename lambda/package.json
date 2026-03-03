@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Lambda handlers for Connect Events",
   "private": true,
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.0.0",
     "@aws-sdk/client-ses": "^3.0.0",
