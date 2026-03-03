@@ -43,12 +43,35 @@ export class FrontendStack extends cdk.Stack {
       protocolPolicy: cloudfront.OriginProtocolPolicy.HTTPS_ONLY,
     });
 
+    // ── CloudFront Function — rewrite extensionless paths to .html ───────────
+    // Next.js static export generates /admin.html, /gallery.html, etc.
+    // Without this, /admin hits S3, gets a 403 (no such key), and falls back
+    // to the 404→index.html error response, rendering the home page instead.
+    const rewriteFunction = new cloudfront.Function(this, 'RewriteFunction', {
+      runtime: cloudfront.FunctionRuntime.JS_2_0,
+      code: cloudfront.FunctionCode.fromInline(`
+function handler(event) {
+  var uri = event.request.uri;
+  if (uri.endsWith('/')) {
+    event.request.uri += 'index.html';
+  } else if (!uri.includes('.')) {
+    event.request.uri += '.html';
+  }
+  return event.request;
+}
+      `),
+    });
+
     // ── CloudFront distribution ───────────────────────────────────────────────
     const distribution = new cloudfront.Distribution(this, 'CDN', {
       defaultBehavior: {
         origin: s3Origin,
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+        functionAssociations: [{
+          function: rewriteFunction,
+          eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
+        }],
       },
       additionalBehaviors: {
         '/api/*': {
