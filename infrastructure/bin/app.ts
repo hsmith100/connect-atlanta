@@ -5,6 +5,7 @@ import { DnsStack } from '../lib/stacks/dns-stack';
 import { DynamoStack } from '../lib/stacks/dynamo-stack';
 import { BackendStack } from '../lib/stacks/backend-stack';
 import { FrontendStack } from '../lib/stacks/frontend-stack';
+import { CiStack } from '../lib/stacks/ci-stack';
 
 // Stacks are deployed in this order:
 //   Phase 1: DnsStack      ✅ done
@@ -27,6 +28,10 @@ const dnsStack = new DnsStack(app, 'ConnectDnsStack', { env });
 const dynamoStack = new DynamoStack(app, 'ConnectDynamoStack', { env });
 const backendStack = new BackendStack(app, 'ConnectBackendStack', { env, dynamoStack });
 new FrontendStack(app, 'ConnectFrontendStack', { env, dnsStack, backendStack });
+
+// ── CI/CD ─────────────────────────────────────────────────────────────────────
+// OIDC provider + IAM role for GitHub Actions — one per account
+new CiStack(app, 'ConnectCiStack', { env });
 
 // ── Staging ───────────────────────────────────────────────────────────────────
 // Full staging environment — S3 + CloudFront (no custom domain) + Lambda + DynamoDB.

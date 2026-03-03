@@ -5,48 +5,94 @@ on:
     branches: [main]
 
 jobs:
-  frontend:
-    name: Frontend — lint & build
+  # ── Stage 1: Quality checks (parallel) ──────────────────────────────────────
+
+  lint-frontend:
+    name: Lint — frontend
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --prefix frontend
+      - run: npm run lint --prefix frontend
 
-      - name: Install dependencies
-        run: npm ci --prefix frontend
-
-      - name: Lint
-        run: npm run lint --prefix frontend
-
-      - name: Build (static export)
-        run: npm run build --prefix frontend
-
-  lambda:
-    name: Lambda — typecheck
+  typecheck-lambda:
+    name: Typecheck — lambda
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
       - uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: npm
           cache-dependency-path: lambda/package-lock.json
+      - run: npm ci --prefix lambda
+      - run: npm run typecheck --prefix lambda
 
-      - name: Install dependencies
-        run: npm ci --prefix lambda
-
-      - name: Typecheck
-        run: npm run typecheck --prefix lambda
-
-  infrastructure:
-    name: Infrastructure — typecheck
+  typecheck-infra:
+    name: Typecheck — infrastructure
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: infrastructure/package-lock.json
+      - run: npm ci --prefix infrastructure
+      - run: npm run build --prefix infrastructure
+
+  # ── Stage 2: Synth & build (parallel, after checks pass) ────────────────────
+
+  synth:
+    name: CDK synth
+    needs: [lint-frontend, typecheck-lambda, typecheck-infra]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: infrastructure/package-lock.json
+      - run: npm ci --prefix infrastructure
+      - run: npm ci --prefix lambda
+      - run: npx cdk synth --app 'npx ts-node bin/app.ts' --all
+        working-directory: infrastructure
+
+  build-frontend:
+    name: Build — frontend
+    needs: [lint-frontend, typecheck-lambda, typecheck-infra]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --prefix frontend
+      - run: npm run build --prefix frontend
+      - uses: actions/upload-artifact@v4
+        with:
+          name: frontend-out
+          path: frontend/out/
+          retention-days: 1
+
+  # ── Stage 3: Deploy to staging ───────────────────────────────────────────────
+
+  deploy-staging:
+    name: Deploy — staging
+    needs: [synth, build-frontend]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v4
 
@@ -56,8 +102,51 @@ jobs:
           cache: npm
           cache-dependency-path: infrastructure/package-lock.json
 
-      - name: Install dependencies
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Install infrastructure dependencies
         run: npm ci --prefix infrastructure
 
-      - name: Typecheck
-        run: npm run build --prefix infrastructure
+      - name: Install lambda dependencies
+        run: npm ci --prefix lambda
+
+      - name: CDK deploy staging
+        run: npx cdk deploy ConnectStagingDynamoStack ConnectStagingBackendStack ConnectStagingFrontendStack --require-approval never
+        working-directory: infrastructure
+
+      - name: Download frontend build
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-out
+          path: frontend/out/
+
+      - name: Sync frontend to staging S3
+        run: |
+          BUCKET=$(aws cloudformation describe-stacks \
+            --stack-name ConnectStagingFrontendStack \
+            --query 'Stacks[0].Outputs[?OutputKey==`FrontendBucketName`].OutputValue' \
+            --output text)
+          aws s3 sync frontend/out/ s3://$BUCKET --delete
+
+      - name: Invalidate staging CloudFront
+        run: |
+          DIST_ID=$(aws cloudformation describe-stacks \
+            --stack-name ConnectStagingFrontendStack \
+            --query 'Stacks[0].Outputs[?OutputKey==`CloudFrontDistributionId`].OutputValue' \
+            --output text)
+          aws cloudfront create-invalidation --distribution-id $DIST_ID --paths "/*"
+
+      - name: Comment staging URL on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ Staging deployed: https://d36pa7dr4nksf5.cloudfront.net'
+            })
