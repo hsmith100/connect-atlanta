@@ -1,0 +1,140 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  # ── Stage 1: Quality checks (parallel) ──────────────────────────────────────
+
+  lint-frontend:
+    name: Lint — frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --prefix frontend
+      - run: npm run lint --prefix frontend
+
+  typecheck-lambda:
+    name: Typecheck — lambda
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: lambda/package-lock.json
+      - run: npm ci --prefix lambda
+      - run: npm run typecheck --prefix lambda
+
+  typecheck-infra:
+    name: Typecheck — infrastructure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: infrastructure/package-lock.json
+      - run: npm ci --prefix infrastructure
+      - run: npm run build --prefix infrastructure
+
+  # ── Stage 2: Synth & build (parallel, after checks pass) ────────────────────
+
+  synth:
+    name: CDK synth
+    needs: [lint-frontend, typecheck-lambda, typecheck-infra]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: infrastructure/package-lock.json
+      - run: npm ci --prefix infrastructure
+      - run: npm ci --prefix lambda
+      - run: npx cdk synth --app 'npx ts-node bin/app.ts' --all
+        working-directory: infrastructure
+
+  build-frontend:
+    name: Build — frontend
+    needs: [lint-frontend, typecheck-lambda, typecheck-infra]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci --prefix frontend
+      - run: npm run build --prefix frontend
+      - uses: actions/upload-artifact@v4
+        with:
+          name: frontend-out
+          path: frontend/out/
+          retention-days: 1
+
+  # ── Stage 3: Deploy to production ───────────────────────────────────────────
+
+  deploy-production:
+    name: Deploy — production
+    needs: [synth, build-frontend]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: infrastructure/package-lock.json
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Install infrastructure dependencies
+        run: npm ci --prefix infrastructure
+
+      - name: Install lambda dependencies
+        run: npm ci --prefix lambda
+
+      - name: CDK deploy production
+        run: npx cdk deploy ConnectDynamoStack ConnectBackendStack ConnectFrontendStack --require-approval never
+        working-directory: infrastructure
+
+      - name: Download frontend build
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-out
+          path: frontend/out/
+
+      - name: Sync frontend to production S3
+        run: |
+          BUCKET=$(aws cloudformation describe-stacks \
+            --stack-name ConnectFrontendStack \
+            --query 'Stacks[0].Outputs[?OutputKey==`FrontendBucketName`].OutputValue' \
+            --output text)
+          aws s3 sync frontend/out/ s3://$BUCKET --delete
+
+      - name: Invalidate production CloudFront
+        run: |
+          DIST_ID=$(aws cloudformation describe-stacks \
+            --stack-name ConnectFrontendStack \
+            --query 'Stacks[0].Outputs[?OutputKey==`CloudFrontDistributionId`].OutputValue' \
+            --output text)
+          aws cloudfront create-invalidation --distribution-id $DIST_ID --paths "/*"
