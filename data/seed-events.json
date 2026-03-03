@@ -1,8 +1,8 @@
 [
   {
-    "id": "1",
+    "id": "april-2025",
     "entity": "EVENT",
-    "title": "BOTB - Season 2 Ep. 1",
+    "title": "Beats on the Beltline - April 2025",
     "date": "2025-04-05",
     "location": "Atlanta Beltline",
     "description": "Kicking off Season 2 with a bang",
@@ -11,9 +11,9 @@
     "artists": "25+ DJs"
   },
   {
-    "id": "2",
+    "id": "may-2025",
     "entity": "EVENT",
-    "title": "BOTB - Season 2 Ep. 1.5",
+    "title": "Beats on the Beltline - May 2025",
     "date": "2025-05-24",
     "location": "Atlanta Beltline",
     "description": "Spring vibes continue with an extra episode",
@@ -22,9 +22,18 @@
     "artists": "24+ DJs"
   },
   {
-    "id": "3",
+    "id": "may-2025-afterparty",
     "entity": "EVENT",
-    "title": "BOTB - Season 2 Ep. 2",
+    "title": "Beats on the Beltline - May 2025 Afterparty",
+    "date": "2025-05-24",
+    "location": "Atlanta",
+    "description": "Keep the party going after the Beltline",
+    "flyerUrl": "/images/events/may-2025-after.jpg"
+  },
+  {
+    "id": "july-2025",
+    "entity": "EVENT",
+    "title": "Beats on the Beltline - July 2025",
     "date": "2025-07-12",
     "location": "Atlanta Beltline",
     "description": "Summer vibes and amazing music on the Beltline",
@@ -33,14 +42,41 @@
     "artists": "28+ DJs"
   },
   {
-    "id": "4",
+    "id": "july-2025-afterparty",
     "entity": "EVENT",
-    "title": "BOTB - Season 2 Ep. 3",
+    "title": "Beats on the Beltline - July 2025 Afterparty",
+    "date": "2025-07-12",
+    "location": "Atlanta",
+    "description": "Keep the energy going after the Beltline",
+    "flyerUrl": "/images/events/july-2025-after.png"
+  },
+  {
+    "id": "september-2025",
+    "entity": "EVENT",
+    "title": "Beats on the Beltline - September 2025",
     "date": "2025-09-06",
     "location": "Atlanta Beltline",
     "description": "The biggest episode yet with incredible energy and performances",
     "flyerUrl": "/images/events/september-2025.png",
     "attendees": "8,000+",
     "artists": "30+ DJs"
+  },
+  {
+    "id": "september-2025-afterparty-1",
+    "entity": "EVENT",
+    "title": "Beats on the Beltline - September 2025 Afterparty",
+    "date": "2025-09-06",
+    "location": "Atlanta",
+    "description": "The night continues",
+    "flyerUrl": "/images/events/sept-2025-after.png"
+  },
+  {
+    "id": "september-2025-afterparty-2",
+    "entity": "EVENT",
+    "title": "Beats on the Beltline - September 2025 Afterparty 2",
+    "date": "2025-09-06",
+    "location": "Atlanta",
+    "description": "Keep dancing",
+    "flyerUrl": "/images/events/sept-2025-after2.png"
   }
 ]

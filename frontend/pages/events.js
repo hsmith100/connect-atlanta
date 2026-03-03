@@ -55,99 +55,20 @@ export default function Events() {
     ])
     const [pastEvents, setPastEvents] = useState([])
 
-    // Static event data - always use local flyer images
-    const staticPastEvents = [
-        {
-            id: 8,
-            title: "Beats on the Beltline - September 2025",
-            date: "September 6, 2025",
-            location: "Atlanta Beltline",
-            flyerUrl: "/images/events/september-2025.png",
-            attendees: "8,000+",
-            artists: "30+ DJs",
-            galleryEnabled: true
-        },
-        {
-            id: 7,
-            title: "Beats on the Beltline - September Afterparty",
-            date: "September 6, 2025",
-            location: "Atlanta",
-            flyerUrl: "/images/events/sept-2025-after.png",
-            galleryEnabled: true
-        },
-        {
-            id: 6,
-            title: "Beats on the Beltline - September Afterparty 2",
-            date: "September 6, 2025",
-            location: "Atlanta",
-            flyerUrl: "/images/events/sept-2025-after2.png",
-            galleryEnabled: true
-        },
-        {
-            id: 5,
-            title: "Beats on the Beltline - July 2025",
-            date: "July 12, 2025",
-            location: "Atlanta Beltline",
-            flyerUrl: "/images/events/july-2025.png",
-            attendees: "7,500+",
-            artists: "28+ DJs",
-            galleryEnabled: true
-        },
-        {
-            id: 4,
-            title: "Beats on the Beltline - July Afterparty",
-            date: "July 12, 2025",
-            location: "Atlanta",
-            flyerUrl: "/images/events/july-2025-after.png",
-            galleryEnabled: true
-        },
-        {
-            id: 3,
-            title: "Beats on the Beltline - May 2025",
-            date: "May 24, 2025",
-            location: "Atlanta Beltline",
-            flyerUrl: "/images/events/may-2025.png",
-            attendees: "5,500+",
-            artists: "24+ DJs",
-            galleryEnabled: true
-        },
-        {
-            id: 2,
-            title: "Beats on the Beltline - May Afterparty",
-            date: "May 24, 2025",
-            location: "Atlanta",
-            flyerUrl: "/images/events/may-2025-after.jpg",
-            galleryEnabled: true
-        },
-        {
-            id: 1,
-            title: "Beats on the Beltline - April 2025",
-            date: "April 5, 2025",
-            location: "Atlanta Beltline",
-            flyerUrl: "/images/events/april-2025.png",
-            attendees: "6,000+",
-            artists: "25+ DJs",
-            galleryEnabled: true
-        }
-    ]
-
-    // Load events on mount - use static data for display
+    // Load events on mount
     useEffect(() => {
-        // Always use static past events for display (with local flyer images)
-        setPastEvents(staticPastEvents)
-        setLoading(false)
-
-        // Optionally load from API in background for future gallery features
-        async function loadEventsInBackground() {
+        async function loadEvents() {
             try {
                 const events = await getEvents()
-                // API data could be used for dynamic galleries in the future
-                console.log('Events loaded from API:', events.length)
+                setPastEvents(events)
             } catch (err) {
-                console.log('API events not available, using static data')
+                console.error('Failed to load events:', err)
+                setError('Failed to load events. Please try again later.')
+            } finally {
+                setLoading(false)
             }
         }
-        loadEventsInBackground()
+        loadEvents()
     }, [])
 
     const handleEventClick = async (eventId) => {
@@ -221,7 +142,7 @@ export default function Events() {
     // Check for eventId in URL query params and auto-select event
     useEffect(() => {
         if (router.isReady && router.query.eventId && pastEvents.length > 0) {
-            const eventId = parseInt(router.query.eventId)
+            const eventId = router.query.eventId
             if (pastEvents.find(e => e.id === eventId)) {
                 handleEventClick(eventId)
             }
