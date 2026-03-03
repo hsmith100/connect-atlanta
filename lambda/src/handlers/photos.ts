@@ -251,14 +251,37 @@ async function updateEventFlyer(event: APIGatewayProxyEventV2): Promise<APIGatew
   const id = event.pathParameters?.id;
   if (!id) return errResponse(400, 'Missing event id');
 
-  const { flyerUrl }: { flyerUrl: string } = JSON.parse(event.body ?? '{}');
-  if (!flyerUrl) return errResponse(400, 'flyerUrl is required');
+  const body: { flyerUrl?: string; goLiveAt?: string | null } = JSON.parse(event.body ?? '{}');
+  if (!body.flyerUrl && body.goLiveAt === undefined) {
+    return errResponse(400, 'flyerUrl or goLiveAt is required');
+  }
+
+  const setParts: string[] = [];
+  const removeParts: string[] = [];
+  const values: Record<string, string> = {};
+
+  if (body.flyerUrl) {
+    setParts.push('flyerUrl = :url');
+    values[':url'] = body.flyerUrl;
+  }
+  if (body.goLiveAt !== undefined) {
+    if (body.goLiveAt === null) {
+      removeParts.push('goLiveAt');
+    } else {
+      setParts.push('goLiveAt = :gla');
+      values[':gla'] = body.goLiveAt;
+    }
+  }
+
+  const parts: string[] = [];
+  if (setParts.length > 0) parts.push(`SET ${setParts.join(', ')}`);
+  if (removeParts.length > 0) parts.push(`REMOVE ${removeParts.join(', ')}`);
 
   await ddb.send(new UpdateCommand({
     TableName: EVENTS_TABLE,
     Key: { id },
-    UpdateExpression: 'SET flyerUrl = :url',
-    ExpressionAttributeValues: { ':url': flyerUrl },
+    UpdateExpression: parts.join(' '),
+    ...(Object.keys(values).length > 0 ? { ExpressionAttributeValues: values } : {}),
   }));
 
   return ok({ updated: true });

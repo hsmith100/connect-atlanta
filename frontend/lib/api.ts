@@ -109,11 +109,28 @@ export async function presignFlyer(
   });
 }
 
-export async function updateEventFlyer(adminKey: string, eventId: string, flyerUrl: string): Promise<void> {
+export async function updateEventFlyer(
+  adminKey: string,
+  eventId: string,
+  flyerUrl: string,
+  goLiveAt?: string,
+): Promise<void> {
   await fetchAPI<{ updated: boolean }>(`/api/admin/events/${eventId}`, {
     method: 'PATCH',
     headers: adminHeaders(adminKey),
-    body: JSON.stringify({ flyerUrl }),
+    body: JSON.stringify({ flyerUrl, ...(goLiveAt !== undefined ? { goLiveAt } : {}) }),
+  });
+}
+
+export async function updateEventGoLive(
+  adminKey: string,
+  eventId: string,
+  goLiveAt: string | null,
+): Promise<void> {
+  await fetchAPI<{ updated: boolean }>(`/api/admin/events/${eventId}`, {
+    method: 'PATCH',
+    headers: adminHeaders(adminKey),
+    body: JSON.stringify({ goLiveAt }),
   });
 }
 

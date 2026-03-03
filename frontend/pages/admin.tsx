@@ -9,6 +9,7 @@ import {
   deletePhotos,
   presignFlyer,
   updateEventFlyer,
+  updateEventGoLive,
 } from '../lib/api'
 import type { Photo, PresignRequest, PresignResponse } from '@shared/types/photos'
 import type { Event } from '@shared/types/events'
@@ -355,10 +356,48 @@ interface EventsTabProps {
   setEvents: React.Dispatch<React.SetStateAction<Event[]>>
 }
 
+// Convert ISO datetime string to datetime-local input value (local time)
+function toDatetimeLocal(iso: string): string {
+  const d = new Date(iso)
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`
+}
+
+function GoLiveBadge({ goLiveAt }: { goLiveAt?: string | null }) {
+  if (!goLiveAt) {
+    return <span className="inline-block text-xs px-2 py-0.5 rounded-full bg-gray-700 text-gray-300">Always live</span>
+  }
+  const isLive = goLiveAt <= new Date().toISOString()
+  return isLive
+    ? <span className="inline-block text-xs px-2 py-0.5 rounded-full bg-green-800 text-green-200">Live now</span>
+    : <span className="inline-block text-xs px-2 py-0.5 rounded-full bg-yellow-800 text-yellow-200">Scheduled: {new Date(goLiveAt).toLocaleString()}</span>
+}
+
 function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
   const [uploading, setUploading] = useState<Record<string, boolean>>({})
+  const [savingGoLive, setSavingGoLive] = useState<Record<string, boolean>>({})
+  const [goLiveInputs, setGoLiveInputs] = useState<Record<string, string>>({})
   const [statusMsg, setStatusMsg] = useState('')
   const [error, setError] = useState('')
+
+  async function handleSetGoLive(ev: Event) {
+    const raw = goLiveInputs[ev.id]
+    // empty string → clear the schedule (null), otherwise parse to ISO
+    const goLiveAt = raw ? new Date(raw).toISOString() : null
+    setSavingGoLive((prev) => ({ ...prev, [ev.id]: true }))
+    setStatusMsg('')
+    setError('')
+    try {
+      await updateEventGoLive(adminKey, ev.id, goLiveAt)
+      setEvents((prev) => prev.map((e) => e.id === ev.id ? { ...e, goLiveAt } : e))
+      setStatusMsg(goLiveAt ? `Go-live set for "${ev.title}".` : `Schedule cleared for "${ev.title}".`)
+    } catch (err) {
+      console.error('Go-live update error:', err)
+      setError(`Failed to update go-live for "${ev.title}".`)
+    } finally {
+      setSavingGoLive((prev) => ({ ...prev, [ev.id]: false }))
+    }
+  }
 
   async function handleFlyerUpload(event: Event, file: File) {
     setUploading((prev) => ({ ...prev, [event.id]: true }))
@@ -429,6 +468,7 @@ function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
               <div>
                 <p className="font-semibold text-white text-sm">{ev.title}</p>
                 <p className="text-gray-400 text-xs">{ev.date}</p>
+                <div className="mt-1"><GoLiveBadge goLiveAt={ev.goLiveAt} /></div>
               </div>
               <label className={`flex items-center justify-center gap-2 w-full rounded-lg px-3 py-2 text-sm font-semibold cursor-pointer transition-colors ${uploading[ev.id] ? 'bg-gray-700 opacity-50 cursor-wait' : 'bg-brand-primary hover:bg-brand-primary/90'} text-white`}>
                 {uploading[ev.id] ? (
@@ -448,6 +488,23 @@ function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
                   }}
                 />
               </label>
+              {/* Go-live scheduler */}
+              <div className="space-y-1.5">
+                <p className="text-xs text-gray-400">Go-live (local time) — leave blank for always live</p>
+                <input
+                  type="datetime-local"
+                  value={goLiveInputs[ev.id] ?? (ev.goLiveAt ? toDatetimeLocal(ev.goLiveAt) : '')}
+                  onChange={(e) => setGoLiveInputs((prev) => ({ ...prev, [ev.id]: e.target.value }))}
+                  className="w-full bg-gray-800 text-white text-xs rounded-lg px-3 py-1.5 border border-gray-700 focus:outline-none focus:border-brand-primary"
+                />
+                <button
+                  onClick={() => handleSetGoLive(ev)}
+                  disabled={savingGoLive[ev.id]}
+                  className="flex items-center justify-center gap-1.5 w-full bg-gray-700 hover:bg-gray-600 text-white rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors disabled:opacity-50"
+                >
+                  {savingGoLive[ev.id] ? <><Loader2 size={12} className="animate-spin" /> Saving…</> : <><Save size={12} /> Set Go-Live</>}
+                </button>
+              </div>
             </div>
           </div>
         ))}

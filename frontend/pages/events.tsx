@@ -10,15 +10,6 @@ import { getEvents, getEventGallery } from '../lib/api'
 import type { Event } from '@shared/types/events'
 import type { Photo } from '@shared/types/photos'
 
-interface UpcomingEvent {
-  id: string;
-  title: string;
-  date: string;
-  time: string;
-  location: string;
-  image: string;
-}
-
 // Matches the actual GET /api/gallery response shape
 type EventGalleryData = { photos: Photo[] };
 
@@ -56,25 +47,17 @@ export default function Events() {
     const [galleryError, setGalleryError] = useState<string | null>(null)
     const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
 
-    // Event data from backend
-    const [upcomingEvents] = useState<UpcomingEvent[]>([
-        {
-            id: 'april-2026',
-            title: "Beats on the Beltline",
-            date: "April 25, 2026",
-            time: "2:00 PM - 10:00 PM",
-            location: "Atlanta Beltline",
-            image: "/images/events/april-2026.webp"
-        }
-    ])
+    const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([])
     const [pastEvents, setPastEvents] = useState<Event[]>([])
 
-    // Load events on mount
+    // Load events on mount — split by date
     useEffect(() => {
         async function loadEvents() {
             try {
                 const events = await getEvents()
-                setPastEvents(events)
+                const today = new Date().toISOString().slice(0, 10) // "YYYY-MM-DD"
+                setUpcomingEvents(events.filter((e) => e.date > today))
+                setPastEvents(events.filter((e) => e.date <= today))
             } catch (err) {
                 console.error('Failed to load events:', err)
                 setError('Failed to load events. Please try again later.')
@@ -218,14 +201,20 @@ export default function Events() {
                                             <div className="grid md:grid-cols-2 gap-0">
                                                 {/* Event Flyer */}
                                                 <div className="relative bg-brand-bg-cream flex items-center justify-center p-8">
-                                                    <Image
-                                                        src={event.image}
-                                                        alt={event.title}
-                                                        width={1080}
-                                                        height={1350}
-                                                        className="w-full h-auto rounded-2xl shadow-xl"
-                                                        priority
-                                                    />
+                                                    {event.flyerUrl ? (
+                                                        <Image
+                                                            src={event.flyerUrl}
+                                                            alt={event.title}
+                                                            width={1080}
+                                                            height={1350}
+                                                            className="w-full h-auto rounded-2xl shadow-xl"
+                                                            priority
+                                                        />
+                                                    ) : (
+                                                        <div className="w-full aspect-[4/5] rounded-2xl bg-brand-primary/10 flex items-center justify-center">
+                                                            <Calendar size={80} className="text-brand-primary/30" strokeWidth={1.5} />
+                                                        </div>
+                                                    )}
                                                 </div>
 
                                                 {/* Event Details */}
@@ -238,26 +227,30 @@ export default function Events() {
                                                         <div className="flex items-start gap-4 text-brand-text">
                                                             <Calendar size={28} className="text-brand-primary mt-1 flex-shrink-0" strokeWidth={2} />
                                                             <div>
-                                                                <p className="text-2xl font-bold text-brand-header">{event.date}</p>
+                                                                <p className="text-2xl font-bold text-brand-header">{formatEventDate(event.date)}</p>
                                                                 <p className="text-lg text-brand-text/80">Mark your calendar!</p>
                                                             </div>
                                                         </div>
 
-                                                        <div className="flex items-start gap-4 text-brand-text">
-                                                            <Clock size={28} className="text-brand-primary mt-1 flex-shrink-0" strokeWidth={2} />
-                                                            <div>
-                                                                <p className="text-2xl font-bold text-brand-header">{event.time}</p>
-                                                                <p className="text-lg text-brand-text/80">All afternoon & evening</p>
+                                                        {event.time && (
+                                                            <div className="flex items-start gap-4 text-brand-text">
+                                                                <Clock size={28} className="text-brand-primary mt-1 flex-shrink-0" strokeWidth={2} />
+                                                                <div>
+                                                                    <p className="text-2xl font-bold text-brand-header">{event.time}</p>
+                                                                    <p className="text-lg text-brand-text/80">All afternoon & evening</p>
+                                                                </div>
                                                             </div>
-                                                        </div>
+                                                        )}
 
-                                                        <div className="flex items-start gap-4 text-brand-text">
-                                                            <MapPin size={28} className="text-brand-primary mt-1 flex-shrink-0" strokeWidth={2} />
-                                                            <div>
-                                                                <p className="text-2xl font-bold text-brand-header">{event.location}</p>
-                                                                <p className="text-lg text-brand-text/80">Atlanta's premier trail</p>
+                                                        {event.location && (
+                                                            <div className="flex items-start gap-4 text-brand-text">
+                                                                <MapPin size={28} className="text-brand-primary mt-1 flex-shrink-0" strokeWidth={2} />
+                                                                <div>
+                                                                    <p className="text-2xl font-bold text-brand-header">{event.location}</p>
+                                                                    <p className="text-lg text-brand-text/80">Atlanta's premier trail</p>
+                                                                </div>
                                                             </div>
-                                                        </div>
+                                                        )}
                                                     </div>
 
                                                     <p className="text-xl text-brand-text mb-8 leading-relaxed">
