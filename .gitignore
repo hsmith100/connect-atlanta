@@ -74,6 +74,11 @@ postgres-data/
 *.pem
 *.key
 
+# CDK
+infrastructure/cdk.out/
+infrastructure/node_modules/
+lambda/node_modules/
+
 # Misc
 .cache/
 .rsync-exclude

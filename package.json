@@ -1,0 +1,14 @@
+{
+  "name": "connect-atlanta",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install --prefix frontend && npm install --prefix lambda && npm install --prefix infrastructure",
+    "build:frontend": "npm run build --prefix frontend",
+    "deploy:dns": "npm run --prefix infrastructure -- cdk deploy ConnectDnsStack",
+    "deploy:dynamo": "npm run --prefix infrastructure -- cdk deploy ConnectDynamoStack",
+    "deploy:backend": "npm run --prefix infrastructure -- cdk deploy ConnectBackendStack",
+    "deploy:frontend": "npm run --prefix infrastructure -- cdk deploy ConnectFrontendStack",
+    "deploy:all": "npm run --prefix infrastructure -- cdk deploy --all"
+  }
+}

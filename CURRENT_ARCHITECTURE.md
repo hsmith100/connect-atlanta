@@ -180,6 +180,10 @@ FastAPI updates photo_count/video_count cache in PostgreSQL
 Returns gallery JSON to browser → browser renders photo grid
 ```
 
+> **Confirmed via KT session:** Cloudinary was never actually connected. The API secret was committed to `docker-compose.prod.yml` but the credentials were never configured in the running environment. The `/gallery` page would always resolve to the empty state ("No photos available yet"). The backend gallery routes are scaffolded dead code.
+>
+> **The actual photo carousel** on the homepage is a hardcoded array of local image paths in `pages/index.js`, pointing to files in `public/images/events/`. No backend or Cloudinary involvement at any point.
+
 ---
 
 ## 4. Form Submission Data Flow
@@ -452,7 +456,7 @@ PostgreSQL 15, running in Docker, persisted in a named volume `postgresql_data`.
 | Service | Status | Risk |
 |---------|--------|------|
 | **PostgreSQL** | Running in Docker on EC2 | Contains no real production data — site was never launched. Not worth preserving. |
-| **Cloudinary** | Connected; API secret committed to git | Delivery layer only — team owns all source images in Google Drive. Old account not needed; create a new one or migrate to S3. |
+| **Cloudinary** | Never actually connected — credentials not in running environment | The gallery backend routes are dead scaffolded code. The homepage carousel uses static files from `public/images/events/`. No Cloudinary media to migrate. Account can be ignored entirely. |
 | **Google Sheets** | Credentials missing from repo | Sync almost certainly never worked in this deployment. **Irrelevant** — the team uses Google Forms → Sheets directly as their primary workflow, bypassing this app entirely. |
 | **SMTP / Email** | Credentials not visible in repo | Unknown status. Replaceable with AWS SES. |
 | **EC2 Instance** | Running; not owned by current team | Can be abandoned — no meaningful data on it. |

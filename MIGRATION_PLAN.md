@@ -12,13 +12,24 @@
 
 ---
 
+## Migration Strategy
+
+**Single arc — build it right from the start.**
+
+The backend routes are simple INSERTs and SELECTs with no joins. Switching to DynamoDB eliminates the VPC, NAT Gateway ($32/month), Aurora ($12–15/month), and RDS Proxy entirely — dropping the monthly AWS cost from ~$47–52 to ~$3–5. Since we're already doing a Node.js rewrite, we build the TypeScript Lambda handlers directly rather than doing a Python detour first.
+
+**Phases 0–6:** Get deployed with the right stack (Node.js + DynamoDB).
+**Phase 7 (post-launch):** S3 photo gallery — fresh build, not a migration.
+
+---
+
 ## 1. Risk Register
 
 ### CRITICAL
 
 | Risk | Detail | Impact |
 |------|--------|--------|
-| **Credentials in source control** | `docker-compose.prod.yml` and `.env` contain the Cloudinary API secret (`7NLfDFSPbupwHOcoviFHMM5FOZM`), DB password (`burger_secure_password_123`), and app `SECRET_KEY` in plaintext. Anyone with repo access, past or present, has these. | Full compromise of Cloudinary account, database, and any JWT-signed sessions |
+| **Credentials in source control** | `docker-compose.prod.yml` and `.env` contain the Cloudinary API secret (`7NLfDFSPbupwHOcoviFHMM5FOZM`), DB password (`burger_secure_password_123`), and app `SECRET_KEY` in plaintext. Anyone with repo access, past or present, has these. | DB password and SECRET_KEY must be rotated. Cloudinary secret is lower priority — Cloudinary was never actually connected (confirmed via KT session) — but should still be rotated to clean up the committed value. |
 | **No access to original AWS account** | The EC2 instances (`54.210.148.147`, `98.81.74.242`) live in an account you do not control. You cannot modify security groups, rotate SSH keys at the account level, or guarantee the instances won't be terminated. | Loss of the running server environment — but **no meaningful data loss**, as the site was never launched and the database contains no real submissions. |
 | **Database has no backups** | PostgreSQL runs inside a Docker named volume (`postgresql_data`) on a single EC2 instance. There is no automated snapshot, no RDS, no off-instance backup. | **Not a concern for this migration** — the site was never launched; the database contains no production data. Real team data lives in Google Sheets. |
 | **No SSL/TLS** | The app serves on `http://98.81.74.242:3000` and `http://98.81.74.242:8000`. All form submissions (names, emails, phone numbers) travel over plain HTTP. | PII exposure, MITM attacks, browser security warnings |
@@ -62,40 +73,35 @@
     └─────────────────────┘                          └──────────────┬─────────────┘
                                                                      │
                                                         ┌────────────▼────────────┐
-                                                        │   Lambda Function        │
-                                                        │   (FastAPI + Mangum)     │
+                                                        │   Lambda Functions       │
+                                                        │   (Node.js TypeScript)   │
                                                         └────────────┬────────────┘
                                                                      │
                                               ┌──────────────────────┼──────────────────────┐
                                               │                       │                      │
                                    ┌──────────▼──────┐  ┌────────────▼──────┐  ┌────────────▼──────┐
-                                   │   RDS Proxy     │  │  Secrets Manager   │  │   Cloudinary API  │
-                                   │   (conn pool)   │  │  (all credentials) │  │   (media storage) │
-                                   └──────────┬──────┘  └───────────────────┘  └───────────────────┘
-                                              │
-                                   ┌──────────▼──────────┐
-                                   │ Aurora Serverless v2 │
-                                   │ PostgreSQL           │
-                                   │ (private subnet)     │
-                                   └─────────────────────┘
+                                   │   DynamoDB       │  │  Secrets Manager   │  │   AWS SES        │
+                                   │   (6 tables)     │  │  (all credentials) │  │   (email)        │
+                                   └─────────────────┘  └───────────────────┘  └───────────────────┘
 ```
+
+> **No VPC.** Lambda communicates with DynamoDB, Secrets Manager, SES, and S3 over HTTPS — no private networking required. This eliminates the NAT Gateway, RDS Proxy, and Aurora entirely.
 
 ### AWS Services Summary
 
 | Service | Purpose | Replaces |
 |---------|---------|---------|
-| **S3** | Hosts pre-built static Next.js output — no server required | EC2 + Docker frontend container |
+| **S3** | Hosts pre-built static Next.js output | EC2 + Docker frontend container |
 | **CloudFront** | CDN + SSL termination, serves S3 and proxies `/api/*` to API Gateway | None (was running on raw HTTP) |
 | **ACM** | Free TLS certificates | None |
-| **API Gateway HTTP API** | Managed HTTP routing to Lambda | EC2 port 8000 / Nginx |
-| **Lambda** | FastAPI backend (via Mangum adapter) | EC2 + Docker backend container |
-| **Aurora Serverless v2** | PostgreSQL — managed, auto-scales, auto-backup | Docker postgres container |
-| **RDS Proxy** | Connection pooling between Lambda and Aurora | Direct psycopg2 connections |
+| **API Gateway HTTP API** | Managed HTTP routing to Lambda | EC2 port 8000 |
+| **Lambda** | Node.js TypeScript handlers (3 functions) | EC2 + Docker backend container |
+| **DynamoDB** | 6 tables — events + 5 form types. Serverless, scales to zero | Docker postgres container |
 | **Secrets Manager** | All credentials at runtime | `.env` / `docker-compose.prod.yml` |
-| **VPC** | Private networking for Lambda → RDS | Docker bridge network |
+| **AWS SES** | Outbound email for contact + sponsor forms | SMTP / Gmail |
 | **CloudWatch** | Logs + metrics + alarms | `docker-compose logs` |
 
-> **No Docker required for the frontend.** The Next.js app uses client-side data fetching throughout — there is no SSR. `next build` with `output: 'export'` produces a static `out/` directory that S3 serves directly. Docker and ECR are eliminated from the frontend entirely.
+> **No VPC, no NAT Gateway, no RDS Proxy, no Aurora.** Lambda + DynamoDB is a fully serverless stack — every component scales to zero and bills only for what's used.
 
 ---
 
@@ -125,23 +131,24 @@ S3+CF: paying only for what's actually served
 
 **Estimated monthly costs:**
 
-| Item | Current (Server Burger EC2) | New (AWS) |
+| Item | Current (Server Burger EC2) | New (AWS + DynamoDB) |
 |------|----------------------------|-----------|
 | Frontend hosting | ~$40–80 (shared instance) | ~$0.01 (S3 storage) |
 | CDN / SSL | None | ~$0–2 (CloudFront) |
 | Backend compute | Included in EC2 | ~$0 (Lambda free tier) |
 | API routing | Included in EC2 | ~$0 (API Gateway free tier) |
-| Database | Included in EC2 | ~$12–15 (RDS t4g.micro) |
-| Secrets / config | $0 (committed to git) | ~$2 (Secrets Manager) |
+| Database | Included in EC2 | ~$0 (DynamoDB free tier) |
+| NAT Gateway | Included in EC2 | $0 (not needed — no VPC) |
+| Secrets / config | $0 (committed to git) | ~$1–2 (Secrets Manager) |
 | DNS | $0 (raw IP, no domain) | ~$0.50 (Route53) |
 | SSL certificate | $0 (no SSL) | $0 (ACM, free with CloudFront) |
 | Monitoring | $0 (none) | ~$1–2 (CloudWatch) |
-| **Total** | **~$40–80/mo** | **~$16–22/mo** |
-| **Annual** | **~$480–960/yr** | **~$190–265/yr** |
+| **Total** | **~$40–80/mo** | **~$3–5/mo** |
+| **Annual** | **~$480–960/yr** | **~$36–60/yr** |
 
-> **First 12 months on AWS free tier:** ~$3–5/month (just Secrets Manager + Route53). RDS, Lambda, CloudFront, and API Gateway all have free tier allowances that comfortably cover this app's usage.
+> **DynamoDB free tier** covers 25GB storage, 25 WCU, and 25 RCU permanently — far more than this app will ever use.
 
-**Savings: ~$300–700/year**, with better performance, reliability, and security than the current setup.
+**Savings: ~$440–900/year** vs the original EC2 setup.
 
 **Event day behaviour comparison:**
 
@@ -158,6 +165,8 @@ The event burst scenario is the **strongest argument** for this architecture. S3
 ---
 
 ## 3. Lambda BFF Analysis
+
+> **Approach:** Node.js TypeScript Lambda handlers using DynamoDB. No Python, no Mangum, no VPC. All routes are simple enough (single-table reads and writes) that the rewrite is straightforward and done once cleanly.
 
 ### Why Lambda Works Here
 
@@ -262,88 +271,78 @@ infrastructure/
 │   └── app.ts                  # CDK app entry point, stack instantiation
 ├── lib/
 │   └── stacks/
-│       ├── dns-stack.ts        # Route53 hosted zone + ACM cert
-│       ├── network-stack.ts    # VPC, subnets, security groups
-│       ├── database-stack.ts   # Aurora Serverless v2 + RDS Proxy + secret
-│       ├── backend-stack.ts    # Lambda + API Gateway + IAM
-│       ├── frontend-stack.ts   # ECR + App Runner + CloudFront
-│       └── pipeline-stack.ts   # (optional) CDK Pipelines self-mutation
+│       ├── dns-stack.ts        # Route53 hosted zone + ACM cert  ← exists
+│       ├── dynamo-stack.ts     # DynamoDB tables + IAM           ← Phase 2
+│       ├── backend-stack.ts    # Lambda (NodejsFunction) + API Gateway + IAM  ← Phase 3
+│       └── frontend-stack.ts   # S3 + CloudFront                 ← Phase 4
 ├── cdk.json
 ├── package.json
 └── tsconfig.json
 ```
 
+No `network-stack.ts` — Lambda + DynamoDB requires no VPC.
+
 ### Stack Dependency Order
 
 ```
-DnsStack → NetworkStack → DatabaseStack → BackendStack → FrontendStack
+DnsStack → DynamoStack → BackendStack → FrontendStack
 ```
 
 ### Key CDK Snippets
 
-**database-stack.ts**
+**dynamo-stack.ts**
 ```typescript
-// Aurora Serverless v2 — scales to zero when idle (cost-effective for event sites)
-const cluster = new rds.DatabaseCluster(this, 'Database', {
-  engine: rds.DatabaseClusterEngine.auroraPostgres({
-    version: rds.AuroraPostgresEngineVersion.VER_15_4,
-  }),
-  serverlessV2MinCapacity: 0.5,
-  serverlessV2MaxCapacity: 4,
-  writer: rds.ClusterInstance.serverlessV2('writer'),
-  vpc,
-  vpcSubnets: { subnetType: ec2.SubnetType.PRIVATE_ISOLATED },
-  credentials: rds.Credentials.fromGeneratedSecret('burger_user'),
+const eventsTable = new dynamodb.Table(this, 'EventsTable', {
+  tableName: 'connect-events',
+  partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
+  billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+  removalPolicy: RemovalPolicy.RETAIN,
 });
 
-// RDS Proxy — connection pooling for Lambda
-const proxy = new rds.DatabaseProxy(this, 'Proxy', {
-  proxyTarget: rds.ProxyTarget.fromCluster(cluster),
-  secrets: [cluster.secret!],
-  vpc,
-  securityGroups: [dbProxySecurityGroup],
+// GSI for listing all events sorted by date
+eventsTable.addGlobalSecondaryIndex({
+  indexName: 'byDate',
+  partitionKey: { name: 'entity', type: dynamodb.AttributeType.STRING },
+  sortKey: { name: 'date', type: dynamodb.AttributeType.STRING },
+});
+
+// Form tables follow the same pattern — one per type
+const vendorTable = new dynamodb.Table(this, 'VendorApplicationsTable', {
+  tableName: 'connect-vendor-applications',
+  partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
+  billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+  removalPolicy: RemovalPolicy.RETAIN,
+});
+
+// GSI for admin filtering by status
+vendorTable.addGlobalSecondaryIndex({
+  indexName: 'byStatus',
+  partitionKey: { name: 'status', type: dynamodb.AttributeType.STRING },
+  sortKey: { name: 'createdAt', type: dynamodb.AttributeType.STRING },
 });
 ```
 
 **backend-stack.ts**
 ```typescript
-const backendFn = new lambda.Function(this, 'BackendLambda', {
-  runtime: lambda.Runtime.PYTHON_3_11,
+import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
+
+// NodejsFunction uses esbuild automatically — no manual bundling needed
+const eventsLambda = new NodejsFunction(this, 'EventsLambda', {
+  entry: '../lambda/src/handlers/events.ts',
+  handler: 'handler',
+  runtime: lambda.Runtime.NODEJS_22_X,
   architecture: lambda.Architecture.ARM_64,
-  handler: 'main.handler',
-  code: lambda.Code.fromAsset('../backend', {
-    bundling: {
-      image: lambda.Runtime.PYTHON_3_11.bundlingImage,
-      command: [
-        'bash', '-c',
-        'pip install -r requirements.txt -t /asset-output && cp -r . /asset-output',
-      ],
-    },
-  }),
-  vpc,
+  memorySize: 256,
+  timeout: Duration.seconds(15),
+  // No vpc — DynamoDB is accessed over HTTPS
   environment: {
-    SECRET_ARN: dbSecret.secretArn,
-    DB_PROXY_ENDPOINT: proxy.endpoint,
-  },
-  timeout: Duration.seconds(30),
-  memorySize: 512,
-});
-
-dbSecret.grantRead(backendFn);
-
-const api = new apigw.HttpApi(this, 'Api', {
-  corsPreflight: {
-    allowOrigins: [frontendUrl],
-    allowMethods: [apigw.CorsHttpMethod.ANY],
-    allowHeaders: ['content-type', 'authorization'],
+    EVENTS_TABLE: eventsTable.tableName,
+    SECRET_ARN: appSecret.secretArn,
   },
 });
 
-api.addRoutes({
-  path: '/api/{proxy+}',
-  methods: [apigw.HttpMethod.ANY],
-  integration: new integrations.HttpLambdaIntegration('BackendIntegration', backendFn),
-});
+eventsTable.grantReadData(eventsLambda);
+appSecret.grantRead(eventsLambda);
 ```
 
 **frontend-stack.ts**
@@ -593,7 +592,7 @@ new iam.Role(this, 'GitHubActionsDeployRole', {
 
 These actions are independent of the migration and should happen today:
 
-- [ ] **Rotate Cloudinary API secret** — Log into Cloudinary (`beats-on-beltline` account), generate a new API secret, update wherever it's used
+- [ ] **Rotate Cloudinary API secret** — Log into Cloudinary (`beats-on-beltline` account), generate a new API secret. Note: Cloudinary was never actually connected (confirmed via KT session) so this is just cleanup of a committed value, not an active breach risk.
 - [ ] **Rotate DB password** — SSH into the EC2 instance (if you still have access) and run `ALTER USER burger_user WITH PASSWORD 'new-password'`; update `docker-compose.prod.yml`
 - [ ] **Rotate `SECRET_KEY`** — Generate a new 64-char random string; update and redeploy
 - [ ] **Add `.env` and `docker-compose.prod.yml` to `.gitignore`** — Stop the bleeding for future commits
@@ -601,84 +600,67 @@ These actions are independent of the migration and should happen today:
 
 ---
 
-### Phase 1 — Foundation (Week 1)
+### Phase 1 — Foundation ✅ Complete
 
-Stand up the new AWS account and developer tooling. Nothing touches production yet.
-
-- [ ] Create a new AWS account (or use an existing org account you control)
-- [ ] Enable AWS Organizations, set up billing alerts
-- [ ] Bootstrap CDK: `cdk bootstrap aws://ACCOUNT_ID/us-east-1`
-- [ ] Create the GitHub repo (if not already there) and configure branch protection on `main`
-- [ ] Create the OIDC IAM role for GitHub Actions
-- [ ] Initialize the `infrastructure/` CDK project (`cdk init app --language typescript`)
-- [ ] Write and deploy `NetworkStack` (VPC with public/private/isolated subnets)
-- [ ] Write and deploy `DnsStack` — register/transfer domain or create a new Route53 hosted zone, request ACM cert
+- [x] Create AWS account (account: `145185391901`, region: `us-east-1`)
+- [x] Install AWS CLI + CDK, configure credentials
+- [x] Bootstrap CDK: `cdk bootstrap aws://145185391901/us-east-1`
+- [x] Initialize `infrastructure/` CDK project (TypeScript)
+- [x] Write and deploy `DnsStack` — Route53 hosted zone + ACM cert for `connectevents.co` + `www.connectevents.co`
+- [x] Add ACM DNS validation CNAMEs to Namecheap — cert issued
+- [ ] Set up billing alerts in AWS console
+- [ ] Configure branch protection on `main` in GitHub
 
 ---
 
-### Phase 2 — Database Setup (Week 2)
+### Phase 2 — DynamoDB Tables ✅ Complete
 
-Stand up a fresh Aurora database. No data migration required — the site was never launched and the EC2 database contains no real submissions.
-
-- [ ] Write and deploy `DatabaseStack` (Aurora Serverless v2 + RDS Proxy + Secrets Manager secret)
-- [ ] Run the existing migration SQL files against Aurora to create the schema
-- [ ] Seed the `events` table with any event data the team wants displayed on launch
-- [ ] Enable Aurora automated backups (7-day retention minimum)
-- [ ] Enable Aurora point-in-time recovery
-
-> **Note:** No pg_dump needed. The team's real application data (vendor/volunteer/artist/sponsor/email submissions) is in Google Sheets. When the admin page is built (Section 8), the team can decide whether to manually import that historical data into the new database.
-
----
-
-### Phase 3 — Backend Lambda (Week 3)
-
-Deploy the FastAPI backend as Lambda. Run in parallel with the old backend for validation.
-
-- [ ] Add `mangum` to `backend/requirements.txt`
-- [ ] Add the two-line Mangum wrapper to `main.py`
-- [ ] Write and deploy `BackendStack` (Lambda + API Gateway HTTP API)
-- [ ] Update Lambda `DATABASE_URL` to point to RDS Proxy endpoint (not Aurora directly)
-- [ ] Move all secrets to Secrets Manager; add secrets helper to backend code
-- [ ] Run the full API test suite against the new Lambda endpoint
-- [ ] Manually test all form submissions end-to-end
-- [ ] Test Cloudinary gallery endpoints
-- [ ] Verify Google Sheets sync is working (check the sheets after each test submission) — **do not remove the Sheets integration yet; the admin page must be built first (see Section 8)**
+- [x] Write and deploy `DynamoStack` — 6 tables:
+  - `connect-events` (PK: `id`, GSI: `byDate` on `entity`/`date`)
+  - `connect-email-signups` (PK: `id`, GSI: `byStatus` on `status`/`createdAt`)
+  - `connect-vendor-applications` (PK: `id`, GSI: `byStatus`)
+  - `connect-volunteer-applications` (PK: `id`, GSI: `byStatus`)
+  - `connect-artist-applications` (PK: `id`, GSI: `byStatus`)
+  - `connect-sponsor-inquiries` (PK: `id`, GSI: `byStatus`)
+- [ ] Seed `connect-events` table with current event data via a one-off script
 
 ---
 
-### Phase 4 — Frontend Migration (Week 4)
+### Phase 3 — Node.js Lambda Backend ✅ Complete
 
-Convert Next.js to a static export and deploy to S3 + CloudFront. No Docker required.
+- [x] Create `lambda/` directory (TypeScript, Node.js 22, ARM64)
+- [x] Write `handlers/events.ts` — GET /api/events, GET /api/events/:id (DynamoDB `byDate` GSI)
+- [x] Write `handlers/forms.ts` — POST /api/forms/* (6 form types; SES email for contact + sponsor)
+- [x] Write and deploy `BackendStack` — 2 `NodejsFunction` constructs + API Gateway HTTP API
+- [x] IAM: EventsLambda → read events table; FormsLambda → write all 5 form tables + SES send
+- [ ] Verify routes end-to-end via form submissions on live site
+- [ ] SES domain verification for `noreply@connectevents.co` — handle in Phase 5
+- [ ] Delete `backend/` Python directory — after Phase 5 cutover confirmed stable
 
-**`next.config.js` changes needed before this phase:**
-- Change `output: 'standalone'` → `output: 'export'`
-- Remove the `rewrites()` block entirely (the API proxy is no longer needed — the frontend will call the API Gateway URL directly via `NEXT_PUBLIC_API_URL`)
-- Set `images.unoptimized: true` (Next.js built-in image optimization requires a server; Cloudinary handles its own CDN optimization)
-- Fix `sitemap.xml.js` — convert `getServerSideProps` to `getStaticProps` or move to a static file in `public/`
-- Delete `pages/api/forms/` directory — these Next.js API proxy routes are replaced by direct Lambda calls
+---
 
-**Checklist:**
-- [ ] Make the `next.config.js` changes above
-- [ ] Delete `frontend/pages/api/` directory
-- [ ] Fix `sitemap.xml.js` to use static generation
-- [ ] Run `npm run build` locally and confirm `out/` directory is produced with no errors
-- [ ] Write and deploy `FrontendStack` (S3 bucket + CloudFront distribution with OAC)
-- [ ] Set `NEXT_PUBLIC_API_URL` to the API Gateway endpoint in GitHub Actions secrets
-- [ ] Manually sync `out/` to the staging S3 bucket and verify the site loads via CloudFront URL
-- [ ] Test all forms end-to-end — they now call Lambda directly, not through Next.js API routes
-- [ ] Test Cloudinary gallery loads correctly
+### Phase 4 — Frontend Static Export ✅ Complete
+
+- [x] Update `next.config.js`: `output: 'export'`, `unoptimized: true`, remove `rewrites()` / `headers()` / Cloudinary
+- [x] Delete `frontend/pages/api/` — Next.js proxy routes replaced by CloudFront → API Gateway routing
+- [x] Replace `pages/sitemap.xml.js` (used `getServerSideProps`) with static `public/sitemap.xml`
+- [x] Write and deploy `FrontendStack` — S3 bucket + CloudFront (OAI) + Route53 A records
+- [x] Build frontend: `npm run build` → `out/` directory produced cleanly
+- [x] Sync `out/` to S3, invalidate CloudFront — site live at `https://d34vrmm0q27tmb.cloudfront.net`
+- [ ] Test all forms end-to-end
 - [ ] Set up CloudWatch alarms: Lambda error rate, Lambda p99 duration, CloudFront 5xx rate
 
 ---
 
-### Phase 5 — Cutover (Week 5)
+### Phase 5 — Cutover
 
-Switch production traffic to the new stack.
+Switch production traffic to the new stack. Route53 A records already point to CloudFront (created in Phase 4) — just needs nameservers switched at Namecheap.
 
-- [ ] Create/update Route53 A records to point your domain to the CloudFront distribution
-- [ ] Verify HTTPS is working with the ACM certificate
-- [ ] Monitor for 24 hours — check CloudWatch logs, error rates, form submissions
-- [ ] Once stable, update `NEXT_PUBLIC_SITE_URL` and CORS origins to use the real domain
+- [ ] Verify SES domain: add DKIM/TXT records to Namecheap → verify `noreply@connectevents.co` in SES console
+- [ ] Test all forms end-to-end on CloudFront URL before switching
+- [ ] At Namecheap: update nameservers to Route53 nameservers (output from `ConnectDnsStack`)
+- [ ] Verify `https://connectevents.co` resolves and HTTPS works
+- [ ] Monitor for 24 hours — CloudWatch logs, Lambda error rates, form submissions in DynamoDB
 - [ ] Set up a CloudWatch dashboard with key metrics
 - [ ] Configure SNS alerts for Lambda errors and high latency
 
@@ -693,6 +675,40 @@ Switch production traffic to the new stack.
 - [ ] Archive or remove `docker-compose.prod.yml` (keep `docker-compose.yml` for local dev)
 - [ ] `frontend/Dockerfile` and `frontend/Dockerfile.prod` can be deleted — the frontend no longer deploys as a container
 - [ ] **Do not remove Google Sheets integration yet** — the admin page (Section 8) must be live and the team must have signed off on their new workflow before `google_sheets_service.py` can be deleted
+- [ ] Delete dead Cloudinary backend code — `backend/services/cloudinary_service.py`, gallery routes in `backend/routes/events.py`, and `cloudinary` from `requirements.txt`. Cloudinary was never connected (confirmed via KT session) so there is no active integration to preserve.
+
+---
+
+### Phase 7 — Node.js Lambda Rewrite (Post-Launch)
+
+Build a real S3-backed photo gallery from scratch. Cloudinary was never connected — this is a new feature, not a migration.
+
+**Architecture:**
+
+| Component | Detail |
+|-----------|--------|
+| Storage | S3 media bucket (separate from frontend static bucket) |
+| Delivery | CloudFront (add media bucket as a second origin, path `/events/*`) |
+| Listing API | `s3.list_objects_v2(Prefix=...)` in a new `handlers/gallery.ts` Lambda |
+| Thumbnails | Pre-generated on upload via S3 `ObjectCreated` trigger + `sharp` |
+
+**Thumbnail strategy:**
+```
+s3://media-bucket/
+  events/sept-2025/photos/img001.jpg
+  events/sept-2025/photos/thumbnails/img001.jpg   ← auto-generated on upload
+```
+
+**DynamoDB:** Add `mediaFolder` attribute to event items (replaces the old `cloudinary_folder` concept).
+
+**Checklist:**
+- [ ] Add S3 media bucket + CloudFront origin to CDK
+- [ ] Write thumbnail generator Lambda (`sharp` + S3 `ObjectCreated` trigger)
+- [ ] Write `handlers/gallery.ts` using `@aws-sdk/client-s3`
+- [ ] Upload event photos from Google Drive to S3
+- [ ] Rewrite `/gallery` frontend page to call the new API
+- [ ] Update `next.config.js` — remove `res.cloudinary.com`, add CloudFront media domain
+- [ ] Verify gallery loads end-to-end
 
 ---
 
@@ -702,7 +718,7 @@ Before pointing DNS at the new stack, verify:
 
 - [ ] All 10 API routes return expected responses via the CloudFront URL
 - [ ] All 5 form types submit successfully and appear in both the database and Google Sheets (Sheets sync is still the team's primary workflow at cutover time — the admin page replaces it later, not during cutover)
-- [ ] Cloudinary gallery loads for at least one event
+- [ ] Gallery page shows graceful empty state (real gallery built in Phase 7 post-launch)
 - [ ] Contact form sends an email notification
 - [ ] HTTPS certificate is valid (no browser warnings)
 - [ ] CORS is correctly configured (frontend domain → API Gateway)
@@ -846,7 +862,9 @@ After team sign-off
 
 ## Appendix: Dependencies to Add
 
-**Backend (`requirements.txt`)**
+### Arc 1 — Phases 0–6 (Python + Mangum)
+
+**Backend (`backend/requirements.txt`)**
 ```
 mangum==0.17.0              # ASGI adapter for Lambda
 boto3==1.34.0               # AWS SDK for Secrets Manager
@@ -863,5 +881,36 @@ mailchimp-marketing==3.0.80 # Email list sync (replaces Google Sheets for email 
 }
 ```
 
-> Note: S3, CloudFront, and API Gateway are all part of `aws-cdk-lib` — no additional alpha packages needed. ECR and App Runner are no longer required.
+> Note: S3, CloudFront, and API Gateway are all part of `aws-cdk-lib` — no additional alpha packages needed.
+
+---
+
+### Arc 2 — Phases 7–8 (Node.js rewrite + Cloudinary → S3)
+
+**Lambda (`lambda/package.json`)**
+```json
+{
+  "dependencies": {
+    "pg": "^8.11.0",
+    "googleapis": "^140.0.0",
+    "@aws-sdk/client-s3": "^3.0.0",
+    "@aws-sdk/client-ses": "^3.0.0",
+    "@aws-sdk/client-secrets-manager": "^3.0.0",
+    "mailchimp-marketing": "^3.0.80",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "@types/aws-lambda": "^8.10.0",
+    "@types/pg": "^8.11.0",
+    "esbuild": "^0.20.0"
+  }
+}
 ```
+
+**Thumbnail generator Lambda (`lambda/src/handlers/thumbnail.ts`)**
+```
+sharp   # Image resizing — must be built for Lambda's Linux ARM64 architecture
+```
+
+> Note: `sharp` requires a platform-specific binary. Use CDK's `NodejsFunction` bundling with `nodeModules: ['sharp']` to ensure the correct Linux ARM64 build is included in the Lambda package.

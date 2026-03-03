@@ -1,0 +1,16 @@
+{
+  "name": "connect-lambda",
+  "version": "1.0.0",
+  "description": "Lambda handlers for Connect Events",
+  "private": true,
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.0.0",
+    "@aws-sdk/client-ses": "^3.0.0",
+    "@aws-sdk/lib-dynamodb": "^3.0.0"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.0",
+    "@types/node": "^25.3.3",
+    "typescript": "~5.0.0"
+  }
+}

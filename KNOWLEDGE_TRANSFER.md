@@ -53,13 +53,13 @@
 ### Cloudinary Account — **NOT NEEDED**
 **Account name:** `beats-on-beltline`
 
-**Status:** The team owns all source images and videos in Google Drive. Cloudinary is a delivery mechanism only — it does not own any content.
+**Status (confirmed via KT session):** Cloudinary was never actually used. The backend gallery routes (`GET /api/gallery`, `GET /api/events/{id}/gallery`) are scaffolded dead code — the credentials were committed to `docker-compose.prod.yml` but were never configured in the running environment. The `/gallery` page always showed the empty state.
 
-**Resolution options:**
-1. Create a new Cloudinary free account, re-upload images from Google Drive matching the folder structure (`events/{folder}/photos/`, `events/{folder}/videos/`), update the credentials in the new environment.
-2. Move images to S3 and serve via CloudFront — eliminates Cloudinary as a dependency entirely. This is the recommended approach since the migration is already targeting S3 + CloudFront. The only feature lost is on-the-fly URL-based transformations; thumbnails would need to be pre-generated on upload.
+The homepage "photo carousel" is a hardcoded array of local image paths in `pages/index.js` pointing to static files in `public/images/events/`. No Cloudinary involvement.
 
-**What is lost without recovering the old account:** Nothing. Source files are in Google Drive.
+**What is lost without recovering the old account:** Nothing. There is no Cloudinary media to migrate.
+
+**Future gallery:** If a real event photo gallery is desired, it will be built fresh using S3 + CloudFront as part of the post-launch improvements (Phase 8 in `MIGRATION_PLAN.md`).
 
 ---
 
