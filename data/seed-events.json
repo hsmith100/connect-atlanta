@@ -1,0 +1,46 @@
+[
+  {
+    "id": "1",
+    "entity": "EVENT",
+    "title": "BOTB - Season 2 Ep. 1",
+    "date": "2025-04-05",
+    "location": "Atlanta Beltline",
+    "description": "Kicking off Season 2 with a bang",
+    "flyerUrl": "/images/events/april-2025.png",
+    "attendees": "6,000+",
+    "artists": "25+ DJs"
+  },
+  {
+    "id": "2",
+    "entity": "EVENT",
+    "title": "BOTB - Season 2 Ep. 1.5",
+    "date": "2025-05-24",
+    "location": "Atlanta Beltline",
+    "description": "Spring vibes continue with an extra episode",
+    "flyerUrl": "/images/events/may-2025.png",
+    "attendees": "5,500+",
+    "artists": "24+ DJs"
+  },
+  {
+    "id": "3",
+    "entity": "EVENT",
+    "title": "BOTB - Season 2 Ep. 2",
+    "date": "2025-07-12",
+    "location": "Atlanta Beltline",
+    "description": "Summer vibes and amazing music on the Beltline",
+    "flyerUrl": "/images/events/july-2025.png",
+    "attendees": "7,500+",
+    "artists": "28+ DJs"
+  },
+  {
+    "id": "4",
+    "entity": "EVENT",
+    "title": "BOTB - Season 2 Ep. 3",
+    "date": "2025-09-06",
+    "location": "Atlanta Beltline",
+    "description": "The biggest episode yet with incredible energy and performances",
+    "flyerUrl": "/images/events/september-2025.png",
+    "attendees": "8,000+",
+    "artists": "30+ DJs"
+  }
+]
