@@ -1,164 +1,93 @@
-# Connect Events - Documentation Index
+# Documentation Index
 
-This directory contains all project documentation organized by category.
+## Migration & Architecture
 
-## 📁 Directory Structure
+Current state of the AWS migration — start here for context on where the project is and where it's going.
 
-```
-docs/
-├── README.md (this file)
-├── setup/           # Setup and configuration guides
-├── frontend/        # Frontend-specific documentation
-├── backend/         # Backend-specific documentation
-├── dev_logs/        # Development logs and session notes
-└── PRD/             # Product requirements documents
-```
+- **[MIGRATION_PLAN.md](MIGRATION_PLAN.md)** — Phase-by-phase migration plan with CDK snippets and current status
+- **[CURRENT_ARCHITECTURE.md](CURRENT_ARCHITECTURE.md)** — Diagram and description of the current AWS architecture
+- **[KNOWLEDGE_TRANSFER.md](KNOWLEDGE_TRANSFER.md)** — Notes from the handoff from the previous developer
 
 ---
 
-## 🚀 Setup & Configuration
+## Design & Brand
 
-**Location:** `docs/setup/`
-
-- **EMAIL_SETUP.md** - SendGrid email service configuration
-- **GOOGLE_SHEETS_SETUP.md** - Google Sheets API integration
-- **GOOGLE_SEARCH_CONSOLE_SETUP.md** - Search Console verification
-- **CONTACT_FORM_IMPLEMENTATION.md** - Contact form setup guide
-
----
-
-## 🎨 Frontend Documentation
-
-**Location:** `docs/frontend/`
-
-- **DESIGN-SYSTEM.md** - Design system tokens and components
-- **CUSTOM-FONT-SETUP.md** - Font installation and configuration
-- **HOMEPAGE-STRUCTURE.md** - Homepage component structure
-- **IMAGE-ASSETS.md** - Image asset management guide
-- **SEO-IMPLEMENTATION-GUIDE.md** - Comprehensive SEO guide
-- **SEO-QUICK-REFERENCE.md** - Quick SEO checklist
+- **[BRAND_DIRECTION_CONNECT.md](BRAND_DIRECTION_CONNECT.md)** — Brand guidelines
+- **[TYPOGRAPHY_GUIDE.md](TYPOGRAPHY_GUIDE.md)** — Typography standards
+- **[COLOR_MIGRATION_SUMMARY.md](COLOR_MIGRATION_SUMMARY.md)** — Color system notes
+- **[frontend/DESIGN-SYSTEM.md](frontend/DESIGN-SYSTEM.md)** — Design system tokens and components
+- **[frontend/CUSTOM-FONT-SETUP.md](frontend/CUSTOM-FONT-SETUP.md)** — Font installation and configuration
 
 ---
 
-## ⚙️ Backend Documentation
+## Frontend
 
-**Location:** `docs/backend/`
-
-- **README_FORMS.md** - Forms API endpoints and usage
-- **API_FORMS_README.md** - API forms integration guide
-
----
-
-## 📊 Project Documentation
-
-**Root `docs/` folder:**
-
-- **DEPLOY_INSTRUCTIONS.md** - Deployment guide
-- **OPTIMIZATION_SUMMARY.md** - Performance optimization notes
-- **IMPLEMENTATION_SUMMARY.md** - Client feedback round 1 summary
-- **IMPLEMENTATION_SUMMARY_ROUND2.md** - Client feedback round 2 summary
-- **SEO_AUTHORITY_STRATEGY.md** - SEO and authority building strategy
-- **BRAND_DIRECTION_CONNECT.md** - Brand guidelines
-- **TYPOGRAPHY_GUIDE.md** - Typography standards
-- **COLOR_MIGRATION_SUMMARY.md** - Color system migration notes
-- **HOMEPAGE_REDESIGN_SUMMARY.md** - Homepage redesign documentation
-- **HOMEPAGE_UPDATE_V2.md** - Homepage v2 updates
-- **GOOGLE_ANALYTICS_SETUP.md** - Google Analytics configuration
+- **[frontend/HOMEPAGE-STRUCTURE.md](frontend/HOMEPAGE-STRUCTURE.md)** — Homepage component structure
+- **[frontend/IMAGE-ASSETS.md](frontend/IMAGE-ASSETS.md)** — Image asset management
+- **[frontend/SEO-IMPLEMENTATION-GUIDE.md](frontend/SEO-IMPLEMENTATION-GUIDE.md)** — SEO implementation
+- **[frontend/SEO-QUICK-REFERENCE.md](frontend/SEO-QUICK-REFERENCE.md)** — SEO quick checklist
+- **[HOMEPAGE_REDESIGN_SUMMARY.md](HOMEPAGE_REDESIGN_SUMMARY.md)** — Homepage redesign notes
+- **[HOMEPAGE_UPDATE_V2.md](HOMEPAGE_UPDATE_V2.md)** — Homepage v2 updates
 
 ---
 
-## 📝 Development Logs
+## SEO & Analytics
 
-**Location:** `docs/dev_logs/`
-
-Chronological development session logs:
-
-1. **01_SEO_preparation.md** - Initial SEO setup
-2. **02_design_system_setup.md** - Design system implementation
-3. **03_homepage_build.md** - Homepage construction
-4. **04_about_events_pages.md** - About and Events pages
-5. **04_image_integration.md** - Image asset integration
-6. **05_join_us_page.md** - Join Us page with forms
-7. **06_contact_forms_and_hero_updates.md** - Contact forms and UI updates
-8. **07_cloudinary_integration.md** - Cloudinary gallery integration
-9. **08_design_updates_forms_google_sheets.md** - Design refinements and Sheets integration
-10. **09_gallery_fixes_contact_form_email.md** - Gallery fixes and email setup
-11. **10_sponsor_inquiries.md** - Sponsor inquiries page
+- **[SEO_AUTHORITY_STRATEGY.md](SEO_AUTHORITY_STRATEGY.md)** — SEO and authority building strategy
+- **[GOOGLE_ANALYTICS_SETUP.md](GOOGLE_ANALYTICS_SETUP.md)** — Google Analytics configuration (property: G-86ZLZS2JEX)
+- **[setup/GOOGLE_SEARCH_CONSOLE_SETUP.md](setup/GOOGLE_SEARCH_CONSOLE_SETUP.md)** — Search Console verification
 
 ---
 
-## 📋 Product Requirements
+## Forms & Email
 
-**Location:** `docs/PRD/`
-
-- **01_cloudinary_gallery.md** - Cloudinary gallery requirements
-- **02_client_feedback.md** - Client feedback round 1
-- **03_client_feedback2.md** - Client feedback round 2
+- **[setup/CONTACT_FORM_IMPLEMENTATION.md](setup/CONTACT_FORM_IMPLEMENTATION.md)** — Contact form setup
+- **[setup/GOOGLE_SHEETS_SETUP.md](setup/GOOGLE_SHEETS_SETUP.md)** — Google Sheets integration (5 sheet IDs)
+- **[setup/EMAIL_SETUP.md](setup/EMAIL_SETUP.md)** — Original email setup notes (SendGrid; migrated to AWS SES)
 
 ---
 
-## 🔍 Finding Documentation
+## Website Copy
 
-### By Topic
-
-**Setup & Configuration:**
-- Email → `docs/setup/EMAIL_SETUP.md`
-- Google Sheets → `docs/setup/GOOGLE_SHEETS_SETUP.md`
-- SEO → `docs/setup/GOOGLE_SEARCH_CONSOLE_SETUP.md`
-
-**Frontend Development:**
-- Design System → `docs/frontend/DESIGN-SYSTEM.md`
-- SEO Implementation → `docs/frontend/SEO-IMPLEMENTATION-GUIDE.md`
-- Fonts → `docs/frontend/CUSTOM-FONT-SETUP.md`
-
-**Backend Development:**
-- Forms API → `docs/backend/README_FORMS.md`
-- API Integration → `docs/backend/API_FORMS_README.md`
-
-**Deployment:**
-- Deploy Process → `docs/DEPLOY_INSTRUCTIONS.md`
-
-### By Feature
-
-**Gallery:**
-- Implementation: `docs/dev_logs/07_cloudinary_integration.md`
-- Fixes: `docs/dev_logs/09_gallery_fixes_contact_form_email.md`
-
-**Forms:**
-- Join Us: `docs/dev_logs/05_join_us_page.md`
-- Contact: `docs/dev_logs/06_contact_forms_and_hero_updates.md`
-- Sponsors: `docs/dev_logs/10_sponsor_inquiries.md`
-- API: `docs/backend/README_FORMS.md`
-
-**Email:**
-- Setup: `docs/setup/EMAIL_SETUP.md`
-- Implementation: `docs/dev_logs/09_gallery_fixes_contact_form_email.md`
+- **[Website_copy/](Website_copy/)** — Copywriting for site pages
 
 ---
 
-## 📦 Component-Specific READMEs
+## Product Requirements
 
-These READMEs remain in their respective component directories:
-
-- `README.md` - Project root README
-- `frontend/README.md` - Frontend component README
-- `backend/README.md` - Backend component README
-- `frontend/public/fonts/README.md` - Fonts directory README
-- `ai_devguide_and_readme/` - AI development guides
+- **[PRD/01_cloudinary_gallery.md](PRD/01_cloudinary_gallery.md)** — Gallery requirements
+- **[PRD/02_client_feedback.md](PRD/02_client_feedback.md)** — Client feedback round 1
+- **[PRD/03_client_feedback2.md](PRD/03_client_feedback2.md)** — Client feedback round 2
 
 ---
 
-## 🤝 Contributing
+## Development Logs
 
-When adding new documentation:
+Chronological session logs from the original build (pre-AWS migration):
 
-1. **Setup guides** → `docs/setup/`
-2. **Frontend docs** → `docs/frontend/`
-3. **Backend docs** → `docs/backend/`
-4. **Dev session logs** → `docs/dev_logs/` (numbered sequentially)
-5. **Product requirements** → `docs/PRD/`
-6. **General project docs** → `docs/` (root)
+| # | Log |
+|---|---|
+| 01 | [SEO preparation](dev_logs/01_SEO_preparation.md) |
+| 02 | [Design system setup](dev_logs/02_design_system_setup.md) |
+| 03 | [Homepage build](dev_logs/03_homepage_build.md) |
+| 04 | [About & Events pages](dev_logs/04_about_events_pages.md) |
+| 04 | [Image integration](dev_logs/04_image_integration.md) |
+| 05 | [Join Us page](dev_logs/05_join_us_page.md) |
+| 06 | [Contact forms & hero updates](dev_logs/06_contact_forms_and_hero_updates.md) |
+| 07 | [Cloudinary integration](dev_logs/07_cloudinary_integration.md) |
+| 08 | [Design updates & Google Sheets](dev_logs/08_design_updates_forms_google_sheets.md) |
+| 09 | [Gallery fixes & contact form email](dev_logs/09_gallery_fixes_contact_form_email.md) |
+| 10 | [Sponsor inquiries](dev_logs/10_sponsor_inquiries.md) |
 
 ---
 
-**Last Updated:** February 5, 2026
+## Adding New Documentation
+
+| Type | Location |
+|---|---|
+| Migration / architecture | `docs/` root |
+| Design / brand | `docs/` root |
+| Frontend implementation | `docs/frontend/` |
+| Setup / configuration | `docs/setup/` |
+| Dev session logs | `docs/dev_logs/` (number sequentially) |
+| Product requirements | `docs/PRD/` |
