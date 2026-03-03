@@ -1,19 +1,31 @@
 import { useEffect, useState, useRef } from 'react'
 
-export default function ConnectModal({ isOpen, onClose }) {
-    const formRef = useRef(null)
-    const [formData, setFormData] = useState({
+interface ConnectModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+interface ModalFormData {
+  name: string;
+  email: string;
+  phone: string;
+  marketingConsent: boolean;
+}
+
+export default function ConnectModal({ isOpen, onClose }: ConnectModalProps) {
+    const formRef = useRef<HTMLFormElement>(null)
+    const [formData, setFormData] = useState<ModalFormData>({
         name: '',
         email: '',
         phone: '',
         marketingConsent: false
     })
     const [isSubmitting, setIsSubmitting] = useState(false)
-    const [submitStatus, setSubmitStatus] = useState(null) // 'success', 'error', or null
+    const [submitStatus, setSubmitStatus] = useState<'success' | 'error' | null>(null)
 
     // Close modal on ESC key press
     useEffect(() => {
-        const handleEscape = (e) => {
+        const handleEscape = (e: KeyboardEvent) => {
             if (e.key === 'Escape') {
                 onClose()
             }
@@ -44,15 +56,15 @@ export default function ConnectModal({ isOpen, onClose }) {
         }
     }, [isOpen])
 
-    const handleInputChange = (e) => {
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = e.target
         setFormData(prev => ({
             ...prev,
             [name]: type === 'checkbox' ? checked : value
-        }))
+        } as ModalFormData))
     }
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         setIsSubmitting(true)
         setSubmitStatus(null)
@@ -72,8 +84,6 @@ export default function ConnectModal({ isOpen, onClose }) {
                 })
             })
 
-            const data = await response.json()
-
             if (response.ok) {
                 setSubmitStatus('success')
                 // Scroll to form top to show message
@@ -85,6 +95,7 @@ export default function ConnectModal({ isOpen, onClose }) {
                     onClose()
                 }, 2000)
             } else {
+                const data = await response.json() as { error?: string }
                 setSubmitStatus('error')
                 console.error('Signup failed:', data)
                 // Scroll to form top to show error
@@ -247,4 +258,3 @@ export default function ConnectModal({ isOpen, onClose }) {
         </div>
     )
 }
-

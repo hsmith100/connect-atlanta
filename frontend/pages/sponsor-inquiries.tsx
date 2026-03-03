@@ -6,18 +6,25 @@ import Image from 'next/image'
 import { Mail, User, Phone, Building2, Briefcase, ChevronLeft, ChevronRight, X } from 'lucide-react'
 import * as gtag from '../lib/gtag'
 
+interface SponsorFormData {
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+  productIndustry: string;
+}
+
 export default function SponsorInquiries() {
   const [isHeaderVisible, setIsHeaderVisible] = useState(true)
-  const formRef = useRef(null)
+  const formRef = useRef<HTMLDivElement>(null)
 
   // Gallery state
   const [currentSlide, setCurrentSlide] = useState(0)
   const [isGalleryOpen, setIsGalleryOpen] = useState(false)
   const [galleryIndex, setGalleryIndex] = useState(0)
-  const galleryRef = useRef(null)
 
   // Form state
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<SponsorFormData>({
     name: '',
     email: '',
     phone: '',
@@ -25,7 +32,7 @@ export default function SponsorInquiries() {
     productIndustry: ''
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitStatus, setSubmitStatus] = useState(null)
+  const [submitStatus, setSubmitStatus] = useState<'success' | 'error' | null>(null)
 
   // Sponsor deck images (1.webp through 14.webp) - Optimized from 30MB to 2MB
   const sponsorDeckImages = Array.from({ length: 14 }, (_, i) => `/images/sponsors/sponsor_deck/${i + 1}.webp`)
@@ -68,7 +75,7 @@ export default function SponsorInquiries() {
   }
 
   // Open full gallery modal
-  const openGallery = (index) => {
+  const openGallery = (index: number) => {
     setGalleryIndex(index)
     setIsGalleryOpen(true)
     document.body.style.overflow = 'hidden'
@@ -89,7 +96,7 @@ export default function SponsorInquiries() {
 
   // Handle keyboard navigation in gallery
   useEffect(() => {
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (!isGalleryOpen) return
       if (e.key === 'ArrowRight') nextGalleryImage()
       if (e.key === 'ArrowLeft') prevGalleryImage()
@@ -101,12 +108,12 @@ export default function SponsorInquiries() {
   }, [isGalleryOpen])
 
   // Form handlers
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
+    setFormData(prev => ({ ...prev, [name]: value } as SponsorFormData))
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
     setSubmitStatus(null)
@@ -148,7 +155,7 @@ export default function SponsorInquiries() {
       <SEO
         title="Sponsor Inquiries | Beats on the Beltline"
         description="Interested in sponsoring Beats on the Beltline 2026? Partner with Atlanta's premier free outdoor electronic music festival reaching 5,000-10,000 attendees."
-        canonical="https://connectevents.co/sponsor-inquiries"
+        canonicalUrl="https://connectevents.co/sponsor-inquiries"
       />
 
       <Header />

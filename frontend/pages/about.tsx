@@ -4,7 +4,7 @@ import Header from '../components/layout/Header'
 import Footer from '../components/layout/Footer'
 import ConnectModal from '../components/ConnectModal'
 import Image from 'next/image'
-import { Music, Heart, Target, Sparkles, Users, MapPin } from 'lucide-react'
+import { Music, Heart, Users } from 'lucide-react'
 
 export default function About() {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -14,7 +14,7 @@ export default function About() {
       <SEO
         title="About Us | Beats on the Beltline"
         description="Learn about Atlanta's premier free outdoor electronic music experience. Discover our mission, vision, and the story behind Beats on the Beltline."
-        canonical="https://yourfestival.com/about"
+        canonicalUrl="https://yourfestival.com/about"
       />
 
       <Header />
@@ -143,4 +143,3 @@ export default function About() {
     </>
   )
 }
-

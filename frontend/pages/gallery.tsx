@@ -5,11 +5,21 @@ import Footer from '../components/layout/Footer'
 import { Camera, Loader2, AlertCircle, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { getGallery } from '../lib/api'
 
+interface GalleryPhoto {
+  id?: string;
+  url: string;
+  thumbnail?: string;
+}
+
+interface GalleryData {
+  photos: GalleryPhoto[];
+}
+
 export default function Gallery() {
-  const [galleryData, setGalleryData] = useState(null)
+  const [galleryData, setGalleryData] = useState<GalleryData | null>(null)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
-  const [selectedImageIndex, setSelectedImageIndex] = useState(null)
+  const [error, setError] = useState<string | null>(null)
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
 
   // Load gallery on mount
   useEffect(() => {
@@ -19,7 +29,7 @@ export default function Gallery() {
         setError(null)
         // Fetch from main events/photos folder
         const gallery = await getGallery()
-        setGalleryData(gallery)
+        setGalleryData(gallery as GalleryData)
         setLoading(false)
       } catch (err) {
         console.error('Failed to load gallery:', err)
@@ -31,7 +41,7 @@ export default function Gallery() {
   }, [])
 
   // Image modal handlers
-  const openImageModal = (index) => {
+  const openImageModal = (index: number) => {
     setSelectedImageIndex(index)
     document.body.style.overflow = 'hidden'
   }
@@ -55,9 +65,9 @@ export default function Gallery() {
 
   // Keyboard navigation for image modal
   useEffect(() => {
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (selectedImageIndex === null) return
-      
+
       if (e.key === 'Escape') closeImageModal()
       if (e.key === 'ArrowRight') nextImage()
       if (e.key === 'ArrowLeft') prevImage()
@@ -72,7 +82,7 @@ export default function Gallery() {
       <SEO
         title="Event Gallery | Beats on the Beltline"
         description="Check out our vibe! Browse photos from Beats on the Beltline events."
-        canonical="https://yourfestival.com/gallery"
+        canonicalUrl="https://yourfestival.com/gallery"
       />
 
       <Header />
@@ -116,8 +126,8 @@ export default function Gallery() {
               <div>
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                   {galleryData.photos.map((photo, index) => (
-                    <div 
-                      key={photo.id || index} 
+                    <div
+                      key={photo.id || index}
                       className="relative aspect-square rounded-2xl overflow-hidden group cursor-pointer"
                       onClick={() => openImageModal(index)}
                     >
@@ -154,7 +164,7 @@ export default function Gallery() {
 
       {/* Image Modal */}
       {selectedImageIndex !== null && galleryData && galleryData.photos && (
-        <div 
+        <div
           className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center p-4"
           onClick={closeImageModal}
         >
@@ -182,7 +192,7 @@ export default function Gallery() {
           )}
 
           {/* Image Container */}
-          <div 
+          <div
             className="relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center"
             onClick={(e) => e.stopPropagation()}
           >
@@ -191,7 +201,7 @@ export default function Gallery() {
               alt={`Gallery photo ${selectedImageIndex + 1}`}
               className="max-w-full max-h-full object-contain rounded-lg"
             />
-            
+
             {/* Image Counter */}
             <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-sm">
               {selectedImageIndex + 1} / {galleryData.photos.length}
@@ -218,4 +228,3 @@ export default function Gallery() {
     </>
   )
 }
-

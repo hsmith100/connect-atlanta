@@ -8,21 +8,28 @@ import Image from 'next/image'
 import { Music, Headphones, Users, Camera } from 'lucide-react'
 import { organizationSchema, websiteSchema, eventSeriesSchema, faqSchema } from '../lib/structuredData'
 
+interface SignupFormData {
+  name: string;
+  email: string;
+  phone: string;
+  marketingConsent: boolean;
+}
+
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [cardsVisible, setCardsVisible] = useState(false)
-  const cardsRef = useRef(null)
-  const formRef = useRef(null)
+  const cardsRef = useRef<HTMLDivElement>(null)
+  const formRef = useRef<HTMLFormElement>(null)
 
   // Form state for bottom signup form
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<SignupFormData>({
     name: '',
     email: '',
     phone: '',
     marketingConsent: false
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitStatus, setSubmitStatus] = useState(null) // 'success', 'error', or null
+  const [submitStatus, setSubmitStatus] = useState<'success' | 'error' | null>(null)
 
   // Intersection Observer for cards animation
   useEffect(() => {
@@ -51,15 +58,15 @@ export default function Home() {
   }, [])
 
   // Form handlers
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target
     setFormData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
-    }))
+    } as SignupFormData))
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
     setSubmitStatus(null)
@@ -79,8 +86,6 @@ export default function Home() {
         })
       })
 
-      const data = await response.json()
-
       if (response.ok) {
         setSubmitStatus('success')
         // Scroll to form top to show message
@@ -98,6 +103,7 @@ export default function Home() {
           setSubmitStatus(null)
         }, 3000)
       } else {
+        const data = await response.json() as { error?: string }
         setSubmitStatus('error')
         console.error('Signup failed:', data)
         // Scroll to form top to show error
@@ -314,7 +320,6 @@ export default function Home() {
               </span>
             </h1>
 
-            {/* Subtitle */}
             {/* Hero Tagline */}
             <p className="text-xl md:text-2xl font-bold text-center text-brand-text mb-12 max-w-4xl mx-auto">
               Atlanta's premier FREE outdoor electronic music experience

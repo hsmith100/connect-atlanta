@@ -10,7 +10,10 @@
       "Bash(node:*)",
       "Bash(npx cdk:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)"
+      "Bash(git commit:*)",
+      "Bash(aws logs:*)",
+      "Bash(gh run:*)",
+      "Bash(curl:*)"
     ]
   }
 }

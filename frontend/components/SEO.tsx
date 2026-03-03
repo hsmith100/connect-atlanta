@@ -1,5 +1,17 @@
 import Head from 'next/head'
 
+interface SEOProps {
+  title?: string;
+  description?: string;
+  keywords?: string;
+  ogImage?: string;
+  ogType?: string;
+  twitterCard?: string;
+  canonicalUrl?: string;
+  noindex?: boolean;
+  structuredData?: object | null;
+}
+
 export default function SEO({
   title = 'Connect Events - Beats on the Beltline | Atlanta EDM Festival',
   description = 'Atlanta\'s premier FREE outdoor electronic music experience. Join us for Beats on the Beltline featuring top DJs, amazing vibes, and unforgettable daytime parties on the Atlanta BeltLine.',
@@ -10,7 +22,7 @@ export default function SEO({
   canonicalUrl,
   noindex = false,
   structuredData = null,
-}) {
+}: SEOProps) {
   // Get the current URL if canonical is not provided
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://connectevents.co'
   const canonical = canonicalUrl || siteUrl
@@ -55,13 +67,13 @@ export default function SEO({
       <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
       <meta httpEquiv="content-language" content="en" />
       <meta name="author" content="Connect Events, Inc." />
-      
+
       {/* Geographic Meta Tags */}
       <meta name="geo.region" content="US-GA" />
       <meta name="geo.placename" content="Atlanta" />
       <meta name="geo.position" content="33.7490;-84.3880" />
       <meta name="ICBM" content="33.7490, -84.3880" />
-      
+
       {/* Structured Data (JSON-LD) */}
       {structuredData && (
         <script
@@ -72,20 +84,3 @@ export default function SEO({
     </Head>
   )
 }
-
-// Usage in pages:
-// import SEO from '../components/SEO'
-// 
-// export default function Page() {
-//   return (
-//     <>
-//       <SEO 
-//         title="Lineup | Music Festival 2025"
-//         description="Check out our incredible lineup for 2025"
-//         canonicalUrl="https://yourfestival.com/lineup"
-//       />
-//       <main>...</main>
-//     </>
-//   )
-// }
-

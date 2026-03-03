@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
@@ -210,4 +209,3 @@ export default function Header() {
     </header>
   )
 }
-

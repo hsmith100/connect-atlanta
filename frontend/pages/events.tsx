@@ -5,11 +5,41 @@ import Header from '../components/layout/Header'
 import Footer from '../components/layout/Footer'
 import ConnectModal from '../components/ConnectModal'
 import Image from 'next/image'
-import { Calendar, Clock, MapPin, Music, Ticket, Loader2, AlertCircle, X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Calendar, Clock, MapPin, Music, Loader2, AlertCircle, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { getEvents, getEventGallery } from '../lib/api'
+import type { Event } from '@shared/types/events'
+
+interface UpcomingEvent {
+  id: string;
+  title: string;
+  date: string;
+  time: string;
+  location: string;
+  image: string;
+}
+
+interface GalleryPhoto {
+  id: string;
+  url: string;
+  thumbnail: string;
+}
+
+interface GalleryVideo {
+  id: string;
+  url: string;
+  thumbnail: string;
+}
+
+interface EventGalleryData {
+  eventTitle: string;
+  photoCount: number;
+  videoCount: number;
+  photos: GalleryPhoto[];
+  videos: GalleryVideo[];
+}
 
 // Format date to "Month Day(th), Year"
-const formatEventDate = (dateString) => {
+const formatEventDate = (dateString: string | undefined): string => {
     if (!dateString) return ''
 
     const date = new Date(dateString)
@@ -18,9 +48,9 @@ const formatEventDate = (dateString) => {
     const year = date.getFullYear()
 
     // Add ordinal suffix (st, nd, rd, th)
-    const getOrdinalSuffix = (day) => {
-        if (day > 3 && day < 21) return 'th'
-        switch (day % 10) {
+    const getOrdinalSuffix = (d: number): string => {
+        if (d > 3 && d < 21) return 'th'
+        switch (d % 10) {
             case 1: return 'st'
             case 2: return 'nd'
             case 3: return 'rd'
@@ -34,16 +64,16 @@ const formatEventDate = (dateString) => {
 export default function Events() {
     const router = useRouter()
     const [isModalOpen, setIsModalOpen] = useState(false)
-    const [selectedEvent, setSelectedEvent] = useState(null)
-    const [galleryData, setGalleryData] = useState(null)
+    const [selectedEvent, setSelectedEvent] = useState<string | null>(null)
+    const [galleryData, setGalleryData] = useState<EventGalleryData | null>(null)
     const [loading, setLoading] = useState(true)
     const [galleryLoading, setGalleryLoading] = useState(false)
-    const [error, setError] = useState(null)
-    const [galleryError, setGalleryError] = useState(null)
-    const [selectedImageIndex, setSelectedImageIndex] = useState(null)
+    const [error, setError] = useState<string | null>(null)
+    const [galleryError, setGalleryError] = useState<string | null>(null)
+    const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
 
     // Event data from backend
-    const [upcomingEvents, setUpcomingEvents] = useState([
+    const [upcomingEvents] = useState<UpcomingEvent[]>([
         {
             id: 'april-2026',
             title: "Beats on the Beltline",
@@ -53,7 +83,7 @@ export default function Events() {
             image: "/images/events/april-2026.webp"
         }
     ])
-    const [pastEvents, setPastEvents] = useState([])
+    const [pastEvents, setPastEvents] = useState<Event[]>([])
 
     // Load events on mount
     useEffect(() => {
@@ -71,7 +101,7 @@ export default function Events() {
         loadEvents()
     }, [])
 
-    const handleEventClick = async (eventId) => {
+    const handleEventClick = async (eventId: string) => {
         setSelectedEvent(eventId)
         setGalleryData(null)
         setGalleryError(null)
@@ -80,7 +110,7 @@ export default function Events() {
         // Fetch gallery from API
         try {
             const gallery = await getEventGallery(eventId)
-            setGalleryData(gallery)
+            setGalleryData(gallery as EventGalleryData)
             setGalleryLoading(false)
 
             // Scroll to gallery section after data is loaded
@@ -103,7 +133,7 @@ export default function Events() {
     }
 
     // Image modal handlers
-    const openImageModal = (index) => {
+    const openImageModal = (index: number) => {
         setSelectedImageIndex(index)
         document.body.style.overflow = 'hidden' // Prevent background scroll
     }
@@ -127,7 +157,7 @@ export default function Events() {
 
     // Keyboard navigation for image modal
     useEffect(() => {
-        const handleKeyDown = (e) => {
+        const handleKeyDown = (e: KeyboardEvent) => {
             if (selectedImageIndex === null) return
 
             if (e.key === 'Escape') closeImageModal()
@@ -142,7 +172,7 @@ export default function Events() {
     // Check for eventId in URL query params and auto-select event
     useEffect(() => {
         if (router.isReady && router.query.eventId && pastEvents.length > 0) {
-            const eventId = router.query.eventId
+            const eventId = router.query.eventId as string
             if (pastEvents.find(e => e.id === eventId)) {
                 handleEventClick(eventId)
             }
@@ -154,7 +184,7 @@ export default function Events() {
             <SEO
                 title="Events | Beats on the Beltline"
                 description="Explore upcoming and past events from Beats on the Beltline. Join us for Atlanta's premier free outdoor electronic music experience."
-                canonical="https://yourfestival.com/events"
+                canonicalUrl="https://yourfestival.com/events"
             />
 
             <Header />
@@ -300,7 +330,7 @@ export default function Events() {
                                     <div key={event.id} className="card-bg-white shadow-xl border-2 border-brand-primary/10 rounded-2xl overflow-hidden">
                                         <figure className="relative aspect-auto w-full">
                                             <Image
-                                                src={event.flyerUrl}
+                                                src={event.flyerUrl ?? ''}
                                                 alt={event.title}
                                                 width={1080}
                                                 height={1350}
@@ -515,4 +545,3 @@ export default function Events() {
         </>
     )
 }
-

@@ -1,10 +1,29 @@
-// EventStructuredData.js - Add this to pages that describe your festival event
+// EventStructuredData.tsx - Add this to pages that describe your festival event
 // This helps Google understand your event and show it in special search results
+
+interface EventStructuredDataProps {
+  name?: string;
+  description?: string;
+  startDate?: string;
+  endDate?: string;
+  locationName?: string;
+  streetAddress?: string;
+  addressLocality?: string;
+  addressRegion?: string;
+  postalCode?: string;
+  country?: string;
+  ticketPrice?: string;
+  ticketUrl?: string;
+  imageUrl?: string;
+  performers?: string[];
+  organizerName?: string;
+  organizerUrl?: string;
+}
 
 export default function EventStructuredData({
   name = "Music Festival 2025",
   description = "Join us for an unforgettable music festival experience with top artists",
-  startDate = "2025-07-15T10:00:00-05:00", // Format: ISO 8601
+  startDate = "2025-07-15T10:00:00-05:00",
   endDate = "2025-07-17T23:00:00-05:00",
   locationName = "Festival Grounds",
   streetAddress = "123 Festival Road",
@@ -18,7 +37,7 @@ export default function EventStructuredData({
   performers = ["Artist Name 1", "Artist Name 2", "Artist Name 3"],
   organizerName = "Your Events Company",
   organizerUrl = "http://localhost:3000",
-}) {
+}: EventStructuredDataProps) {
   const eventData = {
     "@context": "https://schema.org",
     "@type": "MusicEvent",
@@ -67,27 +86,3 @@ export default function EventStructuredData({
     />
   )
 }
-
-// Example usage in a page:
-// 
-// import Head from 'next/head'
-// import EventStructuredData from '../components/EventStructuredData'
-// 
-// export default function HomePage() {
-//   return (
-//     <>
-//       <Head>
-//         <EventStructuredData 
-//           name="Summer Music Fest 2025"
-//           startDate="2025-07-15T10:00:00-05:00"
-//           endDate="2025-07-17T23:00:00-05:00"
-//           performers={["The Headliners", "Amazing Band", "DJ Superstar"]}
-//         />
-//       </Head>
-//       <main>
-//         {/* Your page content */}
-//       </main>
-//     </>
-//   )
-// }
-

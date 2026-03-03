@@ -4,6 +4,14 @@ import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 import type { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda';
 import { randomUUID } from 'crypto';
 import { appendToSheet } from '../lib/sheets';
+import type {
+  EmailSignupPayload,
+  ContactFormPayload,
+  VolunteerApplicationPayload,
+  VendorApplicationPayload,
+  ArtistApplicationPayload,
+  SponsorInquiryPayload,
+} from '../../../shared/types/forms';
 
 const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}));
 const ses = new SESClient({ region: 'us-east-1' });
@@ -41,7 +49,7 @@ function errResponse(status: number, message: string): APIGatewayProxyResultV2 {
 function parseBody(event: APIGatewayProxyEventV2): Record<string, unknown> {
   if (!event.body) throw new Error('Missing request body');
   try {
-    return JSON.parse(event.body);
+    return JSON.parse(event.body) as Record<string, unknown>;
   } catch {
     throw new Error('Invalid JSON body');
   }
@@ -80,20 +88,36 @@ async function sendEmail(subject: string, body: string): Promise<void> {
   }
 }
 
+/**
+ * Validates required fields on a raw payload and narrows it to type T.
+ * Returns a discriminated union — check `result.ok` before accessing `result.data`.
+ */
+function parsePayload<T>(
+  raw: Record<string, unknown>,
+  requiredFields: (keyof T & string)[],
+): { ok: true; data: T } | { ok: false; err: APIGatewayProxyResultV2 } {
+  for (const field of requiredFields) {
+    if (!raw[field]) return { ok: false, err: errResponse(400, `${field} is required`) };
+  }
+  return { ok: true, data: raw as unknown as T };
+}
+
 // ── Form handlers ────────────────────────────────────────────────────────────
 
-async function emailSignup(data: Record<string, unknown>): Promise<APIGatewayProxyResultV2> {
-  const { name, email, phone, source } = data;
-  const marketingConsent = data.marketingConsent ?? data.marketing_consent ?? false;
-  if (!name || !email) return errResponse(400, 'name and email are required');
+async function emailSignup(raw: Record<string, unknown>): Promise<APIGatewayProxyResultV2> {
+  const result = parsePayload<EmailSignupPayload>(raw, ['name', 'email']);
+  if (!result.ok) return result.err;
+  const data = result.data;
+
+  const marketingConsent = raw.marketingConsent ?? raw.marketing_consent ?? false;
 
   const item = {
     ...newItem(),
-    name,
-    email,
-    phone: phone ?? null,
+    name: data.name,
+    email: data.email,
+    phone: data.phone ?? null,
     marketingConsent,
-    source: source ?? 'website',
+    source: data.source ?? 'website',
   };
 
   await ddb.send(new PutCommand({ TableName: TABLES.emailSignups, Item: item }));
@@ -106,11 +130,13 @@ async function emailSignup(data: Record<string, unknown>): Promise<APIGatewayPro
   });
 }
 
-async function vendorApplication(data: Record<string, unknown>): Promise<APIGatewayProxyResultV2> {
-  const required = ['businessName', 'contactName', 'email', 'phone', 'businessType', 'description', 'websiteSocial', 'pricePoint', 'hasInsurance', 'foodPermit', 'setup'];
-  for (const field of required) {
-    if (!data[field]) return errResponse(400, `${field} is required`);
-  }
+async function vendorApplication(raw: Record<string, unknown>): Promise<APIGatewayProxyResultV2> {
+  const result = parsePayload<VendorApplicationPayload>(raw, [
+    'businessName', 'contactName', 'email', 'phone', 'businessType',
+    'description', 'websiteSocial', 'pricePoint', 'hasInsurance', 'foodPermit', 'setup',
+  ]);
+  if (!result.ok) return result.err;
+  const data = result.data;
 
   const item = {
     ...newItem(),
@@ -135,22 +161,22 @@ async function vendorApplication(data: Record<string, unknown>): Promise<APIGate
   await syncToSheet(SHEETS.vendorApplications, [
     timestamp(),       // A: Timestamp
     '', '', '', '', '', '', '', '', '', '', // B-K: Internal review columns
-    data.businessName as string,    // L: Store Name
-    data.contactName as string,     // M: Owner's Full Name
-    data.businessType as string,    // N: What kind of business
-    data.description as string,     // O: Description of what you're selling
-    data.websiteSocial as string,   // P: Website or Social Media Links
-    data.pricePoint as string,      // Q: Average Price Point
-    data.hasInsurance as string,    // R: Does your business have insurance?
-    '',                             // S: Is this business a registered entity? (not collected)
-    data.email as string,           // T: Email
-    data.phone as string,           // U: Phone Number
-    (data.additionalComments as string) ?? '', // V: Additional Comments
-    data.description as string,     // W: Brief description
-    data.foodPermit as string,      // X: Food service permit
-    data.setup as string,           // Y: Setup
-    '', '',                         // Z, AA: empty / Do you have permits (not collected)
-    '',                             // AB: Internal Notes
+    data.businessName,    // L: Store Name
+    data.contactName,     // M: Owner's Full Name
+    data.businessType,    // N: What kind of business
+    data.description,     // O: Description of what you're selling
+    data.websiteSocial,   // P: Website or Social Media Links
+    data.pricePoint,      // Q: Average Price Point
+    data.hasInsurance,    // R: Does your business have insurance?
+    '',                   // S: Is this business a registered entity? (not collected)
+    data.email,           // T: Email
+    data.phone,           // U: Phone Number
+    data.additionalComments ?? '', // V: Additional Comments
+    data.description,     // W: Brief description
+    data.foodPermit,      // X: Food service permit
+    data.setup,           // Y: Setup
+    '', '',               // Z, AA: empty / Do you have permits (not collected)
+    '',                   // AB: Internal Notes
   ]);
 
   return created({
@@ -161,11 +187,10 @@ async function vendorApplication(data: Record<string, unknown>): Promise<APIGate
   });
 }
 
-async function volunteerApplication(data: Record<string, unknown>): Promise<APIGatewayProxyResultV2> {
-  const required = ['firstName', 'lastName', 'email', 'phone'];
-  for (const field of required) {
-    if (!data[field]) return errResponse(400, `${field} is required`);
-  }
+async function volunteerApplication(raw: Record<string, unknown>): Promise<APIGatewayProxyResultV2> {
+  const result = parsePayload<VolunteerApplicationPayload>(raw, ['firstName', 'lastName', 'email', 'phone']);
+  if (!result.ok) return result.err;
+  const data = result.data;
 
   const item = {
     ...newItem(),
@@ -182,11 +207,11 @@ async function volunteerApplication(data: Record<string, unknown>): Promise<APIG
   // Sync to Google Sheet
   await syncToSheet(SHEETS.volunteerApplications, [
     timestamp(),                    // A: Timestamp
-    data.firstName as string,       // B: First Name
-    data.lastName as string,        // C: Last Name
-    data.email as string,           // D: Email
-    data.phone as string,           // E: Phone Number
-    (data.experience as string) ?? '',  // F: Event Experience
+    data.firstName,                 // B: First Name
+    data.lastName,                  // C: Last Name
+    data.email,                     // D: Email
+    data.phone,                     // E: Phone Number
+    data.experience ?? '',          // F: Event Experience
     Array.isArray(data.skills) ? data.skills.join(', ') : '', // G: I am interested in
   ]);
 
@@ -198,11 +223,14 @@ async function volunteerApplication(data: Record<string, unknown>): Promise<APIG
   });
 }
 
-async function artistApplication(data: Record<string, unknown>): Promise<APIGatewayProxyResultV2> {
-  const required = ['email', 'fullLegalName', 'djName', 'city', 'phone', 'instagramLink', 'contactMethod', 'mainGenre', 'subGenre', 'livePerformanceLinks', 'soundcloudLink', 'spotifyLink', 'rekordboxFamiliar'];
-  for (const field of required) {
-    if (!data[field]) return errResponse(400, `${field} is required`);
-  }
+async function artistApplication(raw: Record<string, unknown>): Promise<APIGatewayProxyResultV2> {
+  const result = parsePayload<ArtistApplicationPayload>(raw, [
+    'email', 'fullLegalName', 'djName', 'city', 'phone', 'instagramLink',
+    'contactMethod', 'mainGenre', 'subGenre', 'livePerformanceLinks',
+    'soundcloudLink', 'spotifyLink', 'rekordboxFamiliar',
+  ]);
+  if (!result.ok) return result.err;
+  const data = result.data;
 
   const item = {
     ...newItem(),
@@ -233,30 +261,30 @@ async function artistApplication(data: Record<string, unknown>): Promise<APIGate
   await syncToSheet(SHEETS.artistApplications, [
     timestamp(),                          // A: Timestamp
     '',                                   // B: RATING (team fills manually)
-    data.djName as string,               // C: DJ Name / Alias
-    data.email as string,                // D: Email Address
-    data.mainGenre as string,            // E: Main Genre
+    data.djName,                          // C: DJ Name / Alias
+    data.email,                           // D: Email Address
+    data.mainGenre,                       // E: Main Genre
     '',                                   // F: What Other Genres (not collected)
-    data.artistBio as string,            // G: Tell us about you
-    data.b2bFavorite as string,          // H: Favorite B2B
-    data.spotifyLink as string,          // I: Spotify Link
-    data.email as string,                // J: Email (duplicate column in sheet)
-    data.instagramLink as string,        // K: Instagram Link
-    data.phone as string,                // L: Phone number
-    data.rekordboxFamiliar as string,    // M: Familiar with Rekordbox?
-    data.contactMethod as string,        // N: Best way to contact
-    data.promoKitLinks as string,        // O: Promo / Press Kits
+    data.artistBio ?? '',                 // G: Tell us about you
+    data.b2bFavorite ?? '',               // H: Favorite B2B
+    data.spotifyLink,                     // I: Spotify Link
+    data.email,                           // J: Email (duplicate column in sheet)
+    data.instagramLink,                   // K: Instagram Link
+    data.phone,                           // L: Phone number
+    data.rekordboxFamiliar,               // M: Familiar with Rekordbox?
+    data.contactMethod,                   // N: Best way to contact
+    data.promoKitLinks ?? '',             // O: Promo / Press Kits
     '',                                   // P: EPK upload (file, not collected)
-    (data.additionalInfo as string) ?? '', // Q: Anything else
-    data.city as string,                 // R: City
-    data.subGenre as string,             // S: Sub Genre
-    (data.otherSubGenre as string) ?? '', // T: Other Sub Genre
-    data.livePerformanceLinks as string, // U: Live performance links
-    data.soundcloudLink as string,       // V: Soundcloud
-    (data.otherGenreText as string) ?? '', // W: Other genre text
-    data.fullLegalName as string,        // X: Full legal name
-    '', '',                              // Y, Z: Column 20, Upload (not collected)
-    '', '',                              // AA, AB: NOTES, EXPORTED TO DATABASE
+    data.additionalInfo ?? '',            // Q: Anything else
+    data.city,                            // R: City
+    data.subGenre,                        // S: Sub Genre
+    data.otherSubGenre ?? '',             // T: Other Sub Genre
+    data.livePerformanceLinks,            // U: Live performance links
+    data.soundcloudLink,                  // V: Soundcloud
+    data.otherGenreText ?? '',            // W: Other genre text
+    data.fullLegalName,                   // X: Full legal name
+    '', '',                               // Y, Z: Column 20, Upload (not collected)
+    '', '',                               // AA, AB: NOTES, EXPORTED TO DATABASE
   ]);
 
   return created({
@@ -267,11 +295,10 @@ async function artistApplication(data: Record<string, unknown>): Promise<APIGate
   });
 }
 
-async function sponsorInquiry(data: Record<string, unknown>): Promise<APIGatewayProxyResultV2> {
-  const required = ['name', 'email', 'phone', 'company', 'productIndustry'];
-  for (const field of required) {
-    if (!data[field]) return errResponse(400, `${field} is required`);
-  }
+async function sponsorInquiry(raw: Record<string, unknown>): Promise<APIGatewayProxyResultV2> {
+  const result = parsePayload<SponsorInquiryPayload>(raw, ['name', 'email', 'phone', 'company', 'productIndustry']);
+  if (!result.ok) return result.err;
+  const data = result.data;
 
   const item = {
     ...newItem(),
@@ -297,11 +324,10 @@ async function sponsorInquiry(data: Record<string, unknown>): Promise<APIGateway
   });
 }
 
-async function contactForm(data: Record<string, unknown>): Promise<APIGatewayProxyResultV2> {
-  const required = ['name', 'email', 'subject', 'message'];
-  for (const field of required) {
-    if (!data[field]) return errResponse(400, `${field} is required`);
-  }
+async function contactForm(raw: Record<string, unknown>): Promise<APIGatewayProxyResultV2> {
+  const result = parsePayload<ContactFormPayload>(raw, ['name', 'email', 'subject', 'message']);
+  if (!result.ok) return result.err;
+  const data = result.data;
 
   await sendEmail(
     `Contact Form: ${data.subject}`,
