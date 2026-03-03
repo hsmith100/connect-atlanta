@@ -619,8 +619,8 @@ new iam.Role(this, 'GitHubActionsDeployRole', {
   - `connect-volunteer-applications` (PK: `id`, GSI: `byStatus`)
   - `connect-artist-applications` (PK: `id`, GSI: `byStatus`)
   - `connect-sponsor-inquiries` (PK: `id`, GSI: `byStatus`)
-- [ ] Seed `connect-events` table — event data saved in `data/seed-events.json`
-- [ ] Update events page to fetch from `/api/events` instead of hardcoded `staticPastEvents` array
+- [x] Seed `connect-events` table — 8 events (4 main + 4 afterparties) in `data/seed-events.json`, seeded via `npm run seed:prod`
+- [x] Update events page to fetch from `/api/events` instead of hardcoded `staticPastEvents` array
 
 ---
 
@@ -651,12 +651,12 @@ new iam.Role(this, 'GitHubActionsDeployRole', {
 
 ---
 
-### Phase 5 — Gallery Migration + Events Wiring
+### Phase 5 — Gallery Migration + Events Wiring ✅ Complete (events wiring)
 
 **Note:** Cutover has been moved to the final step. All work is done at the CloudFront URL first, then DNS is switched once everything is fully production-ready.
 
-- [ ] Seed `connect-events` DynamoDB table from `data/seed-events.json`
-- [ ] Update events page to fetch from `/api/events` (remove hardcoded `staticPastEvents`)
+- [x] Seed `connect-events` DynamoDB table from `data/seed-events.json`
+- [x] Update events page to fetch from `/api/events` (remove hardcoded `staticPastEvents`)
 - [ ] Add S3 media bucket + CloudFront origin to CDK (`MediaStack` or added to `FrontendStack`)
 - [ ] Write thumbnail generator Lambda (`sharp` + S3 `ObjectCreated` trigger)
 - [ ] Write `handlers/gallery.ts` — lists photos from S3 by event folder
