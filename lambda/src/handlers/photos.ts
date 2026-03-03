@@ -243,8 +243,10 @@ async function createEvent(event: APIGatewayProxyEventV2): Promise<APIGatewayPro
     id: string;
     title: string;
     date: string;
-    time?: string;
+    startTime?: string;
+    endTime?: string;
     location?: string;
+    flyerUrl?: string;
     goLiveAt?: string;
     ticketingUrl?: string;
   } = JSON.parse(event.body ?? '{}');
@@ -260,8 +262,10 @@ async function createEvent(event: APIGatewayProxyEventV2): Promise<APIGatewayPro
       entity: 'EVENT',
       title: body.title,
       date: body.date,
-      ...(body.time ? { time: body.time } : {}),
+      ...(body.startTime ? { startTime: body.startTime } : {}),
+      ...(body.endTime ? { endTime: body.endTime } : {}),
       ...(body.location ? { location: body.location } : {}),
+      ...(body.flyerUrl ? { flyerUrl: body.flyerUrl } : {}),
       ...(body.goLiveAt ? { goLiveAt: body.goLiveAt } : {}),
       ...(body.ticketingUrl ? { ticketingUrl: body.ticketingUrl } : {}),
     },

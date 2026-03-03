@@ -64,7 +64,7 @@ export async function getAdminEvents(adminKey: string): Promise<Event[]> {
 
 export async function createEvent(
   adminKey: string,
-  event: { id: string; title: string; date: string; time?: string; location?: string; goLiveAt?: string; ticketingUrl?: string },
+  event: { id: string; title: string; date: string; startTime?: string; endTime?: string; location?: string; flyerUrl?: string; goLiveAt?: string; ticketingUrl?: string },
 ): Promise<void> {
   await fetchAPI<{ created: boolean }>('/api/admin/events', {
     method: 'POST',

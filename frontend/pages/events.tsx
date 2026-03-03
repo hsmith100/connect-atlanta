@@ -10,6 +10,14 @@ import { getEvents, getEventGallery } from '../lib/api'
 import type { Event } from '@shared/types/events'
 import type { Photo } from '@shared/types/photos'
 
+// Format "HH:MM" 24-hour to "H:MM AM/PM"
+const formatTime = (t: string): string => {
+    const [h, m] = t.split(':').map(Number)
+    const period = h >= 12 ? 'PM' : 'AM'
+    const hour = h % 12 || 12
+    return m === 0 ? `${hour} ${period}` : `${hour}:${String(m).padStart(2, '0')} ${period}`
+}
+
 // Matches the actual GET /api/gallery response shape
 type EventGalleryData = { photos: Photo[] };
 
@@ -232,11 +240,15 @@ export default function Events() {
                                                             </div>
                                                         </div>
 
-                                                        {event.time && (
+                                                        {event.startTime && (
                                                             <div className="flex items-start gap-4 text-brand-text">
                                                                 <Clock size={28} className="text-brand-primary mt-1 flex-shrink-0" strokeWidth={2} />
                                                                 <div>
-                                                                    <p className="text-2xl font-bold text-brand-header">{event.time}</p>
+                                                                    <p className="text-2xl font-bold text-brand-header">
+                                                                        {event.endTime
+                                                                            ? `${formatTime(event.startTime)} – ${formatTime(event.endTime)}`
+                                                                            : formatTime(event.startTime)}
+                                                                    </p>
                                                                     <p className="text-lg text-brand-text/80">All afternoon & evening</p>
                                                                 </div>
                                                             </div>

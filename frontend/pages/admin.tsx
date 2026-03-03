@@ -3,6 +3,7 @@ import { Eye, EyeOff, Trash2, Upload, Save, GripVertical, Loader2, AlertCircle, 
 import {
   getAdminPhotos,
   getAdminEvents,
+  getEvents,
   presignPhotos,
   createPhotos,
   updatePhotos,
@@ -380,8 +381,10 @@ function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
   const [goLiveDates, setGoLiveDates] = useState<Record<string, string>>({})
   const [goLiveTimes, setGoLiveTimes] = useState<Record<string, string>>({})
   const [showAddForm, setShowAddForm] = useState(false)
-  const emptyForm = { title: '', date: '', time: '', location: '', ticketingUrl: '', goLiveDate: '', goLiveTime: '' }
+  const emptyForm = { title: '', date: '', startTime: '', endTime: '', location: '', ticketingUrl: '', goLiveDate: '', goLiveTime: '' }
   const [newEvent, setNewEvent] = useState(emptyForm)
+  const [newEventFile, setNewEventFile] = useState<File | null>(null)
+  const [newEventPreview, setNewEventPreview] = useState<string | null>(null)
   const [savingNew, setSavingNew] = useState(false)
   const [statusMsg, setStatusMsg] = useState('')
   const [error, setError] = useState('')
@@ -418,21 +421,36 @@ function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
         ? new Date(`${newEvent.goLiveDate}T${newEvent.goLiveTime || '00:00'}`).toISOString()
         : undefined
       const id = crypto.randomUUID()
+
+      // Upload flyer first if one was selected
+      let flyerUrl: string | undefined
+      if (newEventFile) {
+        const { uploadUrl, flyerUrl: url } = await presignFlyer(adminKey, id, newEventFile.name, newEventFile.type || 'image/jpeg')
+        const res = await fetch(uploadUrl, { method: 'PUT', body: newEventFile, headers: { 'Content-Type': newEventFile.type || 'image/jpeg' } })
+        if (!res.ok) throw new Error(`S3 upload failed: ${res.status}`)
+        flyerUrl = url
+      }
+
       await createEvent(adminKey, {
         id,
         title: newEvent.title,
         date: newEvent.date,
-        ...(newEvent.time ? { time: newEvent.time } : {}),
+        ...(newEvent.startTime ? { startTime: newEvent.startTime } : {}),
+        ...(newEvent.endTime ? { endTime: newEvent.endTime } : {}),
         ...(newEvent.location ? { location: newEvent.location } : {}),
+        ...(flyerUrl ? { flyerUrl } : {}),
         ...(newEvent.ticketingUrl ? { ticketingUrl: newEvent.ticketingUrl } : {}),
         ...(goLiveAt ? { goLiveAt } : {}),
       })
       setEvents((prev) => [...prev, {
         id, entity: 'EVENT', title: newEvent.title, date: newEvent.date,
-        time: newEvent.time || null, location: newEvent.location || null,
+        startTime: newEvent.startTime || null, endTime: newEvent.endTime || null,
+        location: newEvent.location || null, flyerUrl: flyerUrl ?? null,
         ticketingUrl: newEvent.ticketingUrl || null, goLiveAt: goLiveAt ?? null,
       }])
       setNewEvent(emptyForm)
+      setNewEventFile(null)
+      if (newEventPreview) { URL.revokeObjectURL(newEventPreview); setNewEventPreview(null) }
       setShowAddForm(false)
       setStatusMsg(`Event "${newEvent.title}" created.`)
     } catch (err) {
@@ -497,9 +515,47 @@ function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
               <label className="block text-xs text-gray-400 mb-1">Event Date *</label>
               <input type="date" value={newEvent.date} onChange={(e) => setNewEvent((p) => ({ ...p, date: e.target.value }))} className={inputCls} />
             </div>
+            {/* Flyer upload */}
             <div>
-              <label className="block text-xs text-gray-400 mb-1">Display Time</label>
-              <input type="text" value={newEvent.time} onChange={(e) => setNewEvent((p) => ({ ...p, time: e.target.value }))} placeholder="2:00 PM - 10:00 PM" className={inputCls} />
+              <label className="block text-xs text-gray-400 mb-1">Flyer (optional — can upload later)</label>
+              <div className="flex gap-3 items-start">
+                {newEventPreview ? (
+                  <img src={newEventPreview} alt="Flyer preview" className="w-20 h-24 object-contain rounded-lg bg-gray-800 border border-gray-700 shrink-0" />
+                ) : (
+                  <div className="w-20 h-24 rounded-lg bg-gray-800 border border-gray-700 flex items-center justify-center shrink-0">
+                    <ImageIcon size={24} className="text-gray-600" />
+                  </div>
+                )}
+                <label className="flex-1 flex items-center justify-center gap-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg px-3 py-2 text-sm font-semibold cursor-pointer transition-colors self-center">
+                  <Upload size={14} />
+                  {newEventFile ? 'Replace flyer' : 'Choose flyer'}
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (file) {
+                        if (newEventPreview) URL.revokeObjectURL(newEventPreview)
+                        setNewEventFile(file)
+                        setNewEventPreview(URL.createObjectURL(file))
+                      }
+                      e.target.value = ''
+                    }}
+                  />
+                </label>
+              </div>
+            </div>
+
+            <div className="flex gap-2">
+              <div className="flex-1">
+                <label className="block text-xs text-gray-400 mb-1">Start Time</label>
+                <input type="time" value={newEvent.startTime} onChange={(e) => setNewEvent((p) => ({ ...p, startTime: e.target.value }))} className={inputCls} />
+              </div>
+              <div className="flex-1">
+                <label className="block text-xs text-gray-400 mb-1">End Time</label>
+                <input type="time" value={newEvent.endTime} onChange={(e) => setNewEvent((p) => ({ ...p, endTime: e.target.value }))} className={inputCls} />
+              </div>
             </div>
             <div>
               <label className="block text-xs text-gray-400 mb-1">Location</label>
@@ -525,7 +581,7 @@ function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
                 {savingNew ? <><Loader2 size={14} className="animate-spin" /> Creating…</> : 'Create Event'}
               </button>
               <button
-                onClick={() => { setShowAddForm(false); setNewEvent(emptyForm) }}
+                onClick={() => { setShowAddForm(false); setNewEvent(emptyForm); setNewEventFile(null); if (newEventPreview) { URL.revokeObjectURL(newEventPreview); setNewEventPreview(null) } }}
                 className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors"
               >
                 Cancel
@@ -636,7 +692,7 @@ export default function AdminPage() {
     if (!adminKey) return
     Promise.all([
       getAdminPhotos(adminKey).then((r) => setPhotos(r.photos)),
-      getAdminEvents(adminKey).then(setEvents),
+      getAdminEvents(adminKey).catch(() => getEvents()).then(setEvents),
     ]).catch(console.error)
   }, [adminKey])
 

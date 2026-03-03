@@ -3,7 +3,8 @@ export interface Event {
   entity: string;
   title: string;
   date: string;             // ISO date string, e.g. "2026-04-25"
-  time?: string | null;     // display string, e.g. "2:00 PM - 10:00 PM"
+  startTime?: string | null; // 24-hour "HH:MM", e.g. "14:00"
+  endTime?: string | null;   // 24-hour "HH:MM", e.g. "22:00"
   location?: string | null;
   flyerUrl?: string | null;
   attendees?: string | null;
