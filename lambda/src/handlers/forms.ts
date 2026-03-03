@@ -132,7 +132,7 @@ async function vendorApplication(data: Record<string, unknown>): Promise<APIGate
 
   // Sync to Google Sheet — columns match existing form response sheet
   // Internal review columns (Alumni, C, S, E, I, AFRD, P, T1, T2, R) left blank for team to fill
-  void syncToSheet(SHEETS.vendorApplications, [
+  await syncToSheet(SHEETS.vendorApplications, [
     timestamp(),       // A: Timestamp
     '', '', '', '', '', '', '', '', '', '', // B-K: Internal review columns
     data.businessName as string,    // L: Store Name
@@ -180,7 +180,7 @@ async function volunteerApplication(data: Record<string, unknown>): Promise<APIG
   await ddb.send(new PutCommand({ TableName: TABLES.volunteerApplications, Item: item }));
 
   // Sync to Google Sheet
-  void syncToSheet(SHEETS.volunteerApplications, [
+  await syncToSheet(SHEETS.volunteerApplications, [
     timestamp(),                    // A: Timestamp
     data.firstName as string,       // B: First Name
     data.lastName as string,        // C: Last Name
@@ -230,7 +230,7 @@ async function artistApplication(data: Record<string, unknown>): Promise<APIGate
   await ddb.send(new PutCommand({ TableName: TABLES.artistApplications, Item: item }));
 
   // Sync to Google Sheet — RATING and NOTES left blank for team to fill
-  void syncToSheet(SHEETS.artistApplications, [
+  await syncToSheet(SHEETS.artistApplications, [
     timestamp(),                          // A: Timestamp
     '',                                   // B: RATING (team fills manually)
     data.djName as string,               // C: DJ Name / Alias
