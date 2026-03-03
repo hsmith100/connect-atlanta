@@ -590,13 +590,10 @@ new iam.Role(this, 'GitHubActionsDeployRole', {
 
 ### Phase 0 — Immediate (Before Anything Else)
 
-These actions are independent of the migration and should happen today:
-
-- [ ] **Rotate Cloudinary API secret** — Log into Cloudinary (`beats-on-beltline` account), generate a new API secret. Note: Cloudinary was never actually connected (confirmed via KT session) so this is just cleanup of a committed value, not an active breach risk.
-- [ ] **Rotate DB password** — SSH into the EC2 instance (if you still have access) and run `ALTER USER burger_user WITH PASSWORD 'new-password'`; update `docker-compose.prod.yml`
-- [ ] **Rotate `SECRET_KEY`** — Generate a new 64-char random string; update and redeploy
-- [ ] **Add `.env` and `docker-compose.prod.yml` to `.gitignore`** — Stop the bleeding for future commits
-- [ ] **Audit git history** — Run `git log --all --oneline` and consider whether the repo needs a history rewrite (`git filter-repo`) to purge committed secrets, depending on who has access to the repo
+- [x] **Add `docker-compose.prod.yml` to `.gitignore`** — done, file also deleted from repo
+- [ ] **Rotate Cloudinary API secret** — Cloudinary IS connected and serving live gallery photos from `beats-on-beltline` cloud. Rotate the secret after photos are migrated to S3 in Phase 7.
+- [ ] **Rotate DB password + `SECRET_KEY`** — No SSH access to EC2. Server will be abandoned in Phase 7 post-photo-migration. Low risk (no real user data on it).
+- [ ] **Audit git history** — Consider `git filter-repo` to purge committed secrets if repo access is broad.
 
 ---
 
@@ -608,21 +605,22 @@ These actions are independent of the migration and should happen today:
 - [x] Initialize `infrastructure/` CDK project (TypeScript)
 - [x] Write and deploy `DnsStack` — Route53 hosted zone + ACM cert for `connectevents.co` + `www.connectevents.co`
 - [x] Add ACM DNS validation CNAMEs to Namecheap — cert issued
-- [ ] Set up billing alerts in AWS console
-- [ ] Configure branch protection on `main` in GitHub
+- [x] Set up billing alerts in AWS console ($10/month budget)
+- [x] Configure branch protection on `main` in GitHub
 
 ---
 
 ### Phase 2 — DynamoDB Tables ✅ Complete
 
-- [x] Write and deploy `DynamoStack` — 6 tables:
+- [x] Write and deploy `DynamoStack` — 6 tables (prod + staging):
   - `connect-events` (PK: `id`, GSI: `byDate` on `entity`/`date`)
   - `connect-email-signups` (PK: `id`, GSI: `byStatus` on `status`/`createdAt`)
   - `connect-vendor-applications` (PK: `id`, GSI: `byStatus`)
   - `connect-volunteer-applications` (PK: `id`, GSI: `byStatus`)
   - `connect-artist-applications` (PK: `id`, GSI: `byStatus`)
   - `connect-sponsor-inquiries` (PK: `id`, GSI: `byStatus`)
-- [ ] Seed `connect-events` table with current event data via a one-off script
+- [ ] Seed `connect-events` table — event data saved in `data/seed-events.json`
+- [ ] Update events page to fetch from `/api/events` instead of hardcoded `staticPastEvents` array
 
 ---
 
@@ -635,7 +633,6 @@ These actions are independent of the migration and should happen today:
 - [x] IAM: EventsLambda → read events table; FormsLambda → write all 5 form tables + SES send
 - [ ] Verify routes end-to-end via form submissions on live site
 - [ ] SES domain verification for `noreply@connectevents.co` — handle in Phase 5
-- [ ] Delete `backend/` Python directory — after Phase 5 cutover confirmed stable
 
 ---
 
@@ -647,68 +644,52 @@ These actions are independent of the migration and should happen today:
 - [x] Write and deploy `FrontendStack` — S3 bucket + CloudFront (OAI) + Route53 A records
 - [x] Build frontend: `npm run build` → `out/` directory produced cleanly
 - [x] Sync `out/` to S3, invalidate CloudFront — site live at `https://d34vrmm0q27tmb.cloudfront.net`
+- [x] Full staging environment — `ConnectStagingDynamoStack`, `ConnectStagingBackendStack`, `ConnectStagingFrontendStack` deployed at `https://d36pa7dr4nksf5.cloudfront.net`
+- [x] CI/CD — PR pipeline (quality checks → synth → build → staging deploy) + production pipeline (same checks → prod deploy on merge to main)
 - [ ] Test all forms end-to-end
 - [ ] Set up CloudWatch alarms: Lambda error rate, Lambda p99 duration, CloudFront 5xx rate
 
 ---
 
-### Phase 5 — Cutover
+### Phase 5 — Gallery Migration + Events Wiring
 
-Switch production traffic to the new stack. Route53 A records already point to CloudFront (created in Phase 4) — just needs nameservers switched at Namecheap.
+**Note:** Cutover has been moved to the final step. All work is done at the CloudFront URL first, then DNS is switched once everything is fully production-ready.
+
+- [ ] Seed `connect-events` DynamoDB table from `data/seed-events.json`
+- [ ] Update events page to fetch from `/api/events` (remove hardcoded `staticPastEvents`)
+- [ ] Add S3 media bucket + CloudFront origin to CDK (`MediaStack` or added to `FrontendStack`)
+- [ ] Write thumbnail generator Lambda (`sharp` + S3 `ObjectCreated` trigger)
+- [ ] Write `handlers/gallery.ts` — lists photos from S3 by event folder
+- [ ] Migrate Cloudinary photos to S3 — use Cloudinary API (`beats-on-beltline` cloud, `events/photos/` folder) to export all photos, upload to S3 media bucket
+- [ ] Rewrite `/gallery` frontend page to call new `/api/gallery` Lambda
+- [ ] Verify gallery loads end-to-end at staging CloudFront URL
+- [ ] Rotate Cloudinary API secret after migration confirmed complete
+
+---
+
+### Phase 6 — Repo Decommission ✅ Complete
+
+- [x] Delete `backend/` — Python FastAPI replaced by `lambda/` Node.js handlers
+- [x] Delete `scripts/` — Server Burger `deploy.sh`, `ssh-connect.sh`, `custom_build_config.json`
+- [x] Delete `frontend/Dockerfile` + `frontend/Dockerfile.prod` — frontend is a static S3 export
+- [x] Delete `docker-compose.prod.yml` — contained committed secrets, gitignored and removed
+- [ ] Abandon old EC2 server — can be done after Phase 5 gallery migration confirms photos are in S3. No database dump needed (no real user data on EC2).
+
+`docker-compose.yml` (local dev) retained.
+
+---
+
+### Phase 7 — Cutover (Final Step)
+
+All work is complete and verified at the CloudFront URL. Switch DNS to go live.
 
 - [ ] Verify SES domain: add DKIM/TXT records to Namecheap → verify `noreply@connectevents.co` in SES console
-- [ ] Test all forms end-to-end on CloudFront URL before switching
-- [ ] At Namecheap: update nameservers to Route53 nameservers (output from `ConnectDnsStack`)
+- [ ] Test all forms end-to-end on CloudFront URL
+- [ ] Test gallery end-to-end on CloudFront URL
+- [ ] At Namecheap: update nameservers → Route53 nameservers (output from `ConnectDnsStack`)
 - [ ] Verify `https://connectevents.co` resolves and HTTPS works
 - [ ] Monitor for 24 hours — CloudWatch logs, Lambda error rates, form submissions in DynamoDB
-- [ ] Set up a CloudWatch dashboard with key metrics
-- [ ] Configure SNS alerts for Lambda errors and high latency
-
----
-
-### Phase 6 — Decommission (Week 6)
-
-- [ ] Confirm no traffic is hitting the old EC2 instances (check CloudFront access logs)
-- [ ] No database dump needed — the EC2 database contains no production data
-- [ ] The old EC2 instances can be abandoned — they'll eventually be terminated by whoever controls the Server Burger account
-- [ ] Remove Server Burger-specific config from the repo (`scripts/custom_build_config.json`, `scripts/deploy.sh`, `scripts/ssh-connect.sh`)
-- [ ] Archive or remove `docker-compose.prod.yml` (keep `docker-compose.yml` for local dev)
-- [ ] `frontend/Dockerfile` and `frontend/Dockerfile.prod` can be deleted — the frontend no longer deploys as a container
-- [ ] **Do not remove Google Sheets integration yet** — the admin page (Section 8) must be live and the team must have signed off on their new workflow before `google_sheets_service.py` can be deleted
-- [ ] Delete dead Cloudinary backend code — `backend/services/cloudinary_service.py`, gallery routes in `backend/routes/events.py`, and `cloudinary` from `requirements.txt`. Cloudinary was never connected (confirmed via KT session) so there is no active integration to preserve.
-
----
-
-### Phase 7 — Node.js Lambda Rewrite (Post-Launch)
-
-Build a real S3-backed photo gallery from scratch. Cloudinary was never connected — this is a new feature, not a migration.
-
-**Architecture:**
-
-| Component | Detail |
-|-----------|--------|
-| Storage | S3 media bucket (separate from frontend static bucket) |
-| Delivery | CloudFront (add media bucket as a second origin, path `/events/*`) |
-| Listing API | `s3.list_objects_v2(Prefix=...)` in a new `handlers/gallery.ts` Lambda |
-| Thumbnails | Pre-generated on upload via S3 `ObjectCreated` trigger + `sharp` |
-
-**Thumbnail strategy:**
-```
-s3://media-bucket/
-  events/sept-2025/photos/img001.jpg
-  events/sept-2025/photos/thumbnails/img001.jpg   ← auto-generated on upload
-```
-
-**DynamoDB:** Add `mediaFolder` attribute to event items (replaces the old `cloudinary_folder` concept).
-
-**Checklist:**
-- [ ] Add S3 media bucket + CloudFront origin to CDK
-- [ ] Write thumbnail generator Lambda (`sharp` + S3 `ObjectCreated` trigger)
-- [ ] Write `handlers/gallery.ts` using `@aws-sdk/client-s3`
-- [ ] Upload event photos from Google Drive to S3
-- [ ] Rewrite `/gallery` frontend page to call the new API
-- [ ] Update `next.config.js` — remove `res.cloudinary.com`, add CloudFront media domain
-- [ ] Verify gallery loads end-to-end
+- [ ] Set up CloudWatch dashboard + SNS alerts for Lambda errors and high latency
 
 ---
 
@@ -716,16 +697,13 @@ s3://media-bucket/
 
 Before pointing DNS at the new stack, verify:
 
-- [ ] All 10 API routes return expected responses via the CloudFront URL
-- [ ] All 5 form types submit successfully and appear in both the database and Google Sheets (Sheets sync is still the team's primary workflow at cutover time — the admin page replaces it later, not during cutover)
-- [ ] Gallery page shows graceful empty state (real gallery built in Phase 7 post-launch)
-- [ ] Contact form sends an email notification
+- [ ] All API routes return expected responses via the CloudFront URL
+- [ ] All 5 form types submit successfully and appear in DynamoDB
+- [ ] Gallery page loads photos from S3
+- [ ] Contact form sends an email notification (SES verified)
 - [ ] HTTPS certificate is valid (no browser warnings)
-- [ ] CORS is correctly configured (frontend domain → API Gateway)
 - [ ] CloudWatch logs show no errors during smoke testing
-- [ ] Aurora automated backup is confirmed enabled
-- [ ] Secrets are only in Secrets Manager — no plaintext credentials anywhere in the codebase or environment variables
-- [ ] `.env` and `docker-compose.prod.yml` are in `.gitignore`
+- [ ] `docker-compose.prod.yml` removed from repo and gitignored
 
 ---
 
