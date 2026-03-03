@@ -135,6 +135,7 @@ export class BackendStack extends cdk.Stack {
       timeout: cdk.Duration.seconds(30),
       environment: {
         PHOTOS_TABLE: dynamoStack.photosTable.tableName,
+        EVENTS_TABLE: dynamoStack.eventsTable.tableName,
         MEDIA_BUCKET: mediaBucket.bucketName,
         CLOUDFRONT_DOMAIN: mediaDistribution.distributionDomainName,
         ADMIN_SECRET_ARN: adminKeySecret.secretArn,
@@ -142,6 +143,8 @@ export class BackendStack extends cdk.Stack {
     });
 
     dynamoStack.photosTable.grantReadWriteData(photosLambda);
+    // Write access to events table — admin can update flyerUrl on event records
+    dynamoStack.eventsTable.grantWriteData(photosLambda);
     mediaBucket.grantReadWrite(photosLambda);
     adminKeySecret.grantRead(photosLambda);
 
@@ -171,6 +174,8 @@ export class BackendStack extends cdk.Stack {
     api.addRoutes({ path: '/api/gallery', methods: [apigateway.HttpMethod.GET], integration: photosIntegration });
     api.addRoutes({ path: '/api/admin/photos/presign', methods: [apigateway.HttpMethod.POST], integration: photosIntegration });
     api.addRoutes({ path: '/api/admin/photos', methods: [apigateway.HttpMethod.GET, apigateway.HttpMethod.POST, apigateway.HttpMethod.PATCH, apigateway.HttpMethod.DELETE], integration: photosIntegration });
+    api.addRoutes({ path: '/api/admin/flyers/presign', methods: [apigateway.HttpMethod.POST], integration: photosIntegration });
+    api.addRoutes({ path: '/api/admin/events/{id}', methods: [apigateway.HttpMethod.PATCH], integration: photosIntegration });
 
     this.apiUrl = api.url!;
     // Strip "https://" and trailing "/" to get bare hostname for CloudFront HttpOrigin

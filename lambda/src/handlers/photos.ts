@@ -22,6 +22,7 @@ const s3 = new S3Client({});
 const sm = new SecretsManagerClient({});
 
 const PHOTOS_TABLE = process.env.PHOTOS_TABLE!;
+const EVENTS_TABLE = process.env.EVENTS_TABLE!;
 const MEDIA_BUCKET = process.env.MEDIA_BUCKET!;
 const CLOUDFRONT_DOMAIN = process.env.CLOUDFRONT_DOMAIN!;
 const ADMIN_SECRET_ARN = process.env.ADMIN_SECRET_ARN!;
@@ -217,6 +218,52 @@ async function deletePhotos(event: APIGatewayProxyEventV2): Promise<APIGatewayPr
   return ok({ deleted: ids.length });
 }
 
+// ── Admin: flyer management ───────────────────────────────────────────────────
+
+async function presignFlyer(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
+  const authErr = await requireAdmin(event);
+  if (authErr) return authErr;
+
+  const { eventId, filename, contentType }: { eventId: string; filename: string; contentType: string } =
+    JSON.parse(event.body ?? '{}');
+
+  if (!eventId || !filename || !contentType) {
+    return errResponse(400, 'eventId, filename, and contentType are required');
+  }
+
+  const ext = filename.split('.').pop()?.toLowerCase() ?? 'jpg';
+  // Key uses eventId so re-uploading replaces the previous flyer
+  const flyerKey = `flyers/${eventId}.${ext}`;
+
+  const uploadUrl = await getSignedUrl(s3, new PutObjectCommand({
+    Bucket: MEDIA_BUCKET,
+    Key: flyerKey,
+    ContentType: contentType,
+  }), { expiresIn: 300 });
+
+  return ok({ uploadUrl, flyerUrl: mediaUrl(flyerKey) });
+}
+
+async function updateEventFlyer(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
+  const authErr = await requireAdmin(event);
+  if (authErr) return authErr;
+
+  const id = event.pathParameters?.id;
+  if (!id) return errResponse(400, 'Missing event id');
+
+  const { flyerUrl }: { flyerUrl: string } = JSON.parse(event.body ?? '{}');
+  if (!flyerUrl) return errResponse(400, 'flyerUrl is required');
+
+  await ddb.send(new UpdateCommand({
+    TableName: EVENTS_TABLE,
+    Key: { id },
+    UpdateExpression: 'SET flyerUrl = :url',
+    ExpressionAttributeValues: { ':url': flyerUrl },
+  }));
+
+  return ok({ updated: true });
+}
+
 // ── Router ───────────────────────────────────────────────────────────────────
 
 export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> => {
@@ -230,6 +277,9 @@ export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGateway
     if (method === 'POST' && path === '/api/admin/photos') return createPhotos(event);
     if (method === 'PATCH' && path === '/api/admin/photos') return updatePhotos(event);
     if (method === 'DELETE' && path === '/api/admin/photos') return deletePhotos(event);
+    if (method === 'POST' && path === '/api/admin/flyers/presign') return presignFlyer(event);
+    const flyerMatch = path.match(/^\/api\/admin\/events\/([^/]+)$/);
+    if (method === 'PATCH' && flyerMatch) return updateEventFlyer(event);
 
     return errResponse(404, 'Not found');
   } catch (e) {

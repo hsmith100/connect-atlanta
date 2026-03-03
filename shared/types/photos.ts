@@ -36,3 +36,8 @@ export interface PhotoUpdatePayload {
   visible?: boolean;
   sortOrder?: number;
 }
+
+export interface FlyerPresignResponse {
+  uploadUrl: string;
+  flyerUrl: string;
+}

@@ -7,6 +7,7 @@ import type {
   PresignResponse,
   PhotoCreatePayload,
   PhotoUpdatePayload,
+  FlyerPresignResponse,
 } from '@shared/types/photos';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
@@ -90,6 +91,29 @@ export async function deletePhotos(adminKey: string, ids: string[]): Promise<voi
     method: 'DELETE',
     headers: adminHeaders(adminKey),
     body: JSON.stringify({ ids }),
+  });
+}
+
+// ── Admin flyers ──────────────────────────────────────────────────────────────
+
+export async function presignFlyer(
+  adminKey: string,
+  eventId: string,
+  filename: string,
+  contentType: string,
+): Promise<FlyerPresignResponse> {
+  return fetchAPI<FlyerPresignResponse>('/api/admin/flyers/presign', {
+    method: 'POST',
+    headers: adminHeaders(adminKey),
+    body: JSON.stringify({ eventId, filename, contentType }),
+  });
+}
+
+export async function updateEventFlyer(adminKey: string, eventId: string, flyerUrl: string): Promise<void> {
+  await fetchAPI<{ updated: boolean }>(`/api/admin/events/${eventId}`, {
+    method: 'PATCH',
+    headers: adminHeaders(adminKey),
+    body: JSON.stringify({ flyerUrl }),
   });
 }
 
