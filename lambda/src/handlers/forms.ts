@@ -199,7 +199,7 @@ async function volunteerApplication(data: Record<string, unknown>): Promise<APIG
 }
 
 async function artistApplication(data: Record<string, unknown>): Promise<APIGatewayProxyResultV2> {
-  const required = ['email', 'fullLegalName', 'djName', 'city', 'phone', 'instagramLink', 'contactMethod', 'artistBio', 'b2bFavorite', 'mainGenre', 'subGenre', 'livePerformanceLinks', 'soundcloudLink', 'spotifyLink', 'rekordboxFamiliar', 'promoKitLinks'];
+  const required = ['email', 'fullLegalName', 'djName', 'city', 'phone', 'instagramLink', 'contactMethod', 'artistBio', 'b2bFavorite', 'mainGenre', 'subGenre', 'livePerformanceLinks', 'soundcloudLink', 'spotifyLink', 'rekordboxFamiliar'];
   for (const field of required) {
     if (!data[field]) return errResponse(400, `${field} is required`);
   }
@@ -223,7 +223,7 @@ async function artistApplication(data: Record<string, unknown>): Promise<APIGate
     soundcloudLink: data.soundcloudLink,
     spotifyLink: data.spotifyLink,
     rekordboxFamiliar: data.rekordboxFamiliar,
-    promoKitLinks: data.promoKitLinks,
+    promoKitLinks: data.promoKitLinks ?? null,
     additionalInfo: data.additionalInfo ?? null,
   };
 
