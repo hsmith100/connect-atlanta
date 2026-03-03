@@ -8,7 +8,7 @@ export default function CookiePolicy() {
       <SEO 
         title="Cookie Policy"
         description="Learn about how Connect Events uses cookies and similar technologies on our website."
-        canonical="https://connectevents.co/cookie-policy"
+        canonicalUrl="https://connectevents.co/cookie-policy"
       />
       
       <Header />

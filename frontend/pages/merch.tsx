@@ -9,7 +9,7 @@ export default function Merch() {
       <SEO
         title="Merch | Beats on the Beltline"
         description="Shop official Beats on the Beltline merchandise. Festival apparel, accessories, and more."
-        canonical="https://yourfestival.com/merch"
+        canonicalUrl="https://yourfestival.com/merch"
       />
       
       <Header />

@@ -5,6 +5,7 @@ import { NodejsFunction } from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as apigateway from 'aws-cdk-lib/aws-apigatewayv2';
 import { HttpLambdaIntegration } from 'aws-cdk-lib/aws-apigatewayv2-integrations';
 import * as iam from 'aws-cdk-lib/aws-iam';
+import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
 import { Construct } from 'constructs';
 import { DynamoStack } from './dynamo-stack';
 
@@ -21,6 +22,10 @@ export class BackendStack extends cdk.Stack {
 
     const { dynamoStack } = props;
     const lambdaDir = path.join(__dirname, '../../../lambda/src/handlers');
+
+    // Google service account secret — created once via CLI, referenced here by name
+    const googleSecret = secretsmanager.Secret.fromSecretNameV2(
+      this, 'GoogleServiceAccount', 'connect/google-service-account');
 
     // ── Events Lambda ─────────────────────────────────────────────────────────
     const eventsLambda = new NodejsFunction(this, 'EventsLambda', {
@@ -54,6 +59,11 @@ export class BackendStack extends cdk.Stack {
         // Email addresses — not secrets, just config
         CONTACT_EMAIL: 'info@connectevents.co',
         FROM_EMAIL: 'noreply@connectevents.co',
+        // Google Sheets sync
+        GOOGLE_SA_SECRET_ARN: googleSecret.secretArn,
+        VENDOR_SHEET_ID: '1SUbvzglTqd6iFmAe69XRB__0APhSKfRUHl1zpHUGs-A',
+        ARTIST_SHEET_ID: '1EF3DzG4OjayDjsZtWNezsPh6EwDKKMJWKIAr67LtGls',
+        VOLUNTEER_SHEET_ID: '1-V9HV0AJWqdz0yqIrNQuC2quzGGBFGsRGW5hjfbqZCA',
       },
     });
 
@@ -68,6 +78,9 @@ export class BackendStack extends cdk.Stack {
       actions: ['ses:SendEmail', 'ses:SendRawEmail'],
       resources: ['*'],
     }));
+
+    // Secrets Manager — read Google service account credentials
+    googleSecret.grantRead(formsLambda);
 
     // ── HTTP API Gateway ──────────────────────────────────────────────────────
     const api = new apigateway.HttpApi(this, 'Api', {

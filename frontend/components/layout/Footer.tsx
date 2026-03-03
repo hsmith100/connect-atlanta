@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="section-container">
         <div className="flex flex-col items-center space-y-6">
           {/* Logo */}
-          <img 
+          <img
             src="/images/ConnectBig-White.svg"
             alt="Connect"
             width="150"
@@ -15,8 +15,8 @@ export default function Footer() {
 
           {/* Social Media Links */}
           <div className="flex gap-4 justify-center mb-6">
-            <a 
-              href="https://www.instagram.com/connect__atlanta" 
+            <a
+              href="https://www.instagram.com/connect__atlanta"
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-circle btn-outline border-white hover:bg-white hover:text-brand-header text-white"
@@ -28,8 +28,8 @@ export default function Footer() {
                 <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
               </svg>
             </a>
-            <a 
-              href="https://www.facebook.com/profile.php?id=61573559046886" 
+            <a
+              href="https://www.facebook.com/profile.php?id=61573559046886"
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-circle btn-outline border-white hover:bg-white hover:text-brand-header text-white"
@@ -39,8 +39,8 @@ export default function Footer() {
                 <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path>
               </svg>
             </a>
-            <a 
-              href="https://www.youtube.com/@Connect_Atlanta" 
+            <a
+              href="https://www.youtube.com/@Connect_Atlanta"
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-circle btn-outline border-white hover:bg-white hover:text-brand-header text-white"
@@ -51,8 +51,8 @@ export default function Footer() {
                 <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon>
               </svg>
             </a>
-            <a 
-              href="https://www.tiktok.com/@connect__atlanta" 
+            <a
+              href="https://www.tiktok.com/@connect__atlanta"
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-circle btn-outline border-white hover:bg-white hover:text-brand-header text-white"
@@ -66,26 +66,26 @@ export default function Footer() {
 
           {/* Footer Links */}
           <div className="flex flex-wrap justify-center gap-6 text-sm">
-            <Link 
-              href="/privacy-policy" 
+            <Link
+              href="/privacy-policy"
               className="hover:text-brand-accent transition-colors"
             >
               Privacy Policy
             </Link>
-            <Link 
-              href="/terms-conditions" 
+            <Link
+              href="/terms-conditions"
               className="hover:text-brand-accent transition-colors"
             >
               Terms & Conditions
             </Link>
-            <Link 
-              href="/cookie-policy" 
+            <Link
+              href="/cookie-policy"
               className="hover:text-brand-accent transition-colors"
             >
               Cookie Policy
             </Link>
-            <Link 
-              href="/contact" 
+            <Link
+              href="/contact"
               className="hover:text-brand-accent transition-colors"
             >
               Contact
@@ -101,4 +101,3 @@ export default function Footer() {
     </footer>
   )
 }
-

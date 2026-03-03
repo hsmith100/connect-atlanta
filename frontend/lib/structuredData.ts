@@ -71,7 +71,17 @@ export const eventSeriesSchema = {
   }
 }
 
-export function createEventSchema(event) {
+interface StructuredDataEvent {
+  title: string;
+  date: string;
+  flyerUrl?: string | null;
+  artists?: string | null;
+  description?: string;
+  endDate?: string;
+  location?: string;
+}
+
+export function createEventSchema(event: StructuredDataEvent): object {
   return {
     "@context": "https://schema.org",
     "@type": "MusicEvent",
@@ -117,7 +127,12 @@ export function createEventSchema(event) {
   }
 }
 
-export const breadcrumbSchema = (items) => ({
+interface BreadcrumbItem {
+  name: string;
+  url: string;
+}
+
+export const breadcrumbSchema = (items: BreadcrumbItem[]): object => ({
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   "itemListElement": items.map((item, index) => ({

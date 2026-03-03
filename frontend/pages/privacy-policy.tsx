@@ -8,7 +8,7 @@ export default function PrivacyPolicy() {
       <SEO 
         title="Privacy Policy"
         description="Connect Events privacy policy - How we collect, use, and protect your personal information."
-        canonical="https://connectevents.co/privacy-policy"
+        canonicalUrl="https://connectevents.co/privacy-policy"
       />
       
       <Header />

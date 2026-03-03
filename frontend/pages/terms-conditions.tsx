@@ -8,7 +8,7 @@ export default function TermsConditions() {
       <SEO 
         title="Terms & Conditions"
         description="Terms and conditions for using the Connect Events website and attending Beats on the Beltline events."
-        canonical="https://connectevents.co/terms-conditions"
+        canonicalUrl="https://connectevents.co/terms-conditions"
       />
       
       <Header />

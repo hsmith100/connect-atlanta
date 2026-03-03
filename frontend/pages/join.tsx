@@ -6,17 +6,63 @@ import Image from 'next/image'
 import { Music, Users, Mail, User, Phone, MapPin, Link as LinkIcon, MessageSquare, Store, Headphones } from 'lucide-react'
 import * as gtag from '../lib/gtag'
 
+interface VolunteerFormData {
+  firstName: string
+  lastName: string
+  email: string
+  phone: string
+  experience: string
+  skills: string[]
+}
+
+interface VendorFormData {
+  businessName: string
+  contactName: string
+  phone: string
+  email: string
+  businessType: string
+  description: string
+  websiteSocial: string
+  pricePoint: string
+  hasInsurance: string
+  foodPermit: string
+  setup: string
+  additionalComments: string
+}
+
+interface ArtistFormData {
+  email: string
+  fullLegalName: string
+  djName: string
+  city: string
+  phone: string
+  instagramLink: string
+  contactMethod: string
+  artistBio: string
+  b2bFavorite: string
+  mainGenre: string
+  subGenre: string
+  otherSubGenre: string
+  otherGenreText: string
+  livePerformanceLinks: string
+  soundcloudLink: string
+  spotifyLink: string
+  rekordboxFamiliar: string
+  promoKitLinks: string
+  additionalInfo: string
+}
+
 export default function JoinUs() {
-  const [activeTab, setActiveTab] = useState('volunteer') // 'volunteer', 'vendor', or 'dj'
+  const [activeTab, setActiveTab] = useState<'volunteer' | 'vendor' | 'dj'>('volunteer')
   const [isHeaderVisible, setIsHeaderVisible] = useState(true)
-  
+
   // Form refs for scrolling
-  const volunteerFormRef = useRef(null)
-  const vendorFormRef = useRef(null)
-  const artistFormRef = useRef(null)
+  const volunteerFormRef = useRef<HTMLFormElement>(null)
+  const vendorFormRef = useRef<HTMLFormElement>(null)
+  const artistFormRef = useRef<HTMLFormElement>(null)
 
   // Volunteer form state
-  const [volunteerData, setVolunteerData] = useState({
+  const [volunteerData, setVolunteerData] = useState<VolunteerFormData>({
     firstName: '',
     lastName: '',
     email: '',
@@ -25,10 +71,10 @@ export default function JoinUs() {
     skills: []
   })
   const [volunteerSubmitting, setVolunteerSubmitting] = useState(false)
-  const [volunteerStatus, setVolunteerStatus] = useState(null)
+  const [volunteerStatus, setVolunteerStatus] = useState<'success' | 'error' | null>(null)
 
   // Vendor form state
-  const [vendorData, setVendorData] = useState({
+  const [vendorData, setVendorData] = useState<VendorFormData>({
     businessName: '',
     contactName: '',
     phone: '',
@@ -43,10 +89,10 @@ export default function JoinUs() {
     additionalComments: ''
   })
   const [vendorSubmitting, setVendorSubmitting] = useState(false)
-  const [vendorStatus, setVendorStatus] = useState(null)
+  const [vendorStatus, setVendorStatus] = useState<'success' | 'error' | null>(null)
 
   // Artist/DJ form state
-  const [artistData, setArtistData] = useState({
+  const [artistData, setArtistData] = useState<ArtistFormData>({
     email: '',
     fullLegalName: '',
     djName: '',
@@ -68,7 +114,7 @@ export default function JoinUs() {
     additionalInfo: ''
   })
   const [artistSubmitting, setArtistSubmitting] = useState(false)
-  const [artistStatus, setArtistStatus] = useState(null)
+  const [artistStatus, setArtistStatus] = useState<'success' | 'error' | null>(null)
 
   // Track scroll direction to sync with header visibility
   useEffect(() => {
@@ -92,7 +138,7 @@ export default function JoinUs() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
-  const scrollToForm = (tab) => {
+  const scrollToForm = (tab: 'volunteer' | 'vendor' | 'dj'): void => {
     setActiveTab(tab)
     // Wait for state to update and scroll to form
     setTimeout(() => {
@@ -104,19 +150,20 @@ export default function JoinUs() {
   }
 
   // Volunteer form handlers
-  const handleVolunteerChange = (e) => {
-    const { name, value, type, checked } = e.target
+  const handleVolunteerChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
+    const { name, value } = e.target
+    const { type, checked } = e.target as HTMLInputElement
     if (type === 'checkbox' && name === 'skills') {
       const updatedSkills = checked
         ? [...volunteerData.skills, value]
         : volunteerData.skills.filter(skill => skill !== value)
       setVolunteerData(prev => ({ ...prev, skills: updatedSkills }))
     } else {
-      setVolunteerData(prev => ({ ...prev, [name]: value }))
+      setVolunteerData(prev => ({ ...prev, [name]: value } as VolunteerFormData))
     }
   }
 
-  const handleVolunteerSubmit = async (e) => {
+  const handleVolunteerSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault()
     setVolunteerSubmitting(true)
     setVolunteerStatus(null)
@@ -164,12 +211,12 @@ export default function JoinUs() {
   }
 
   // Vendor form handlers
-  const handleVendorChange = (e) => {
+  const handleVendorChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>): void => {
     const { name, value } = e.target
-    setVendorData(prev => ({ ...prev, [name]: value }))
+    setVendorData(prev => ({ ...prev, [name]: value } as VendorFormData))
   }
 
-  const handleVendorSubmit = async (e) => {
+  const handleVendorSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault()
     setVendorSubmitting(true)
     setVendorStatus(null)
@@ -223,12 +270,12 @@ export default function JoinUs() {
   }
 
   // Artist/DJ form handlers
-  const handleArtistChange = (e) => {
+  const handleArtistChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>): void => {
     const { name, value } = e.target
-    setArtistData(prev => ({ ...prev, [name]: value }))
+    setArtistData(prev => ({ ...prev, [name]: value } as ArtistFormData))
   }
 
-  const handleArtistSubmit = async (e) => {
+  const handleArtistSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault()
     setArtistSubmitting(true)
     setArtistStatus(null)
@@ -267,7 +314,7 @@ export default function JoinUs() {
         if (artistFormRef.current) {
           artistFormRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
         }
-        setArtistData({ 
+        setArtistData({
           email: '',
           fullLegalName: '',
           djName: '',
@@ -313,7 +360,7 @@ export default function JoinUs() {
       <SEO
         title="Join Us | Beats on the Beltline"
         description="Join Beats on the Beltline as a volunteer, vendor, or DJ. Be part of Atlanta's premier free outdoor electronic music experience."
-        canonical="https://yourfestival.com/join"
+        canonicalUrl="https://yourfestival.com/join"
       />
 
       <Header />
@@ -769,7 +816,7 @@ export default function JoinUs() {
                       onChange={handleVendorChange}
                       className="textarea textarea-bordered focus:textarea-primary w-full"
                       placeholder="Website, Instagram, Facebook, etc."
-                      rows="3"
+                      rows={3}
                       disabled={vendorSubmitting}
                       required
                     ></textarea>
@@ -910,7 +957,7 @@ export default function JoinUs() {
                       onChange={handleVendorChange}
                       className="textarea textarea-bordered focus:textarea-primary w-full"
                       placeholder="Any other information you'd like to share..."
-                      rows="4"
+                      rows={4}
                       disabled={vendorSubmitting}
                     ></textarea>
                   </div>
@@ -1155,7 +1202,7 @@ export default function JoinUs() {
                       value={artistData.artistBio}
                       onChange={handleArtistChange}
                       placeholder="Your answer"
-                      rows="4"
+                      rows={4}
                       className="textarea textarea-bordered w-full focus:textarea-primary"
                       disabled={artistSubmitting}
                     />
@@ -1173,7 +1220,7 @@ export default function JoinUs() {
                       value={artistData.b2bFavorite}
                       onChange={handleArtistChange}
                       placeholder="Your answer"
-                      rows="3"
+                      rows={3}
                       className="textarea textarea-bordered w-full focus:textarea-primary"
                       disabled={artistSubmitting}
                     />
@@ -1322,7 +1369,7 @@ export default function JoinUs() {
                       value={artistData.otherGenreText}
                       onChange={handleArtistChange}
                       placeholder="Your answer"
-                      rows="3"
+                      rows={3}
                       className="textarea textarea-bordered w-full focus:textarea-primary"
                       disabled={artistSubmitting}
                     />
@@ -1341,7 +1388,7 @@ export default function JoinUs() {
                       value={artistData.livePerformanceLinks}
                       onChange={handleArtistChange}
                       placeholder="Your answer"
-                      rows="3"
+                      rows={3}
                       className="textarea textarea-bordered w-full focus:textarea-primary"
                       disabled={artistSubmitting}
                       required
@@ -1442,7 +1489,7 @@ export default function JoinUs() {
                       value={artistData.promoKitLinks}
                       onChange={handleArtistChange}
                       placeholder="Your answer"
-                      rows="3"
+                      rows={3}
                       className="textarea textarea-bordered w-full focus:textarea-primary"
                       disabled={artistSubmitting}
                     />
@@ -1460,7 +1507,7 @@ export default function JoinUs() {
                       value={artistData.additionalInfo}
                       onChange={handleArtistChange}
                       placeholder="Your answer"
-                      rows="4"
+                      rows={4}
                       className="textarea textarea-bordered w-full focus:textarea-primary"
                       disabled={artistSubmitting}
                     />

@@ -5,40 +5,54 @@ import Footer from '../components/layout/Footer'
 import { Mail, MapPin, MessageSquare, User, Send, Phone } from 'lucide-react'
 import * as gtag from '../lib/gtag'
 
+interface ContactFormData {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}
+
+interface SignupFormData {
+  name: string;
+  email: string;
+  phone: string;
+  marketingConsent: boolean;
+}
+
 export default function Contact() {
-  const formRef = useRef(null)
-  const contactFormRef = useRef(null)
-  
+  const formRef = useRef<HTMLFormElement>(null)
+  const contactFormRef = useRef<HTMLDivElement>(null)
+
   // Contact form state
-  const [contactData, setContactData] = useState({
+  const [contactData, setContactData] = useState<ContactFormData>({
     name: '',
     email: '',
     subject: '',
     message: ''
   })
   const [isContactSubmitting, setIsContactSubmitting] = useState(false)
-  const [contactSubmitStatus, setContactSubmitStatus] = useState(null)
-  
+  const [contactSubmitStatus, setContactSubmitStatus] = useState<'success' | 'error' | null>(null)
+
   // Signup form state
-  const [signupData, setSignupData] = useState({
+  const [signupData, setSignupData] = useState<SignupFormData>({
     name: '',
     email: '',
     phone: '',
     marketingConsent: false
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitStatus, setSubmitStatus] = useState(null)
+  const [submitStatus, setSubmitStatus] = useState<'success' | 'error' | null>(null)
 
   // Contact form handlers
-  const handleContactInputChange = (e) => {
+  const handleContactInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setContactData(prev => ({
       ...prev,
       [name]: value
-    }))
+    } as ContactFormData))
   }
 
-  const handleContactSubmit = async (e) => {
+  const handleContactSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsContactSubmitting(true)
     setContactSubmitStatus(null)
@@ -51,8 +65,6 @@ export default function Contact() {
         },
         body: JSON.stringify(contactData)
       })
-
-      const data = await response.json()
 
       if (response.ok) {
         setContactSubmitStatus('success')
@@ -87,15 +99,15 @@ export default function Contact() {
   }
 
   // Signup form handlers
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target
     setSignupData(prev => ({
       ...prev,
       [name]: type === 'checkbox' ? checked : value
-    }))
+    } as SignupFormData))
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setIsSubmitting(true)
     setSubmitStatus(null)
@@ -114,8 +126,6 @@ export default function Contact() {
           source: 'contact_page'
         })
       })
-
-      const data = await response.json()
 
       if (response.ok) {
         setSubmitStatus('success')
@@ -154,7 +164,7 @@ export default function Contact() {
       <SEO
         title="Contact Us | Beats on the Beltline"
         description="Get in touch with Beats on the Beltline. We'd love to hear from you about partnerships, performances, or general inquiries."
-        canonical="https://yourfestival.com/contact"
+        canonicalUrl="https://yourfestival.com/contact"
       />
 
       <Header />
@@ -286,8 +296,8 @@ export default function Contact() {
 
                     {/* Submit Button */}
                     <div className="pt-4">
-                      <button 
-                        type="submit" 
+                      <button
+                        type="submit"
                         className="btn-festival btn-lg w-full disabled:opacity-50 disabled:cursor-not-allowed"
                         disabled={isContactSubmitting}
                       >
@@ -574,4 +584,3 @@ export default function Contact() {
     </>
   )
 }
-
