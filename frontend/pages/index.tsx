@@ -5,8 +5,12 @@ import Header from '../components/layout/Header'
 import Footer from '../components/layout/Footer'
 import ConnectModal from '../components/ConnectModal'
 import Image from 'next/image'
-import { Music, Headphones, Users, Camera } from 'lucide-react'
+import { Music, Headphones, Users, Camera, Calendar, Loader2 } from 'lucide-react'
 import { organizationSchema, websiteSchema, eventSeriesSchema, faqSchema } from '../lib/structuredData'
+import { getEvents } from '../lib/api'
+import type { Event } from '@shared/types/events'
+import UpcomingEventCard from '../components/events/UpcomingEventCard'
+import EventFlyerCard from '../components/events/EventFlyerCard'
 
 interface SignupFormData {
   name: string;
@@ -20,6 +24,32 @@ export default function Home() {
   const [cardsVisible, setCardsVisible] = useState(false)
   const cardsRef = useRef<HTMLDivElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
+
+  // Events state
+  const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([])
+  const [pastEvents, setPastEvents] = useState<Event[]>([])
+  const [eventsLoading, setEventsLoading] = useState(true)
+
+  useEffect(() => {
+    async function loadEvents() {
+      try {
+        const events = await getEvents()
+        const today = new Date().toISOString().slice(0, 10)
+        setUpcomingEvents(events.filter((e) => e.date >= today))
+        setPastEvents(
+          events
+            .filter((e) => e.date < today)
+            .sort((a, b) => b.date.localeCompare(a.date))
+            .slice(0, 4)
+        )
+      } catch (err) {
+        console.error('Failed to load events:', err)
+      } finally {
+        setEventsLoading(false)
+      }
+    }
+    loadEvents()
+  }, [])
 
   // Form state for bottom signup form
   const [formData, setFormData] = useState<SignupFormData>({
@@ -397,37 +427,30 @@ export default function Home() {
               Upcoming Events
             </h2>
 
-            <div className="max-w-md mx-auto">
-              <div className="card-bg-white border-2 border-brand-neutral-100 rounded-2xl overflow-hidden hover:border-brand-primary hover:shadow-xl transition-all">
-                <div className="relative aspect-auto bg-brand-bg-cream">
-                  <Image
-                    src="/images/events/april-2026.webp"
-                    alt="Beats on the Beltline - April 2026"
-                    width={1080}
-                    height={1350}
-                    className="object-contain w-full h-full"
-                    priority
-                  />
-                  <span className="bg-brand-primary text-white absolute top-4 right-4 font-semibold px-6 py-2 rounded-full">FREE</span>
-                </div>
-                <div className="p-8">
-                  <h3 className="text-2xl font-bold text-brand-header mb-4 text-center">
-                    Beats on the Beltline
-                  </h3>
-                  <p className="text-brand-text mb-6 text-center">
-                    Atlanta's premier free outdoor electronic music experience is April 25th!
-                  </p>
-                  <a
-                    href="https://bit.ly/botbapril"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="btn-festival w-full block text-center"
-                  >
-                    Attend Next Event
-                  </a>
-                </div>
+            {eventsLoading ? (
+              <div className="flex justify-center items-center py-12">
+                <Loader2 className="animate-spin text-brand-primary" size={40} />
               </div>
-            </div>
+            ) : upcomingEvents.length === 0 ? (
+              <div className="max-w-3xl mx-auto text-center py-8">
+                <div className="mb-6 text-brand-primary/40 flex justify-center">
+                  <Calendar size={72} strokeWidth={1.5} />
+                </div>
+                <p className="text-xl text-brand-header/60 mb-6">New events coming soon!</p>
+                <button
+                  onClick={() => setIsModalOpen(true)}
+                  className="bg-brand-header text-white hover:bg-brand-primary hover:text-brand-header font-bold px-10 py-3 rounded-lg text-lg uppercase transition-all shadow-xl hover:shadow-2xl transform hover:scale-105"
+                >
+                  Join Our Mailing List
+                </button>
+              </div>
+            ) : (
+              <div className="max-w-5xl mx-auto space-y-8">
+                {upcomingEvents.map((event) => (
+                  <UpcomingEventCard key={event.id} event={event} />
+                ))}
+              </div>
+            )}
           </div>
         </section>
 
@@ -438,31 +461,20 @@ export default function Home() {
               PAST EVENTS
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {/* Past Event Cards - Real Flyers (displayed newest to oldest) */}
-              {[
-                { image: '/images/events/september-2025.png', alt: 'Beats on the Beltline - September 2025' },
-                { image: '/images/events/sept-2025-after.png', alt: 'Beats on the Beltline - September Afterparty' },
-                { image: '/images/events/sept-2025-after2.png', alt: 'Beats on the Beltline - September Afterparty 2' },
-                { image: '/images/events/july-2025.png', alt: 'Beats on the Beltline - July 2025' },
-                { image: '/images/events/july-2025-after.png', alt: 'Beats on the Beltline - July Afterparty' },
-                { image: '/images/events/may-2025.png', alt: 'Beats on the Beltline - May 2025' },
-                { image: '/images/events/may-2025-after.jpg', alt: 'Beats on the Beltline - May Afterparty' },
-                { image: '/images/events/april-2025.png', alt: 'Beats on the Beltline - April 2025' }
-              ].map((event, idx) => (
-                <div key={idx} className="card-festival">
-                  <div className="relative aspect-auto rounded-xl overflow-hidden">
-                    <Image
-                      src={event.image}
-                      alt={event.alt}
-                      width={1080}
-                      height={1350}
-                      className="object-contain w-full h-full"
-                    />
-                  </div>
+            {!eventsLoading && pastEvents.length > 0 && (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                  {pastEvents.map((event) => (
+                    <EventFlyerCard key={event.id} event={event} />
+                  ))}
                 </div>
-              ))}
-            </div>
+                <div className="text-center mt-10">
+                  <Link href="/events" className="btn-festival-outline btn-lg">
+                    View all events →
+                  </Link>
+                </div>
+              </>
+            )}
           </div>
         </section>
 
