@@ -13,7 +13,9 @@
       "Bash(git commit:*)",
       "Bash(aws logs:*)",
       "Bash(gh run:*)",
-      "Bash(curl:*)"
+      "Bash(curl:*)",
+      "Bash(npx tsc:*)",
+      "Bash(git rm:*)"
     ]
   }
 }

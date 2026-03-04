@@ -8,35 +8,18 @@ import Image from 'next/image'
 import { Calendar, Clock, MapPin, Music, Loader2, AlertCircle, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { getEvents, getEventGallery } from '../lib/api'
 import type { Event } from '@shared/types/events'
+import type { Photo } from '@shared/types/photos'
 
-interface UpcomingEvent {
-  id: string;
-  title: string;
-  date: string;
-  time: string;
-  location: string;
-  image: string;
+// Format "HH:MM" 24-hour to "H:MM AM/PM"
+const formatTime = (t: string): string => {
+    const [h, m] = t.split(':').map(Number)
+    const period = h >= 12 ? 'PM' : 'AM'
+    const hour = h % 12 || 12
+    return m === 0 ? `${hour} ${period}` : `${hour}:${String(m).padStart(2, '0')} ${period}`
 }
 
-interface GalleryPhoto {
-  id: string;
-  url: string;
-  thumbnail: string;
-}
-
-interface GalleryVideo {
-  id: string;
-  url: string;
-  thumbnail: string;
-}
-
-interface EventGalleryData {
-  eventTitle: string;
-  photoCount: number;
-  videoCount: number;
-  photos: GalleryPhoto[];
-  videos: GalleryVideo[];
-}
+// Matches the actual GET /api/gallery response shape
+type EventGalleryData = { photos: Photo[] };
 
 // Format date to "Month Day(th), Year"
 const formatEventDate = (dateString: string | undefined): string => {
@@ -72,25 +55,17 @@ export default function Events() {
     const [galleryError, setGalleryError] = useState<string | null>(null)
     const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null)
 
-    // Event data from backend
-    const [upcomingEvents] = useState<UpcomingEvent[]>([
-        {
-            id: 'april-2026',
-            title: "Beats on the Beltline",
-            date: "April 25, 2026",
-            time: "2:00 PM - 10:00 PM",
-            location: "Atlanta Beltline",
-            image: "/images/events/april-2026.webp"
-        }
-    ])
+    const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([])
     const [pastEvents, setPastEvents] = useState<Event[]>([])
 
-    // Load events on mount
+    // Load events on mount — split by date
     useEffect(() => {
         async function loadEvents() {
             try {
                 const events = await getEvents()
-                setPastEvents(events)
+                const today = new Date().toISOString().slice(0, 10) // "YYYY-MM-DD"
+                setUpcomingEvents(events.filter((e) => e.date > today))
+                setPastEvents(events.filter((e) => e.date <= today))
             } catch (err) {
                 console.error('Failed to load events:', err)
                 setError('Failed to load events. Please try again later.')
@@ -110,7 +85,7 @@ export default function Events() {
         // Fetch gallery from API
         try {
             const gallery = await getEventGallery(eventId)
-            setGalleryData(gallery as EventGalleryData)
+            setGalleryData(gallery)
             setGalleryLoading(false)
 
             // Scroll to gallery section after data is loaded
@@ -234,14 +209,20 @@ export default function Events() {
                                             <div className="grid md:grid-cols-2 gap-0">
                                                 {/* Event Flyer */}
                                                 <div className="relative bg-brand-bg-cream flex items-center justify-center p-8">
-                                                    <Image
-                                                        src={event.image}
-                                                        alt={event.title}
-                                                        width={1080}
-                                                        height={1350}
-                                                        className="w-full h-auto rounded-2xl shadow-xl"
-                                                        priority
-                                                    />
+                                                    {event.flyerUrl ? (
+                                                        <Image
+                                                            src={event.flyerUrl}
+                                                            alt={event.title}
+                                                            width={1080}
+                                                            height={1350}
+                                                            className="w-full h-auto rounded-2xl shadow-xl"
+                                                            priority
+                                                        />
+                                                    ) : (
+                                                        <div className="w-full aspect-[4/5] rounded-2xl bg-brand-primary/10 flex items-center justify-center">
+                                                            <Calendar size={80} className="text-brand-primary/30" strokeWidth={1.5} />
+                                                        </div>
+                                                    )}
                                                 </div>
 
                                                 {/* Event Details */}
@@ -254,40 +235,50 @@ export default function Events() {
                                                         <div className="flex items-start gap-4 text-brand-text">
                                                             <Calendar size={28} className="text-brand-primary mt-1 flex-shrink-0" strokeWidth={2} />
                                                             <div>
-                                                                <p className="text-2xl font-bold text-brand-header">{event.date}</p>
+                                                                <p className="text-2xl font-bold text-brand-header">{formatEventDate(event.date)}</p>
                                                                 <p className="text-lg text-brand-text/80">Mark your calendar!</p>
                                                             </div>
                                                         </div>
 
-                                                        <div className="flex items-start gap-4 text-brand-text">
-                                                            <Clock size={28} className="text-brand-primary mt-1 flex-shrink-0" strokeWidth={2} />
-                                                            <div>
-                                                                <p className="text-2xl font-bold text-brand-header">{event.time}</p>
-                                                                <p className="text-lg text-brand-text/80">All afternoon & evening</p>
+                                                        {event.startTime && (
+                                                            <div className="flex items-start gap-4 text-brand-text">
+                                                                <Clock size={28} className="text-brand-primary mt-1 flex-shrink-0" strokeWidth={2} />
+                                                                <div>
+                                                                    <p className="text-2xl font-bold text-brand-header">
+                                                                        {event.endTime
+                                                                            ? `${formatTime(event.startTime)} – ${formatTime(event.endTime)}`
+                                                                            : formatTime(event.startTime)}
+                                                                    </p>
+                                                                    <p className="text-lg text-brand-text/80">All afternoon & evening</p>
+                                                                </div>
                                                             </div>
-                                                        </div>
+                                                        )}
 
-                                                        <div className="flex items-start gap-4 text-brand-text">
-                                                            <MapPin size={28} className="text-brand-primary mt-1 flex-shrink-0" strokeWidth={2} />
-                                                            <div>
-                                                                <p className="text-2xl font-bold text-brand-header">{event.location}</p>
-                                                                <p className="text-lg text-brand-text/80">Atlanta's premier trail</p>
+                                                        {event.location && (
+                                                            <div className="flex items-start gap-4 text-brand-text">
+                                                                <MapPin size={28} className="text-brand-primary mt-1 flex-shrink-0" strokeWidth={2} />
+                                                                <div>
+                                                                    <p className="text-2xl font-bold text-brand-header">{event.location}</p>
+                                                                    <p className="text-lg text-brand-text/80">Atlanta's premier trail</p>
+                                                                </div>
                                                             </div>
-                                                        </div>
+                                                        )}
                                                     </div>
 
                                                     <p className="text-xl text-brand-text mb-8 leading-relaxed">
                                                         Join us for an unforgettable day of music, art, and community along Atlanta's iconic Beltline. Free admission, world-class DJs, and amazing vibes!
                                                     </p>
 
-                                                    <a
-                                                        href="https://bit.ly/botbapril"
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="btn-festival text-xl py-4 transform hover:scale-105 transition-all block text-center"
-                                                    >
-                                                        Get Info & Updates
-                                                    </a>
+                                                    {event.ticketingUrl && (
+                                                        <a
+                                                            href={event.ticketingUrl}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="btn-festival text-xl py-4 transform hover:scale-105 transition-all block text-center"
+                                                        >
+                                                            Get Info & Updates
+                                                        </a>
+                                                    )}
                                                 </div>
                                             </div>
                                         </div>
@@ -350,7 +341,7 @@ export default function Events() {
                     <section id="event-gallery" className="py-12 md:py-20 bg-brand-bg scroll-mt-20">
                         <div className="section-container">
                             <h2 className="font-title text-4xl md:text-6xl font-black text-center mb-4 gradient-text uppercase">
-                                {galleryData?.eventTitle || pastEvents.find(e => e.id === selectedEvent)?.title} Gallery
+                                {pastEvents.find(e => e.id === selectedEvent)?.title} Gallery
                             </h2>
                             <p className="text-xl text-center text-brand-header/80 mb-16 max-w-3xl mx-auto">
                                 Relive the moments from {formatEventDate(pastEvents.find(e => e.id === selectedEvent)?.date)}
@@ -384,7 +375,7 @@ export default function Events() {
                             {galleryData && !galleryLoading && galleryData.photos.length > 0 && (
                                 <div className="mb-12">
                                     <h3 className="text-2xl font-bold text-brand-header mb-6 text-center">
-                                        Photos ({galleryData.photoCount})
+                                        Photos ({galleryData.photos.length})
                                     </h3>
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                         {galleryData.photos.map((photo, index) => (
@@ -394,8 +385,8 @@ export default function Events() {
                                                 onClick={() => openImageModal(index)}
                                             >
                                                 <img
-                                                    src={photo.thumbnail}
-                                                    alt={`${galleryData.eventTitle} photo`}
+                                                    src={photo.thumbnailUrl}
+                                                    alt={`${pastEvents.find(e => e.id === selectedEvent)?.title ?? ''} photo`}
                                                     className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                                                     loading="lazy"
                                                 />
@@ -407,29 +398,8 @@ export default function Events() {
                                 </div>
                             )}
 
-                            {/* Videos Grid */}
-                            {galleryData && !galleryLoading && galleryData.videos.length > 0 && (
-                                <div className="mb-12">
-                                    <h3 className="text-2xl font-bold text-brand-header mb-6 text-center">
-                                        Videos ({galleryData.videoCount})
-                                    </h3>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                        {galleryData.videos.map((video) => (
-                                            <div key={video.id} className="relative aspect-video rounded-2xl overflow-hidden shadow-xl">
-                                                <video
-                                                    src={video.url}
-                                                    poster={video.thumbnail}
-                                                    controls
-                                                    className="w-full h-full object-cover"
-                                                />
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            )}
-
                             {/* Empty State */}
-                            {galleryData && !galleryLoading && galleryData.photos.length === 0 && galleryData.videos.length === 0 && (
+                            {galleryData && !galleryLoading && galleryData.photos.length === 0 && (
                                 <div className="text-center py-12">
                                     <Music className="mx-auto mb-4 text-brand-primary/40" size={64} />
                                     <p className="text-xl text-brand-header/60">
@@ -515,7 +485,7 @@ export default function Events() {
                     >
                         <img
                             src={galleryData.photos[selectedImageIndex].url}
-                            alt={`${galleryData.eventTitle} photo ${selectedImageIndex + 1}`}
+                            alt={`${pastEvents.find(e => e.id === selectedEvent)?.title ?? ''} photo ${selectedImageIndex + 1}`}
                             className="max-w-full max-h-full object-contain rounded-lg"
                         />
 

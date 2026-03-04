@@ -1,5 +1,15 @@
 [
   {
+    "id": "april-2026",
+    "entity": "EVENT",
+    "title": "Beats on the Beltline",
+    "date": "2026-04-25",
+    "startTime": "14:00",
+    "endTime": "22:00",
+    "location": "Atlanta Beltline",
+    "description": "Atlanta's premier music event on the Beltline"
+  },
+  {
     "id": "april-2025",
     "entity": "EVENT",
     "title": "Beats on the Beltline - April 2025",

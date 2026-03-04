@@ -10,7 +10,7 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
 };
 
-function ok(body: unknown): APIGatewayProxyResultV2 {
+function ok(body: object): APIGatewayProxyResultV2 {
   return { statusCode: 200, headers: CORS_HEADERS, body: JSON.stringify(body) };
 }
 
@@ -23,7 +23,11 @@ async function listEvents(): Promise<APIGatewayProxyResultV2> {
     TableName: EVENTS_TABLE,
     IndexName: 'byDate',
     KeyConditionExpression: 'entity = :e',
-    ExpressionAttributeValues: { ':e': 'EVENT' },
+    FilterExpression: 'attribute_not_exists(goLiveAt) OR goLiveAt <= :now',
+    ExpressionAttributeValues: {
+      ':e': 'EVENT',
+      ':now': new Date().toISOString(),
+    },
     ScanIndexForward: false, // newest first
   }));
   return ok(result.Items ?? []);

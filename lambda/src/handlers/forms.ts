@@ -38,7 +38,10 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
 };
 
-function created(body: unknown): APIGatewayProxyResultV2 {
+// Represents the valid value types in a JSON form payload
+type FormPayload = Record<string, string | number | boolean | null | string[]>;
+
+function created(body: object): APIGatewayProxyResultV2 {
   return { statusCode: 201, headers: CORS_HEADERS, body: JSON.stringify(body) };
 }
 
@@ -46,10 +49,10 @@ function errResponse(status: number, message: string): APIGatewayProxyResultV2 {
   return { statusCode: status, headers: CORS_HEADERS, body: JSON.stringify({ error: message }) };
 }
 
-function parseBody(event: APIGatewayProxyEventV2): Record<string, unknown> {
+function parseBody(event: APIGatewayProxyEventV2): FormPayload {
   if (!event.body) throw new Error('Missing request body');
   try {
-    return JSON.parse(event.body) as Record<string, unknown>;
+    return JSON.parse(event.body) as FormPayload;
   } catch {
     throw new Error('Invalid JSON body');
   }
@@ -93,18 +96,18 @@ async function sendEmail(subject: string, body: string): Promise<void> {
  * Returns a discriminated union — check `result.ok` before accessing `result.data`.
  */
 function parsePayload<T>(
-  raw: Record<string, unknown>,
+  raw: FormPayload,
   requiredFields: (keyof T & string)[],
 ): { ok: true; data: T } | { ok: false; err: APIGatewayProxyResultV2 } {
   for (const field of requiredFields) {
     if (!raw[field]) return { ok: false, err: errResponse(400, `${field} is required`) };
   }
-  return { ok: true, data: raw as unknown as T };
+  return { ok: true, data: raw as T };
 }
 
 // ── Form handlers ────────────────────────────────────────────────────────────
 
-async function emailSignup(raw: Record<string, unknown>): Promise<APIGatewayProxyResultV2> {
+async function emailSignup(raw: FormPayload): Promise<APIGatewayProxyResultV2> {
   const result = parsePayload<EmailSignupPayload>(raw, ['name', 'email']);
   if (!result.ok) return result.err;
   const data = result.data;
@@ -130,7 +133,7 @@ async function emailSignup(raw: Record<string, unknown>): Promise<APIGatewayProx
   });
 }
 
-async function vendorApplication(raw: Record<string, unknown>): Promise<APIGatewayProxyResultV2> {
+async function vendorApplication(raw: FormPayload): Promise<APIGatewayProxyResultV2> {
   const result = parsePayload<VendorApplicationPayload>(raw, [
     'businessName', 'contactName', 'email', 'phone', 'businessType',
     'description', 'websiteSocial', 'pricePoint', 'hasInsurance', 'foodPermit', 'setup',
@@ -187,7 +190,7 @@ async function vendorApplication(raw: Record<string, unknown>): Promise<APIGatew
   });
 }
 
-async function volunteerApplication(raw: Record<string, unknown>): Promise<APIGatewayProxyResultV2> {
+async function volunteerApplication(raw: FormPayload): Promise<APIGatewayProxyResultV2> {
   const result = parsePayload<VolunteerApplicationPayload>(raw, ['firstName', 'lastName', 'email', 'phone']);
   if (!result.ok) return result.err;
   const data = result.data;
@@ -223,7 +226,7 @@ async function volunteerApplication(raw: Record<string, unknown>): Promise<APIGa
   });
 }
 
-async function artistApplication(raw: Record<string, unknown>): Promise<APIGatewayProxyResultV2> {
+async function artistApplication(raw: FormPayload): Promise<APIGatewayProxyResultV2> {
   const result = parsePayload<ArtistApplicationPayload>(raw, [
     'email', 'fullLegalName', 'djName', 'city', 'phone', 'instagramLink',
     'contactMethod', 'mainGenre', 'subGenre', 'livePerformanceLinks',
@@ -295,7 +298,7 @@ async function artistApplication(raw: Record<string, unknown>): Promise<APIGatew
   });
 }
 
-async function sponsorInquiry(raw: Record<string, unknown>): Promise<APIGatewayProxyResultV2> {
+async function sponsorInquiry(raw: FormPayload): Promise<APIGatewayProxyResultV2> {
   const result = parsePayload<SponsorInquiryPayload>(raw, ['name', 'email', 'phone', 'company', 'productIndustry']);
   if (!result.ok) return result.err;
   const data = result.data;
@@ -324,7 +327,7 @@ async function sponsorInquiry(raw: Record<string, unknown>): Promise<APIGatewayP
   });
 }
 
-async function contactForm(raw: Record<string, unknown>): Promise<APIGatewayProxyResultV2> {
+async function contactForm(raw: FormPayload): Promise<APIGatewayProxyResultV2> {
   const result = parsePayload<ContactFormPayload>(raw, ['name', 'email', 'subject', 'message']);
   if (!result.ok) return result.err;
   const data = result.data;
@@ -342,7 +345,7 @@ async function contactForm(raw: Record<string, unknown>): Promise<APIGatewayProx
 
 // ── Router ───────────────────────────────────────────────────────────────────
 
-const ROUTES: Record<string, (data: Record<string, unknown>) => Promise<APIGatewayProxyResultV2>> = {
+const ROUTES: Record<string, (data: FormPayload) => Promise<APIGatewayProxyResultV2>> = {
   'email-signup': emailSignup,
   'vendor-application': vendorApplication,
   'volunteer-application': volunteerApplication,
