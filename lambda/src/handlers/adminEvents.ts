@@ -96,14 +96,21 @@ export async function updateEventFlyer(event: APIGatewayProxyEventV2): Promise<A
   const id = event.pathParameters?.id;
   if (!id) return errResponse(400, 'Missing event id');
 
-  const body: { flyerUrl?: string; goLiveAt?: string | null; ticketingUrl?: string | null } = JSON.parse(event.body ?? '{}');
-  if (!body.flyerUrl && body.goLiveAt === undefined && body.ticketingUrl === undefined) {
-    return errResponse(400, 'flyerUrl, goLiveAt, or ticketingUrl is required');
-  }
+  const body: {
+    flyerUrl?: string;
+    goLiveAt?: string | null;
+    ticketingUrl?: string | null;
+    title?: string;
+    date?: string;
+    startTime?: string | null;
+    endTime?: string | null;
+    location?: string | null;
+  } = JSON.parse(event.body ?? '{}');
 
   const setParts: string[] = [];
   const removeParts: string[] = [];
   const values: Record<string, string> = {};
+  const names: Record<string, string> = {};
 
   if (body.flyerUrl) {
     // Delete the old flyer from S3 before storing the new URL
@@ -115,21 +122,41 @@ export async function updateEventFlyer(event: APIGatewayProxyEventV2): Promise<A
     setParts.push('flyerUrl = :url');
     values[':url'] = body.flyerUrl;
   }
+  if (body.title !== undefined) {
+    setParts.push('title = :title');
+    values[':title'] = body.title;
+  }
+  if (body.date !== undefined) {
+    // 'date' is a DynamoDB reserved word — must use expression attribute name
+    setParts.push('#dt = :date');
+    values[':date'] = body.date;
+    names['#dt'] = 'date';
+  }
+  if (body.startTime !== undefined) {
+    if (body.startTime === null) removeParts.push('startTime');
+    else { setParts.push('startTime = :st'); values[':st'] = body.startTime; }
+  }
+  if (body.endTime !== undefined) {
+    if (body.endTime === null) removeParts.push('endTime');
+    else { setParts.push('endTime = :et'); values[':et'] = body.endTime; }
+  }
+  if (body.location !== undefined) {
+    // 'location' is a DynamoDB reserved word — must use expression attribute name
+    names['#loc'] = 'location';
+    if (body.location === null) removeParts.push('#loc');
+    else { setParts.push('#loc = :loc'); values[':loc'] = body.location; }
+  }
   if (body.goLiveAt !== undefined) {
-    if (body.goLiveAt === null) {
-      removeParts.push('goLiveAt');
-    } else {
-      setParts.push('goLiveAt = :gla');
-      values[':gla'] = body.goLiveAt;
-    }
+    if (body.goLiveAt === null) removeParts.push('goLiveAt');
+    else { setParts.push('goLiveAt = :gla'); values[':gla'] = body.goLiveAt; }
   }
   if (body.ticketingUrl !== undefined) {
-    if (body.ticketingUrl === null) {
-      removeParts.push('ticketingUrl');
-    } else {
-      setParts.push('ticketingUrl = :tu');
-      values[':tu'] = body.ticketingUrl;
-    }
+    if (body.ticketingUrl === null) removeParts.push('ticketingUrl');
+    else { setParts.push('ticketingUrl = :tu'); values[':tu'] = body.ticketingUrl; }
+  }
+
+  if (setParts.length === 0 && removeParts.length === 0) {
+    return errResponse(400, 'No fields to update');
   }
 
   const parts: string[] = [];
@@ -141,6 +168,7 @@ export async function updateEventFlyer(event: APIGatewayProxyEventV2): Promise<A
     Key: { id },
     UpdateExpression: parts.join(' '),
     ...(Object.keys(values).length > 0 ? { ExpressionAttributeValues: values } : {}),
+    ...(Object.keys(names).length > 0 ? { ExpressionAttributeNames: names } : {}),
   }));
 
   return ok({ updated: true });
