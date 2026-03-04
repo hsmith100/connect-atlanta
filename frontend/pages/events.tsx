@@ -4,45 +4,17 @@ import SEO from '../components/SEO'
 import Header from '../components/layout/Header'
 import Footer from '../components/layout/Footer'
 import ConnectModal from '../components/ConnectModal'
-import Image from 'next/image'
-import { Calendar, Clock, MapPin, Music, Loader2, AlertCircle, X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Calendar, Music, Loader2, AlertCircle, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { getEvents, getEventGallery } from '../lib/api'
 import type { Event } from '@shared/types/events'
 import type { Photo } from '@shared/types/photos'
-
-// Format "HH:MM" 24-hour to "H:MM AM/PM"
-const formatTime = (t: string): string => {
-    const [h, m] = t.split(':').map(Number)
-    const period = h >= 12 ? 'PM' : 'AM'
-    const hour = h % 12 || 12
-    return m === 0 ? `${hour} ${period}` : `${hour}:${String(m).padStart(2, '0')} ${period}`
-}
+import { formatEventDate } from '../lib/formatters'
+import UpcomingEventCard from '../components/events/UpcomingEventCard'
+import EventFlyerCard from '../components/events/EventFlyerCard'
+import FlyerModal from '../components/events/FlyerModal'
 
 // Matches the actual GET /api/gallery response shape
 type EventGalleryData = { photos: Photo[] };
-
-// Format date to "Month Day(th), Year"
-const formatEventDate = (dateString: string | undefined): string => {
-    if (!dateString) return ''
-
-    const date = new Date(dateString)
-    const month = date.toLocaleDateString('en-US', { month: 'long' })
-    const day = date.getDate()
-    const year = date.getFullYear()
-
-    // Add ordinal suffix (st, nd, rd, th)
-    const getOrdinalSuffix = (d: number): string => {
-        if (d > 3 && d < 21) return 'th'
-        switch (d % 10) {
-            case 1: return 'st'
-            case 2: return 'nd'
-            case 3: return 'rd'
-            default: return 'th'
-        }
-    }
-
-    return `${month} ${day}${getOrdinalSuffix(day)}, ${year}`
-}
 
 export default function Events() {
     const router = useRouter()
@@ -57,6 +29,7 @@ export default function Events() {
 
     const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([])
     const [pastEvents, setPastEvents] = useState<Event[]>([])
+    const [selectedFlyerIndex, setSelectedFlyerIndex] = useState<number | null>(null)
 
     // Load events on mount — split by date
     useEffect(() => {
@@ -184,7 +157,12 @@ export default function Events() {
                                 Upcoming Events
                             </h2>
 
-                            {upcomingEvents.length === 0 ? (
+                            {loading ? (
+                                <div className="flex justify-center items-center py-20">
+                                    <Loader2 className="animate-spin text-brand-primary" size={48} />
+                                    <span className="ml-4 text-xl text-brand-header">Loading events...</span>
+                                </div>
+                            ) : upcomingEvents.length === 0 ? (
                                 <div className="max-w-3xl mx-auto text-center py-8">
                                     <div className="mb-6 text-brand-primary/40 flex justify-center">
                                         <Calendar size={80} strokeWidth={1.5} />
@@ -205,83 +183,7 @@ export default function Events() {
                             ) : (
                                 <div className="max-w-5xl mx-auto">
                                     {upcomingEvents.map((event) => (
-                                        <div key={event.id} className="bg-white/80 backdrop-blur-sm border-2 border-brand-primary/30 rounded-3xl overflow-hidden shadow-2xl">
-                                            <div className="grid md:grid-cols-2 gap-0">
-                                                {/* Event Flyer */}
-                                                <div className="relative bg-brand-bg-cream flex items-center justify-center p-8">
-                                                    {event.flyerUrl ? (
-                                                        <Image
-                                                            src={event.flyerUrl}
-                                                            alt={event.title}
-                                                            width={1080}
-                                                            height={1350}
-                                                            className="w-full h-auto rounded-2xl shadow-xl"
-                                                            priority
-                                                        />
-                                                    ) : (
-                                                        <div className="w-full aspect-[4/5] rounded-2xl bg-brand-primary/10 flex items-center justify-center">
-                                                            <Calendar size={80} className="text-brand-primary/30" strokeWidth={1.5} />
-                                                        </div>
-                                                    )}
-                                                </div>
-
-                                                {/* Event Details */}
-                                                <div className="p-8 md:p-12 flex flex-col justify-center">
-                                                    <h3 className="font-festival text-4xl md:text-5xl font-black text-brand-header mb-6 uppercase">
-                                                        {event.title}
-                                                    </h3>
-
-                                                    <div className="space-y-4 mb-8">
-                                                        <div className="flex items-start gap-4 text-brand-text">
-                                                            <Calendar size={28} className="text-brand-primary mt-1 flex-shrink-0" strokeWidth={2} />
-                                                            <div>
-                                                                <p className="text-2xl font-bold text-brand-header">{formatEventDate(event.date)}</p>
-                                                                <p className="text-lg text-brand-text/80">Mark your calendar!</p>
-                                                            </div>
-                                                        </div>
-
-                                                        {event.startTime && (
-                                                            <div className="flex items-start gap-4 text-brand-text">
-                                                                <Clock size={28} className="text-brand-primary mt-1 flex-shrink-0" strokeWidth={2} />
-                                                                <div>
-                                                                    <p className="text-2xl font-bold text-brand-header">
-                                                                        {event.endTime
-                                                                            ? `${formatTime(event.startTime)} – ${formatTime(event.endTime)}`
-                                                                            : formatTime(event.startTime)}
-                                                                    </p>
-                                                                    <p className="text-lg text-brand-text/80">All afternoon & evening</p>
-                                                                </div>
-                                                            </div>
-                                                        )}
-
-                                                        {event.location && (
-                                                            <div className="flex items-start gap-4 text-brand-text">
-                                                                <MapPin size={28} className="text-brand-primary mt-1 flex-shrink-0" strokeWidth={2} />
-                                                                <div>
-                                                                    <p className="text-2xl font-bold text-brand-header">{event.location}</p>
-                                                                    <p className="text-lg text-brand-text/80">Atlanta's premier trail</p>
-                                                                </div>
-                                                            </div>
-                                                        )}
-                                                    </div>
-
-                                                    <p className="text-xl text-brand-text mb-8 leading-relaxed">
-                                                        Join us for an unforgettable day of music, art, and community along Atlanta's iconic Beltline. Free admission, world-class DJs, and amazing vibes!
-                                                    </p>
-
-                                                    {event.ticketingUrl && (
-                                                        <a
-                                                            href={event.ticketingUrl}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer"
-                                                            className="btn-festival text-xl py-4 transform hover:scale-105 transition-all block text-center"
-                                                        >
-                                                            Get Info & Updates
-                                                        </a>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <UpcomingEventCard key={event.id} event={event} />
                                     ))}
                                 </div>
                             )}
@@ -316,19 +218,13 @@ export default function Events() {
 
                         {/* Events Grid */}
                         {!loading && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                {pastEvents.map((event) => (
-                                    <div key={event.id} className="card-bg-white shadow-xl border-2 border-brand-primary/10 rounded-2xl overflow-hidden">
-                                        <figure className="relative aspect-auto w-full">
-                                            <Image
-                                                src={event.flyerUrl ?? ''}
-                                                alt={event.title}
-                                                width={1080}
-                                                height={1350}
-                                                className="object-contain w-full h-full"
-                                            />
-                                        </figure>
-                                    </div>
+                            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
+                                {pastEvents.map((event, index) => (
+                                    <EventFlyerCard
+                                        key={event.id}
+                                        event={event}
+                                        onClick={() => setSelectedFlyerIndex(index)}
+                                    />
                                 ))}
                             </div>
                         )}
@@ -512,6 +408,14 @@ export default function Events() {
             )}
 
             <Footer />
+
+            <FlyerModal
+                events={pastEvents}
+                selectedIndex={selectedFlyerIndex}
+                onClose={() => setSelectedFlyerIndex(null)}
+                onPrev={() => setSelectedFlyerIndex(i => i !== null ? (i - 1 + pastEvents.length) % pastEvents.length : null)}
+                onNext={() => setSelectedFlyerIndex(i => i !== null ? (i + 1) % pastEvents.length : null)}
+            />
         </>
     )
 }
