@@ -11,6 +11,7 @@ import { getEvents } from '../lib/api'
 import type { Event } from '@shared/types/events'
 import UpcomingEventCard from '../components/events/UpcomingEventCard'
 import EventFlyerCard from '../components/events/EventFlyerCard'
+import FlyerModal from '../components/events/FlyerModal'
 
 interface SignupFormData {
   name: string;
@@ -29,6 +30,7 @@ export default function Home() {
   const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([])
   const [pastEvents, setPastEvents] = useState<Event[]>([])
   const [eventsLoading, setEventsLoading] = useState(true)
+  const [selectedFlyerIndex, setSelectedFlyerIndex] = useState<number | null>(null)
 
   useEffect(() => {
     async function loadEvents() {
@@ -463,9 +465,13 @@ export default function Home() {
 
             {!eventsLoading && pastEvents.length > 0 && (
               <>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-                  {pastEvents.map((event) => (
-                    <EventFlyerCard key={event.id} event={event} />
+                <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8">
+                  {pastEvents.map((event, index) => (
+                    <EventFlyerCard
+                      key={event.id}
+                      event={event}
+                      onClick={() => setSelectedFlyerIndex(index)}
+                    />
                   ))}
                 </div>
                 <div className="text-center mt-10">
@@ -654,6 +660,14 @@ export default function Home() {
 
         <Footer />
       </div>
+
+      <FlyerModal
+        events={pastEvents}
+        selectedIndex={selectedFlyerIndex}
+        onClose={() => setSelectedFlyerIndex(null)}
+        onPrev={() => setSelectedFlyerIndex(i => i !== null ? (i - 1 + pastEvents.length) % pastEvents.length : null)}
+        onNext={() => setSelectedFlyerIndex(i => i !== null ? (i + 1) % pastEvents.length : null)}
+      />
     </>
   )
 }

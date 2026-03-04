@@ -11,6 +11,7 @@ import type { Photo } from '@shared/types/photos'
 import { formatEventDate } from '../lib/formatters'
 import UpcomingEventCard from '../components/events/UpcomingEventCard'
 import EventFlyerCard from '../components/events/EventFlyerCard'
+import FlyerModal from '../components/events/FlyerModal'
 
 // Matches the actual GET /api/gallery response shape
 type EventGalleryData = { photos: Photo[] };
@@ -28,6 +29,7 @@ export default function Events() {
 
     const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([])
     const [pastEvents, setPastEvents] = useState<Event[]>([])
+    const [selectedFlyerIndex, setSelectedFlyerIndex] = useState<number | null>(null)
 
     // Load events on mount — split by date
     useEffect(() => {
@@ -155,7 +157,12 @@ export default function Events() {
                                 Upcoming Events
                             </h2>
 
-                            {upcomingEvents.length === 0 ? (
+                            {loading ? (
+                                <div className="flex justify-center items-center py-20">
+                                    <Loader2 className="animate-spin text-brand-primary" size={48} />
+                                    <span className="ml-4 text-xl text-brand-header">Loading events...</span>
+                                </div>
+                            ) : upcomingEvents.length === 0 ? (
                                 <div className="max-w-3xl mx-auto text-center py-8">
                                     <div className="mb-6 text-brand-primary/40 flex justify-center">
                                         <Calendar size={80} strokeWidth={1.5} />
@@ -211,12 +218,12 @@ export default function Events() {
 
                         {/* Events Grid */}
                         {!loading && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                                {pastEvents.map((event) => (
+                            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8">
+                                {pastEvents.map((event, index) => (
                                     <EventFlyerCard
                                         key={event.id}
                                         event={event}
-                                        onClick={() => handleEventClick(event.id)}
+                                        onClick={() => setSelectedFlyerIndex(index)}
                                     />
                                 ))}
                             </div>
@@ -401,6 +408,14 @@ export default function Events() {
             )}
 
             <Footer />
+
+            <FlyerModal
+                events={pastEvents}
+                selectedIndex={selectedFlyerIndex}
+                onClose={() => setSelectedFlyerIndex(null)}
+                onPrev={() => setSelectedFlyerIndex(i => i !== null ? (i - 1 + pastEvents.length) % pastEvents.length : null)}
+                onNext={() => setSelectedFlyerIndex(i => i !== null ? (i + 1) % pastEvents.length : null)}
+            />
         </>
     )
 }
