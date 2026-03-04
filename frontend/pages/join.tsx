@@ -29,7 +29,7 @@ interface ArtistFormData {
 }
 
 export default function JoinUs() {
-  const [activeTab, setActiveTab] = useState<'volunteer' | 'vendor' | 'dj'>('volunteer')
+  const [activeTab, setActiveTab] = useState<'volunteer' | 'vendor' | 'dj'>('dj')
   const [isHeaderVisible, setIsHeaderVisible] = useState(true)
 
   // Form refs for scrolling
