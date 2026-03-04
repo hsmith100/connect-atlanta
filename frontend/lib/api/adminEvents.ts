@@ -44,6 +44,27 @@ export async function updateEventGoLive(
   });
 }
 
+export async function updateEvent(
+  adminKey: string,
+  eventId: string,
+  updates: {
+    title?: string;
+    date?: string;
+    startTime?: string | null;
+    endTime?: string | null;
+    location?: string | null;
+    ticketingUrl?: string | null;
+    goLiveAt?: string | null;
+    flyerUrl?: string;
+  },
+): Promise<void> {
+  await fetchAPI<{ updated: boolean }>(`/api/admin/events/${eventId}`, {
+    method: 'PATCH',
+    headers: adminHeaders(adminKey),
+    body: JSON.stringify(updates),
+  });
+}
+
 export async function deleteEvent(adminKey: string, eventId: string): Promise<void> {
   await fetchAPI<{ deleted: boolean }>(`/api/admin/events/${eventId}`, {
     method: 'DELETE',

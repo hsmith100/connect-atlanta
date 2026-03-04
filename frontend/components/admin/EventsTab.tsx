@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Trash2, Upload, Save, Loader2, AlertCircle, ImageIcon, Plus } from 'lucide-react'
-import { presignFlyer, updateEventFlyer, updateEventGoLive, createEvent, deleteEvent } from '../../lib/api'
+import { Trash2, Upload, Save, Loader2, AlertCircle, ImageIcon, Plus, Pencil } from 'lucide-react'
+import { presignFlyer, updateEventFlyer, updateEventGoLive, updateEvent, createEvent, deleteEvent } from '../../lib/api'
 import type { Event } from '@shared/types/events'
 
 // Convert ISO datetime string to datetime-local input value (local time)
@@ -33,6 +33,7 @@ export function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
   const [goLiveDates, setGoLiveDates] = useState<Record<string, string>>({})
   const [goLiveTimes, setGoLiveTimes] = useState<Record<string, string>>({})
   const [showAddForm, setShowAddForm] = useState(false)
+  const [editingEventId, setEditingEventId] = useState<string | null>(null)
   const emptyForm = { title: '', date: '', startTime: '', endTime: '', location: '', ticketingUrl: '', goLiveDate: '', goLiveTime: '' }
   const [newEvent, setNewEvent] = useState(emptyForm)
   const [newEventFile, setNewEventFile] = useState<File | null>(null)
@@ -40,6 +41,35 @@ export function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
   const [savingNew, setSavingNew] = useState(false)
   const [statusMsg, setStatusMsg] = useState('')
   const [error, setError] = useState('')
+
+  function resetForm() {
+    setEditingEventId(null)
+    setNewEvent(emptyForm)
+    setNewEventFile(null)
+    if (newEventPreview?.startsWith('blob:')) URL.revokeObjectURL(newEventPreview)
+    setNewEventPreview(null)
+    setShowAddForm(false)
+  }
+
+  function handleStartEdit(ev: Event) {
+    const existingLocal = ev.goLiveAt ? toDatetimeLocal(ev.goLiveAt) : ''
+    setEditingEventId(ev.id)
+    setNewEvent({
+      title: ev.title,
+      date: ev.date,
+      startTime: ev.startTime ?? '',
+      endTime: ev.endTime ?? '',
+      location: ev.location ?? '',
+      ticketingUrl: ev.ticketingUrl ?? '',
+      goLiveDate: existingLocal.slice(0, 10),
+      goLiveTime: existingLocal.slice(11, 16),
+    })
+    setNewEventFile(null)
+    setNewEventPreview(ev.flyerUrl ?? null)
+    setShowAddForm(true)
+    setError('')
+    setStatusMsg('')
+  }
 
   const inputCls = 'w-full bg-gray-800 text-white text-sm rounded-lg px-3 py-2 border border-gray-700 focus:outline-none focus:border-brand-primary'
 
@@ -63,50 +93,78 @@ export function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
     }
   }
 
-  async function handleCreateEvent() {
+  async function handleSaveEvent() {
     if (!newEvent.title || !newEvent.date) { setError('Title and date are required.'); return }
     setSavingNew(true)
     setError('')
     setStatusMsg('')
     try {
-      const goLiveAt = newEvent.goLiveDate
-        ? new Date(`${newEvent.goLiveDate}T${newEvent.goLiveTime || '00:00'}`).toISOString()
-        : undefined
-      const id = crypto.randomUUID()
+      // Generate the ID upfront so the flyer presign key matches the event ID
+      const eventId = editingEventId ?? crypto.randomUUID()
 
       let flyerUrl: string | undefined
       if (newEventFile) {
-        const { uploadUrl, flyerUrl: url } = await presignFlyer(adminKey, id, newEventFile.name, newEventFile.type || 'image/jpeg')
+        const { uploadUrl, flyerUrl: url } = await presignFlyer(adminKey, eventId, newEventFile.name, newEventFile.type || 'image/jpeg')
         const res = await fetch(uploadUrl, { method: 'PUT', body: newEventFile, headers: { 'Content-Type': newEventFile.type || 'image/jpeg' } })
         if (!res.ok) throw new Error(`S3 upload failed: ${res.status}`)
         flyerUrl = url
       }
 
-      await createEvent(adminKey, {
-        id,
-        title: newEvent.title,
-        date: newEvent.date,
-        ...(newEvent.startTime ? { startTime: newEvent.startTime } : {}),
-        ...(newEvent.endTime ? { endTime: newEvent.endTime } : {}),
-        ...(newEvent.location ? { location: newEvent.location } : {}),
-        ...(flyerUrl ? { flyerUrl } : {}),
-        ...(newEvent.ticketingUrl ? { ticketingUrl: newEvent.ticketingUrl } : {}),
-        ...(goLiveAt ? { goLiveAt } : {}),
-      })
-      setEvents((prev) => [...prev, {
-        id, entity: 'EVENT', title: newEvent.title, date: newEvent.date,
-        startTime: newEvent.startTime || null, endTime: newEvent.endTime || null,
-        location: newEvent.location || null, flyerUrl: flyerUrl ?? null,
-        ticketingUrl: newEvent.ticketingUrl || null, goLiveAt: goLiveAt ?? null,
-      }])
-      setNewEvent(emptyForm)
-      setNewEventFile(null)
-      if (newEventPreview) { URL.revokeObjectURL(newEventPreview); setNewEventPreview(null) }
-      setShowAddForm(false)
-      setStatusMsg(`Event "${newEvent.title}" created.`)
+      if (editingEventId) {
+        // Edit mode — send all editable fields; null clears optional fields
+        const goLiveAt = newEvent.goLiveDate
+          ? new Date(`${newEvent.goLiveDate}T${newEvent.goLiveTime || '00:00'}`).toISOString()
+          : null
+        await updateEvent(adminKey, editingEventId, {
+          title: newEvent.title,
+          date: newEvent.date,
+          startTime: newEvent.startTime || null,
+          endTime: newEvent.endTime || null,
+          location: newEvent.location || null,
+          ticketingUrl: newEvent.ticketingUrl || null,
+          goLiveAt,
+          ...(flyerUrl ? { flyerUrl } : {}),
+        })
+        setEvents((prev) => prev.map((e) => e.id === editingEventId ? {
+          ...e,
+          title: newEvent.title,
+          date: newEvent.date,
+          startTime: newEvent.startTime || null,
+          endTime: newEvent.endTime || null,
+          location: newEvent.location || null,
+          ticketingUrl: newEvent.ticketingUrl || null,
+          goLiveAt,
+          ...(flyerUrl ? { flyerUrl } : {}),
+        } : e))
+        setStatusMsg(`Event "${newEvent.title}" updated.`)
+      } else {
+        // Create mode
+        const goLiveAt = newEvent.goLiveDate
+          ? new Date(`${newEvent.goLiveDate}T${newEvent.goLiveTime || '00:00'}`).toISOString()
+          : undefined
+        await createEvent(adminKey, {
+          id: eventId,
+          title: newEvent.title,
+          date: newEvent.date,
+          ...(newEvent.startTime ? { startTime: newEvent.startTime } : {}),
+          ...(newEvent.endTime ? { endTime: newEvent.endTime } : {}),
+          ...(newEvent.location ? { location: newEvent.location } : {}),
+          ...(flyerUrl ? { flyerUrl } : {}),
+          ...(newEvent.ticketingUrl ? { ticketingUrl: newEvent.ticketingUrl } : {}),
+          ...(goLiveAt ? { goLiveAt } : {}),
+        })
+        setEvents((prev) => [...prev, {
+          id: eventId, entity: 'EVENT', title: newEvent.title, date: newEvent.date,
+          startTime: newEvent.startTime || null, endTime: newEvent.endTime || null,
+          location: newEvent.location || null, flyerUrl: flyerUrl ?? null,
+          ticketingUrl: newEvent.ticketingUrl || null, goLiveAt: goLiveAt ?? null,
+        }])
+        setStatusMsg(`Event "${newEvent.title}" created.`)
+      }
+      resetForm()
     } catch (err) {
-      console.error('Create event error:', err)
-      setError('Failed to create event.')
+      console.error('Save event error:', err)
+      setError(editingEventId ? 'Failed to update event.' : 'Failed to create event.')
     } finally {
       setSavingNew(false)
     }
@@ -153,7 +211,7 @@ export function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
       <div className="px-6 py-3 border-b border-gray-800 flex items-center justify-between">
         <span className="text-sm text-gray-400">{events.length} event{events.length !== 1 ? 's' : ''}</span>
         <button
-          onClick={() => setShowAddForm((v) => !v)}
+          onClick={() => { if (showAddForm) { resetForm() } else { setShowAddForm(true) } }}
           className="flex items-center gap-2 bg-brand-primary hover:bg-brand-primary/90 text-white rounded-lg px-4 py-1.5 text-sm font-semibold transition-colors"
         >
           <Plus size={16} /> Add Event
@@ -173,7 +231,7 @@ export function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
       {showAddForm && (
         <div className="p-6 border-b border-gray-800">
           <div className="bg-gray-900 rounded-xl border border-gray-700 p-5 space-y-4 max-w-lg">
-            <h3 className="text-white font-semibold">New Event</h3>
+            <h3 className="text-white font-semibold">{editingEventId ? 'Edit Event' : 'New Event'}</h3>
             <div>
               <label className="block text-xs text-gray-400 mb-1">Title *</label>
               <input type="text" value={newEvent.title} onChange={(e) => setNewEvent((p) => ({ ...p, title: e.target.value }))} placeholder="Beats on the Beltline" className={inputCls} />
@@ -239,14 +297,16 @@ export function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
             </div>
             <div className="flex gap-2 pt-1">
               <button
-                onClick={handleCreateEvent}
+                onClick={handleSaveEvent}
                 disabled={savingNew || !newEvent.title || !newEvent.date}
                 className="flex-1 flex items-center justify-center gap-2 bg-brand-primary hover:bg-brand-primary/90 text-white rounded-lg px-4 py-2 text-sm font-semibold transition-colors disabled:opacity-50"
               >
-                {savingNew ? <><Loader2 size={14} className="animate-spin" /> Creating…</> : 'Create Event'}
+                {savingNew
+                  ? <><Loader2 size={14} className="animate-spin" /> {editingEventId ? 'Saving…' : 'Creating…'}</>
+                  : editingEventId ? 'Save Changes' : 'Create Event'}
               </button>
               <button
-                onClick={() => { setShowAddForm(false); setNewEvent(emptyForm); setNewEventFile(null); if (newEventPreview) { URL.revokeObjectURL(newEventPreview); setNewEventPreview(null) } }}
+                onClick={resetForm}
                 className="px-4 py-2 text-sm text-gray-400 hover:text-white transition-colors"
               >
                 Cancel
@@ -287,14 +347,23 @@ export function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
                       <p className="text-gray-400 text-xs">{ev.date}</p>
                       <div className="mt-1"><GoLiveBadge goLiveAt={ev.goLiveAt} /></div>
                     </div>
-                    <button
-                      onClick={() => handleDeleteEvent(ev)}
-                      disabled={deleting[ev.id]}
-                      className="shrink-0 p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-900/30 transition-colors disabled:opacity-50"
-                      title="Delete event"
-                    >
-                      {deleting[ev.id] ? <Loader2 size={15} className="animate-spin" /> : <Trash2 size={15} />}
-                    </button>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        onClick={() => handleStartEdit(ev)}
+                        className="p-1.5 rounded-lg text-gray-500 hover:text-brand-primary hover:bg-brand-primary/10 transition-colors"
+                        title="Edit event"
+                      >
+                        <Pencil size={15} />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteEvent(ev)}
+                        disabled={deleting[ev.id]}
+                        className="p-1.5 rounded-lg text-gray-500 hover:text-red-400 hover:bg-red-900/30 transition-colors disabled:opacity-50"
+                        title="Delete event"
+                      >
+                        {deleting[ev.id] ? <Loader2 size={15} className="animate-spin" /> : <Trash2 size={15} />}
+                      </button>
+                    </div>
                   </div>
                   <label className={`flex items-center justify-center gap-2 w-full rounded-lg px-3 py-2 text-sm font-semibold cursor-pointer transition-colors ${uploading[ev.id] ? 'bg-gray-700 opacity-50 cursor-wait' : 'bg-brand-primary hover:bg-brand-primary/90'} text-white`}>
                     {uploading[ev.id] ? (
