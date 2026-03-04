@@ -37,5 +37,5 @@ new CiStack(app, 'ConnectCiStack', { env });
 // Full staging environment — S3 + CloudFront (no custom domain) + Lambda + DynamoDB.
 // Staging CloudFront URL is shared with the team to review changes before prod.
 const stagingDynamoStack = new DynamoStack(app, 'ConnectStagingDynamoStack', { env, tablePrefix: 'staging-' });
-const stagingBackendStack = new BackendStack(app, 'ConnectStagingBackendStack', { env, dynamoStack: stagingDynamoStack });
+const stagingBackendStack = new BackendStack(app, 'ConnectStagingBackendStack', { env, dynamoStack: stagingDynamoStack, contactEmail: 'productions.connectatlanta@gmail.com' });
 new FrontendStack(app, 'ConnectStagingFrontendStack', { env, backendStack: stagingBackendStack });

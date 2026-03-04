@@ -14,6 +14,7 @@ import { DynamoStack } from './dynamo-stack';
 
 interface BackendStackProps extends cdk.StackProps {
   dynamoStack: DynamoStack;
+  contactEmail?: string;
 }
 
 export class BackendStack extends cdk.Stack {
@@ -25,7 +26,7 @@ export class BackendStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: BackendStackProps) {
     super(scope, id, props);
 
-    const { dynamoStack } = props;
+    const { dynamoStack, contactEmail = 'info@connectevents.co' } = props;
     const lambdaDir = path.join(__dirname, '../../../lambda/src/handlers');
 
     // ── Media S3 Bucket ───────────────────────────────────────────────────────
@@ -94,7 +95,7 @@ export class BackendStack extends cdk.Stack {
         ARTIST_APPLICATIONS_TABLE: dynamoStack.artistApplicationsTable.tableName,
         SPONSOR_INQUIRIES_TABLE: dynamoStack.sponsorInquiriesTable.tableName,
         // Email addresses — not secrets, just config
-        CONTACT_EMAIL: 'info@connectevents.co',
+        CONTACT_EMAIL: contactEmail,
         FROM_EMAIL: 'noreply@connectevents.co',
         // Admin key — shared secret between frontend and forms Lambda
         ADMIN_SECRET_ARN: adminKeySecret.secretArn,
