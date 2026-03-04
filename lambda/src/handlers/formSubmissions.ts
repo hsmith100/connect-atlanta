@@ -1,0 +1,254 @@
+import { PutCommand, UpdateCommand, ScanCommand } from '@aws-sdk/lib-dynamodb';
+import type { APIGatewayProxyResultV2 } from 'aws-lambda';
+import type {
+  EmailSignupPayload,
+  ContactFormPayload,
+  VolunteerApplicationPayload,
+  VendorApplicationPayload,
+  ArtistApplicationPayload,
+  SponsorInquiryPayload,
+} from '../../../shared/types/forms';
+import { ddb, TABLES, created, parsePayload, newItem, sendEmail, type FormPayload } from '../lib/formShared';
+
+async function emailSignup(raw: FormPayload): Promise<APIGatewayProxyResultV2> {
+  const result = parsePayload<EmailSignupPayload>(raw, ['name', 'email']);
+  if (!result.ok) return result.err;
+  const data = result.data;
+
+  const item = {
+    ...newItem(),
+    name: data.name,
+    email: data.email,
+    phone: data.phone ?? null,
+    marketingConsent: raw.marketingConsent ?? raw.marketing_consent ?? false,
+    source: data.source ?? 'website',
+  };
+
+  await ddb.send(new PutCommand({ TableName: TABLES.emailSignups, Item: item }));
+
+  return created({
+    success: true,
+    message: "Thank you for signing up! We'll keep you updated on upcoming events.",
+    id: item.id,
+    createdAt: item.createdAt,
+  });
+}
+
+async function vendorApplication(raw: FormPayload): Promise<APIGatewayProxyResultV2> {
+  const result = parsePayload<VendorApplicationPayload>(raw, [
+    'businessName', 'contactName', 'email', 'phone', 'businessType',
+    'description', 'websiteSocial', 'pricePoint', 'hasInsurance', 'foodPermit', 'setup',
+  ]);
+  if (!result.ok) return result.err;
+  const data = result.data;
+
+  const item = {
+    ...newItem(),
+    businessName: data.businessName,
+    contactName: data.contactName,
+    email: data.email,
+    phone: data.phone,
+    businessType: data.businessType,
+    description: data.description,
+    websiteSocial: data.websiteSocial,
+    pricePoint: data.pricePoint,
+    hasInsurance: data.hasInsurance,
+    foodPermit: data.foodPermit,
+    setup: data.setup,
+    additionalComments: data.additionalComments ?? null,
+  };
+
+  await ddb.send(new PutCommand({ TableName: TABLES.vendorApplications, Item: item }));
+
+  return created({
+    success: true,
+    message: "Thank you for your vendor application! We'll review it and get back to you soon.",
+    id: item.id,
+    createdAt: item.createdAt,
+  });
+}
+
+async function volunteerApplication(raw: FormPayload): Promise<APIGatewayProxyResultV2> {
+  const result = parsePayload<VolunteerApplicationPayload>(raw, ['firstName', 'lastName', 'email', 'phone']);
+  if (!result.ok) return result.err;
+  const data = result.data;
+
+  const item = {
+    ...newItem(),
+    firstName: data.firstName,
+    lastName: data.lastName,
+    email: data.email,
+    phone: data.phone,
+    experience: data.experience ?? null,
+    skills: Array.isArray(data.skills) ? data.skills : [],
+  };
+
+  await ddb.send(new PutCommand({ TableName: TABLES.volunteerApplications, Item: item }));
+
+  return created({
+    success: true,
+    message: "Thank you for volunteering! We'll be in touch with next steps.",
+    id: item.id,
+    createdAt: item.createdAt,
+  });
+}
+
+async function artistApplication(raw: FormPayload): Promise<APIGatewayProxyResultV2> {
+  const result = parsePayload<ArtistApplicationPayload>(raw, [
+    'email', 'fullLegalName', 'djName', 'city', 'phone', 'instagramLink',
+    'contactMethod', 'mainGenre', 'subGenre', 'livePerformanceLinks',
+    'soundcloudLink', 'spotifyLink', 'rekordboxFamiliar',
+  ]);
+  if (!result.ok) return result.err;
+  const data = result.data;
+
+  // Upsert by email — update existing record if email already on file
+  const existing = await ddb.send(new ScanCommand({
+    TableName: TABLES.artistApplications,
+    FilterExpression: 'email = :e',
+    ExpressionAttributeValues: { ':e': data.email },
+    Limit: 1,
+  }));
+
+  if (existing.Items?.length) {
+    const existingId = existing.Items[0].id as string;
+    await ddb.send(new UpdateCommand({
+      TableName: TABLES.artistApplications,
+      Key: { id: existingId },
+      UpdateExpression: [
+        'SET fullLegalName = :fln, djName = :djn, city = :c, phone = :p,',
+        'instagramLink = :ig, contactMethod = :cm, artistBio = :ab,',
+        'b2bFavorite = :b2b, mainGenre = :mg, subGenre = :sg,',
+        'otherSubGenre = :osg, otherGenreText = :ogt,',
+        'livePerformanceLinks = :lpl, soundcloudLink = :sc,',
+        'spotifyLink = :sp, rekordboxFamiliar = :rf,',
+        'promoKitLinks = :pkl, additionalInfo = :ai, updatedAt = :ua',
+      ].join(' '),
+      ExpressionAttributeValues: {
+        ':fln': data.fullLegalName,
+        ':djn': data.djName,
+        ':c': data.city,
+        ':p': data.phone,
+        ':ig': data.instagramLink,
+        ':cm': data.contactMethod,
+        ':ab': data.artistBio || null,
+        ':b2b': data.b2bFavorite || null,
+        ':mg': data.mainGenre,
+        ':sg': data.subGenre,
+        ':osg': data.otherSubGenre ?? null,
+        ':ogt': data.otherGenreText ?? null,
+        ':lpl': data.livePerformanceLinks,
+        ':sc': data.soundcloudLink,
+        ':sp': data.spotifyLink,
+        ':rf': data.rekordboxFamiliar,
+        ':pkl': data.promoKitLinks ?? null,
+        ':ai': data.additionalInfo ?? null,
+        ':ua': new Date().toISOString(),
+      },
+    }));
+
+    return created({
+      success: true,
+      message: "Your application has been updated. We'll review your submission and contact you soon.",
+      id: existingId,
+    });
+  }
+
+  const item = {
+    ...newItem(),
+    email: data.email,
+    fullLegalName: data.fullLegalName,
+    djName: data.djName,
+    city: data.city,
+    phone: data.phone,
+    instagramLink: data.instagramLink,
+    contactMethod: data.contactMethod,
+    artistBio: data.artistBio || null,
+    b2bFavorite: data.b2bFavorite || null,
+    mainGenre: data.mainGenre,
+    subGenre: data.subGenre,
+    otherSubGenre: data.otherSubGenre ?? null,
+    otherGenreText: data.otherGenreText ?? null,
+    livePerformanceLinks: data.livePerformanceLinks,
+    soundcloudLink: data.soundcloudLink,
+    spotifyLink: data.spotifyLink,
+    rekordboxFamiliar: data.rekordboxFamiliar,
+    promoKitLinks: data.promoKitLinks ?? null,
+    additionalInfo: data.additionalInfo ?? null,
+  };
+
+  await ddb.send(new PutCommand({ TableName: TABLES.artistApplications, Item: item }));
+
+  return created({
+    success: true,
+    message: "Thank you for your artist application! We'll review your submission and contact you soon.",
+    id: item.id,
+    createdAt: item.createdAt,
+  });
+}
+
+async function sponsorInquiry(raw: FormPayload): Promise<APIGatewayProxyResultV2> {
+  const result = parsePayload<SponsorInquiryPayload>(raw, ['name', 'email', 'phone', 'company', 'productIndustry']);
+  if (!result.ok) return result.err;
+  const data = result.data;
+
+  const item = {
+    ...newItem(),
+    name: data.name,
+    email: data.email,
+    phone: data.phone,
+    company: data.company,
+    productIndustry: data.productIndustry,
+    notes: '',
+  };
+
+  await ddb.send(new PutCommand({ TableName: TABLES.sponsorInquiries, Item: item }));
+
+  void sendEmail(
+    `New Sponsor Inquiry from ${data.company}`,
+    `New Sponsor Inquiry\n\nName: ${data.name}\nCompany: ${data.company}\nEmail: ${data.email}\nPhone: ${data.phone}\n\nProduct/Industry:\n${data.productIndustry}\n\nSubmitted via connectevents.co`,
+  );
+
+  return created({
+    success: true,
+    message: "Thank you for your interest in sponsoring! A team member will reach out to you soon.",
+    id: item.id,
+    createdAt: item.createdAt,
+  });
+}
+
+async function contactForm(raw: FormPayload): Promise<APIGatewayProxyResultV2> {
+  const result = parsePayload<ContactFormPayload>(raw, ['name', 'email', 'subject', 'message']);
+  if (!result.ok) return result.err;
+  const data = result.data;
+
+  const item = {
+    ...newItem(),
+    name: data.name,
+    email: data.email,
+    source: 'contact-form',
+    subject: data.subject,
+    message: data.message,
+  };
+
+  await ddb.send(new PutCommand({ TableName: TABLES.emailSignups, Item: item }));
+
+  void sendEmail(
+    `Contact Form: ${data.subject}`,
+    `New Contact Form Submission\n\nFrom: ${data.name}\nEmail: ${data.email}\nSubject: ${data.subject}\n\nMessage:\n${data.message}\n\n---\nSent via connectevents.co`,
+  );
+
+  return created({
+    success: true,
+    message: "Message sent successfully! We'll get back to you soon.",
+  });
+}
+
+export const FORM_ROUTES: Record<string, (data: FormPayload) => Promise<APIGatewayProxyResultV2>> = {
+  'email-signup': emailSignup,
+  'vendor-application': vendorApplication,
+  'volunteer-application': volunteerApplication,
+  'artist-application': artistApplication,
+  'sponsor-inquiry': sponsorInquiry,
+  'contact': contactForm,
+};

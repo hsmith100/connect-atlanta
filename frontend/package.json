@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "next dev --hostname 0.0.0.0",
     "build": "next build",
-    "start": "next start --hostname 0.0.0.0",
+    "start": "npx serve out --listen 3000",
     "lint": "next lint",
     "typecheck": "tsc --noEmit"
   },

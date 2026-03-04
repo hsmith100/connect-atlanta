@@ -6,30 +6,6 @@ import Image from 'next/image'
 import { Music, Users, Mail, User, Phone, MapPin, Link as LinkIcon, MessageSquare, Store, Headphones } from 'lucide-react'
 import * as gtag from '../lib/gtag'
 
-interface VolunteerFormData {
-  firstName: string
-  lastName: string
-  email: string
-  phone: string
-  experience: string
-  skills: string[]
-}
-
-interface VendorFormData {
-  businessName: string
-  contactName: string
-  phone: string
-  email: string
-  businessType: string
-  description: string
-  websiteSocial: string
-  pricePoint: string
-  hasInsurance: string
-  foodPermit: string
-  setup: string
-  additionalComments: string
-}
-
 interface ArtistFormData {
   email: string
   fullLegalName: string
@@ -57,39 +33,7 @@ export default function JoinUs() {
   const [isHeaderVisible, setIsHeaderVisible] = useState(true)
 
   // Form refs for scrolling
-  const volunteerFormRef = useRef<HTMLFormElement>(null)
-  const vendorFormRef = useRef<HTMLFormElement>(null)
   const artistFormRef = useRef<HTMLFormElement>(null)
-
-  // Volunteer form state
-  const [volunteerData, setVolunteerData] = useState<VolunteerFormData>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
-    experience: '',
-    skills: []
-  })
-  const [volunteerSubmitting, setVolunteerSubmitting] = useState(false)
-  const [volunteerStatus, setVolunteerStatus] = useState<'success' | 'error' | null>(null)
-
-  // Vendor form state
-  const [vendorData, setVendorData] = useState<VendorFormData>({
-    businessName: '',
-    contactName: '',
-    phone: '',
-    email: '',
-    businessType: '',
-    description: '',
-    websiteSocial: '',
-    pricePoint: '',
-    hasInsurance: '',
-    foodPermit: '',
-    setup: '',
-    additionalComments: ''
-  })
-  const [vendorSubmitting, setVendorSubmitting] = useState(false)
-  const [vendorStatus, setVendorStatus] = useState<'success' | 'error' | null>(null)
 
   // Artist/DJ form state
   const [artistData, setArtistData] = useState<ArtistFormData>({
@@ -147,126 +91,6 @@ export default function JoinUs() {
         formSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }
     }, 100)
-  }
-
-  // Volunteer form handlers
-  const handleVolunteerChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void => {
-    const { name, value } = e.target
-    const { type, checked } = e.target as HTMLInputElement
-    if (type === 'checkbox' && name === 'skills') {
-      const updatedSkills = checked
-        ? [...volunteerData.skills, value]
-        : volunteerData.skills.filter(skill => skill !== value)
-      setVolunteerData(prev => ({ ...prev, skills: updatedSkills }))
-    } else {
-      setVolunteerData(prev => ({ ...prev, [name]: value } as VolunteerFormData))
-    }
-  }
-
-  const handleVolunteerSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
-    e.preventDefault()
-    setVolunteerSubmitting(true)
-    setVolunteerStatus(null)
-
-    try {
-      const response = await fetch('/api/forms/volunteer-application', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          firstName: volunteerData.firstName,
-          lastName: volunteerData.lastName,
-          email: volunteerData.email,
-          phone: volunteerData.phone,
-          skills: volunteerData.skills,
-          experience: volunteerData.experience
-        })
-      })
-
-      if (response.ok) {
-        setVolunteerStatus('success')
-        gtag.trackVolunteerApplication()
-        // Scroll to form top to show message
-        if (volunteerFormRef.current) {
-          volunteerFormRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        }
-        setVolunteerData({ firstName: '', lastName: '', email: '', phone: '', experience: '', skills: [] })
-        setTimeout(() => setVolunteerStatus(null), 5000)
-      } else {
-        setVolunteerStatus('error')
-        // Scroll to form top to show error
-        if (volunteerFormRef.current) {
-          volunteerFormRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        }
-      }
-    } catch (error) {
-      console.error('Error:', error)
-      setVolunteerStatus('error')
-      // Scroll to form top to show error
-      if (volunteerFormRef.current) {
-        volunteerFormRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      }
-    } finally {
-      setVolunteerSubmitting(false)
-    }
-  }
-
-  // Vendor form handlers
-  const handleVendorChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>): void => {
-    const { name, value } = e.target
-    setVendorData(prev => ({ ...prev, [name]: value } as VendorFormData))
-  }
-
-  const handleVendorSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
-    e.preventDefault()
-    setVendorSubmitting(true)
-    setVendorStatus(null)
-
-    try {
-      const response = await fetch('/api/forms/vendor-application', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          businessName: vendorData.businessName,
-          contactName: vendorData.contactName,
-          email: vendorData.email,
-          phone: vendorData.phone,
-          businessType: vendorData.businessType,
-          description: vendorData.description,
-          websiteSocial: vendorData.websiteSocial,
-          pricePoint: vendorData.pricePoint,
-          hasInsurance: vendorData.hasInsurance,
-          foodPermit: vendorData.foodPermit,
-          setup: vendorData.setup,
-          additionalComments: vendorData.additionalComments || null
-        })
-      })
-
-      if (response.ok) {
-        setVendorStatus('success')
-        gtag.trackVendorApplication()
-        // Scroll to form top to show message
-        if (vendorFormRef.current) {
-          vendorFormRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        }
-        setVendorData({ businessName: '', contactName: '', phone: '', email: '', businessType: '', description: '', websiteSocial: '', pricePoint: '', hasInsurance: '', foodPermit: '', setup: '', additionalComments: '' })
-        setTimeout(() => setVendorStatus(null), 5000)
-      } else {
-        setVendorStatus('error')
-        // Scroll to form top to show error
-        if (vendorFormRef.current) {
-          vendorFormRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
-        }
-      }
-    } catch (error) {
-      console.error('Error:', error)
-      setVendorStatus('error')
-      // Scroll to form top to show error
-      if (vendorFormRef.current) {
-        vendorFormRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' })
-      }
-    } finally {
-      setVendorSubmitting(false)
-    }
   }
 
   // Artist/DJ form handlers
@@ -418,11 +242,10 @@ export default function JoinUs() {
             </div>
           </div>
 
-          {/* Volunteer Form */}
+          {/* Volunteer */}
           {activeTab === 'volunteer' && (
             <div id="application-form" className="py-12 md:py-20">
             <div className="section-container max-w-4xl">
-              {/* Volunteer Info */}
               <div className="text-center mb-12">
                 <div className="mb-6 text-brand-primary flex justify-center">
                   <Users size={64} strokeWidth={1.5} />
@@ -435,218 +258,27 @@ export default function JoinUs() {
                 </p>
               </div>
 
-              {/* Success/Error Messages */}
-              {volunteerStatus === 'success' && (
-                <div className="mb-6 p-4 bg-green-50 border-2 border-green-500 rounded-lg text-center">
-                  <p className="text-green-800 font-semibold">
-                    🎉 Thank you for applying! We'll review your application and be in touch soon.
-                  </p>
-                </div>
-              )}
-
-              {volunteerStatus === 'error' && (
-                <div className="mb-6 p-4 bg-red-50 border-2 border-red-500 rounded-lg text-center">
-                  <p className="text-red-800 font-semibold">
-                    ❌ Oops! Something went wrong. Please try again.
-                  </p>
-                </div>
-              )}
-
-              {/* Volunteer Form */}
-              <div className="relative p-4 md:p-8 rounded-2xl overflow-hidden shadow-xl bg-white">
-                <div className="absolute inset-0"></div>
-                <form
-                  ref={volunteerFormRef}
-                  onSubmit={handleVolunteerSubmit}
-                  className="relative z-10 space-y-6"
+              <div className="text-center">
+                <a
+                  href="https://forms.gle/fWyoSrm2koijynxS7"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-festival btn-lg inline-flex items-center gap-2"
+                  onClick={() => gtag.trackVolunteerApplication()}
                 >
-                  {/* First Name & Last Name */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="form-control">
-                      <label className="label flex-col items-start">
-                        <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                          <User size={16} className="inline mr-2" />
-                          First Name *
-                        </span>
-                      </label>
-                      <input
-                        type="text"
-                        name="firstName"
-                        value={volunteerData.firstName}
-                        onChange={handleVolunteerChange}
-                        placeholder="First name"
-                        className="input input-bordered w-full focus:input-primary"
-                        disabled={volunteerSubmitting}
-                        required
-                      />
-                    </div>
-                    <div className="form-control">
-                      <label className="label flex-col items-start">
-                        <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                          <User size={16} className="inline mr-2" />
-                          Last Name *
-                        </span>
-                      </label>
-                      <input
-                        type="text"
-                        name="lastName"
-                        value={volunteerData.lastName}
-                        onChange={handleVolunteerChange}
-                        placeholder="Last name"
-                        className="input input-bordered w-full focus:input-primary"
-                        disabled={volunteerSubmitting}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  {/* Email & Phone */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="form-control">
-                      <label className="label flex-col items-start">
-                        <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                          <Mail size={16} className="inline mr-2" />
-                          Email *
-                        </span>
-                      </label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={volunteerData.email}
-                        onChange={handleVolunteerChange}
-                        placeholder="your@email.com"
-                        className="input input-bordered w-full focus:input-primary"
-                        disabled={volunteerSubmitting}
-                        required
-                      />
-                    </div>
-                    <div className="form-control">
-                      <label className="label flex-col items-start">
-                        <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                          <Phone size={16} className="inline mr-2" />
-                          Phone Number *
-                        </span>
-                      </label>
-                      <input
-                        type="tel"
-                        name="phone"
-                        value={volunteerData.phone}
-                        onChange={handleVolunteerChange}
-                        placeholder="(555) 123-4567"
-                        className="input input-bordered w-full focus:input-primary"
-                        disabled={volunteerSubmitting}
-                        required
-                      />
-                    </div>
-                  </div>
-
-                  {/* Event Experience */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        Event Experience?
-                      </span>
-                      <span className="label-text-alt text-brand-header/60">(Ex: Audio, Management, Hands-on production)</span>
-                    </label>
-                    <textarea
-                      name="experience"
-                      value={volunteerData.experience}
-                      onChange={handleVolunteerChange}
-                      className="textarea textarea-bordered h-24 focus:textarea-primary w-full"
-                      placeholder="Tell us about your event experience..."
-                      disabled={volunteerSubmitting}
-                    ></textarea>
-                  </div>
-
-                  {/* Interests - Checkboxes */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header mb-2 block">
-                        I am interested in: *
-                      </span>
-                    </label>
-                    <div className="space-y-3">
-                      <label className="flex items-start gap-3 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          name="skills"
-                          value="Hands-On Stage (heavy lifting and production setup)"
-                          checked={volunteerData.skills.includes("Hands-On Stage (heavy lifting and production setup)")}
-                          onChange={handleVolunteerChange}
-                          className="checkbox checkbox-primary mt-0.5"
-                          disabled={volunteerSubmitting}
-                        />
-                        <span className="text-brand-header">
-                          <strong>Hands-On Stage</strong> (heavy lifting and production setup)
-                        </span>
-                      </label>
-                      <label className="flex items-start gap-3 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          name="skills"
-                          value="Field Management (Sanitation & Field Operations)"
-                          checked={volunteerData.skills.includes("Field Management (Sanitation & Field Operations)")}
-                          onChange={handleVolunteerChange}
-                          className="checkbox checkbox-primary mt-0.5"
-                          disabled={volunteerSubmitting}
-                        />
-                        <span className="text-brand-header">
-                          <strong>Field Management</strong> (Sanitation & Field Operations)
-                        </span>
-                      </label>
-                      <label className="flex items-start gap-3 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          name="skills"
-                          value="Merch Booth Assistant"
-                          checked={volunteerData.skills.includes("Merch Booth Assistant")}
-                          onChange={handleVolunteerChange}
-                          className="checkbox checkbox-primary mt-0.5"
-                          disabled={volunteerSubmitting}
-                        />
-                        <span className="text-brand-header">
-                          <strong>Merch Booth Assistant</strong>
-                        </span>
-                      </label>
-                      <label className="flex items-start gap-3 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          name="skills"
-                          value="General Assistance (ANYTHING & EVERYTHING)"
-                          checked={volunteerData.skills.includes("General Assistance (ANYTHING & EVERYTHING)")}
-                          onChange={handleVolunteerChange}
-                          className="checkbox checkbox-primary mt-0.5"
-                          disabled={volunteerSubmitting}
-                        />
-                        <span className="text-brand-header">
-                          <strong>General Assistance</strong> (ANYTHING & EVERYTHING)
-                        </span>
-                      </label>
-                    </div>
-                  </div>
-
-                  {/* Submit Button */}
-                  <div className="pt-6">
-                    <button
-                      type="submit"
-                      disabled={volunteerSubmitting}
-                      className="btn-festival btn-lg w-full disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <Users size={20} className="inline mr-2" />
-                      {volunteerSubmitting ? 'Submitting...' : 'Submit Volunteer Application'}
-                    </button>
-                  </div>
-                </form>
+                  <Users size={20} />
+                  Apply to Volunteer
+                </a>
               </div>
+
             </div>
             </div>
           )}
 
-          {/* Vendor Form */}
+          {/* Vendor */}
           {activeTab === 'vendor' && (
             <div id="application-form" className="py-12 md:py-20">
             <div className="section-container max-w-4xl">
-              {/* Vendor Info */}
               <div className="text-center mb-12">
                 <div className="mb-6 text-brand-primary flex justify-center">
                   <Store size={64} strokeWidth={1.5} />
@@ -659,321 +291,17 @@ export default function JoinUs() {
                 </p>
               </div>
 
-              {/* Success/Error Messages */}
-              {vendorStatus === 'success' && (
-                <div className="mb-6 p-4 bg-green-50 border-2 border-green-500 rounded-lg text-center">
-                  <p className="text-green-800 font-semibold">
-                    🎉 Thank you for your application! We'll review it and be in touch soon.
-                  </p>
-                </div>
-              )}
-
-              {vendorStatus === 'error' && (
-                <div className="mb-6 p-4 bg-red-50 border-2 border-red-500 rounded-lg text-center">
-                  <p className="text-red-800 font-semibold">
-                    ❌ Oops! Something went wrong. Please try again.
-                  </p>
-                </div>
-              )}
-
-              {/* Vendor Form */}
-              <div className="relative p-4 md:p-8 rounded-2xl overflow-hidden shadow-xl bg-white">
-                <div className="absolute inset-0"></div>
-                <form
-                  ref={vendorFormRef}
-                  onSubmit={handleVendorSubmit}
-                  className="relative z-10 space-y-6"
+              <div className="text-center">
+                <a
+                  href="https://forms.gle/UcEf4GF1Hg4FaY8D9"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-festival btn-lg inline-flex items-center gap-2"
+                  onClick={() => gtag.trackVendorApplication()}
                 >
-                  {/* Store Name */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        <Store size={16} className="inline mr-2" />
-                        Store Name *
-                      </span>
-                    </label>
-                    <input
-                      type="text"
-                      name="businessName"
-                      value={vendorData.businessName}
-                      onChange={handleVendorChange}
-                      placeholder="Your store/business name"
-                      className="input input-bordered w-full focus:input-primary"
-                      disabled={vendorSubmitting}
-                      required
-                    />
-                  </div>
-
-                  {/* Owner's Full Name */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        <User size={16} className="inline mr-2" />
-                        Owner's Full Name *
-                      </span>
-                    </label>
-                    <input
-                      type="text"
-                      name="contactName"
-                      value={vendorData.contactName}
-                      onChange={handleVendorChange}
-                      placeholder="Full name"
-                      className="input input-bordered w-full focus:input-primary"
-                      disabled={vendorSubmitting}
-                      required
-                    />
-                  </div>
-
-                  {/* Phone Number */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        <Phone size={16} className="inline mr-2" />
-                        Phone Number *
-                      </span>
-                    </label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={vendorData.phone}
-                      onChange={handleVendorChange}
-                      placeholder="(555) 123-4567"
-                      className="input input-bordered w-full focus:input-primary"
-                      disabled={vendorSubmitting}
-                      required
-                    />
-                  </div>
-
-                  {/* Email */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        <Mail size={16} className="inline mr-2" />
-                        Email *
-                      </span>
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={vendorData.email}
-                      onChange={handleVendorChange}
-                      placeholder="your@email.com"
-                      className="input input-bordered w-full focus:input-primary"
-                      disabled={vendorSubmitting}
-                      required
-                    />
-                  </div>
-
-                  {/* Business Type */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        What kind of business are you? *
-                      </span>
-                    </label>
-                    <input
-                      type="text"
-                      name="businessType"
-                      value={vendorData.businessType}
-                      onChange={handleVendorChange}
-                      placeholder="e.g., Food, Jewelry, Art, Clothing"
-                      className="input input-bordered w-full focus:input-primary"
-                      disabled={vendorSubmitting}
-                      required
-                    />
-                  </div>
-
-                  {/* Description */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        <MessageSquare size={16} className="inline mr-2" />
-                        Description of what you're selling *
-                      </span>
-                    </label>
-                    <textarea
-                      name="description"
-                      value={vendorData.description}
-                      onChange={handleVendorChange}
-                      className="textarea textarea-bordered h-32 focus:textarea-primary w-full"
-                      placeholder="Tell us about your products or services..."
-                      disabled={vendorSubmitting}
-                      required
-                    ></textarea>
-                  </div>
-
-                  {/* Website or Social Media Links */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        <LinkIcon size={16} className="inline mr-2" />
-                        Website or Social Media Links *
-                      </span>
-                    </label>
-                    <textarea
-                      name="websiteSocial"
-                      value={vendorData.websiteSocial}
-                      onChange={handleVendorChange}
-                      className="textarea textarea-bordered focus:textarea-primary w-full"
-                      placeholder="Website, Instagram, Facebook, etc."
-                      rows={3}
-                      disabled={vendorSubmitting}
-                      required
-                    ></textarea>
-                  </div>
-
-                  {/* Average Price Point */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        Average Price Point *
-                      </span>
-                    </label>
-                    <input
-                      type="text"
-                      name="pricePoint"
-                      value={vendorData.pricePoint}
-                      onChange={handleVendorChange}
-                      placeholder="e.g., $10-$25, $50+, etc."
-                      className="input input-bordered w-full focus:input-primary"
-                      disabled={vendorSubmitting}
-                      required
-                    />
-                  </div>
-
-                  {/* Insurance */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        Does your business have insurance? *
-                      </span>
-                    </label>
-                    <div className="space-y-3 mt-2">
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="radio"
-                          name="hasInsurance"
-                          value="Yes"
-                          checked={vendorData.hasInsurance === 'Yes'}
-                          onChange={handleVendorChange}
-                          className="radio radio-primary"
-                          disabled={vendorSubmitting}
-                          required
-                        />
-                        <span className="text-brand-header">Yes</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="radio"
-                          name="hasInsurance"
-                          value="No"
-                          checked={vendorData.hasInsurance === 'No'}
-                          onChange={handleVendorChange}
-                          className="radio radio-primary"
-                          disabled={vendorSubmitting}
-                        />
-                        <span className="text-brand-header">No</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Food Permit */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        If selling food or beverages, do you have a food service permit? *
-                      </span>
-                    </label>
-                    <div className="space-y-3 mt-2">
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="radio"
-                          name="foodPermit"
-                          value="Yes"
-                          checked={vendorData.foodPermit === 'Yes'}
-                          onChange={handleVendorChange}
-                          className="radio radio-primary"
-                          disabled={vendorSubmitting}
-                          required
-                        />
-                        <span className="text-brand-header">Yes</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="radio"
-                          name="foodPermit"
-                          value="No"
-                          checked={vendorData.foodPermit === 'No'}
-                          onChange={handleVendorChange}
-                          className="radio radio-primary"
-                          disabled={vendorSubmitting}
-                        />
-                        <span className="text-brand-header">No</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="radio"
-                          name="foodPermit"
-                          value="N/A"
-                          checked={vendorData.foodPermit === 'N/A'}
-                          onChange={handleVendorChange}
-                          className="radio radio-primary"
-                          disabled={vendorSubmitting}
-                        />
-                        <span className="text-brand-header">N/A (Not selling food/beverages)</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Setup */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        What is your setup? *
-                      </span>
-                    </label>
-                    <input
-                      type="text"
-                      name="setup"
-                      value={vendorData.setup}
-                      onChange={handleVendorChange}
-                      className="input input-bordered focus:input-primary w-full"
-                      placeholder="e.g., food truck, cold plate cart, table and canopy, etc."
-                      disabled={vendorSubmitting}
-                      required
-                    />
-                  </div>
-
-                  {/* Additional Comments */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        Additional Comments
-                      </span>
-                    </label>
-                    <textarea
-                      name="additionalComments"
-                      value={vendorData.additionalComments}
-                      onChange={handleVendorChange}
-                      className="textarea textarea-bordered focus:textarea-primary w-full"
-                      placeholder="Any other information you'd like to share..."
-                      rows={4}
-                      disabled={vendorSubmitting}
-                    ></textarea>
-                  </div>
-
-                  {/* Submit Button */}
-                  <div className="pt-6">
-                    <button
-                      type="submit"
-                      disabled={vendorSubmitting}
-                      className="btn-festival btn-lg w-full disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <Store size={20} className="inline mr-2" />
-                      {vendorSubmitting ? 'Submitting...' : 'Submit Vendor Application'}
-                    </button>
-                  </div>
-                </form>
+                  <Store size={20} />
+                  Apply as a Vendor
+                </a>
               </div>
             </div>
             </div>

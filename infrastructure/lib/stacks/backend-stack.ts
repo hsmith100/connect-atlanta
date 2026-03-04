@@ -28,10 +28,6 @@ export class BackendStack extends cdk.Stack {
     const { dynamoStack } = props;
     const lambdaDir = path.join(__dirname, '../../../lambda/src/handlers');
 
-    // Google service account secret — created once via CLI, referenced here by name
-    const googleSecret = secretsmanager.Secret.fromSecretNameV2(
-      this, 'GoogleServiceAccount', 'connect/google-service-account');
-
     // ── Media S3 Bucket ───────────────────────────────────────────────────────
     // Stores uploaded photos and thumbnails. Presigned PUT URLs are issued by
     // PhotosLambda; reads are served via the media CloudFront distribution below.
@@ -102,28 +98,23 @@ export class BackendStack extends cdk.Stack {
         // Email addresses — not secrets, just config
         CONTACT_EMAIL: 'info@connectevents.co',
         FROM_EMAIL: 'noreply@connectevents.co',
-        // Google Sheets sync
-        GOOGLE_SA_SECRET_ARN: googleSecret.secretArn,
-        VENDOR_SHEET_ID: '1SUbvzglTqd6iFmAe69XRB__0APhSKfRUHl1zpHUGs-A',
-        ARTIST_SHEET_ID: '1EF3DzG4OjayDjsZtWNezsPh6EwDKKMJWKIAr67LtGls',
-        VOLUNTEER_SHEET_ID: '1-V9HV0AJWqdz0yqIrNQuC2quzGGBFGsRGW5hjfbqZCA',
+        // Admin key — shared secret between frontend and forms Lambda
+        ADMIN_SECRET_ARN: adminKeySecret.secretArn,
       },
     });
 
-    dynamoStack.emailSignupsTable.grantWriteData(formsLambda);
+    dynamoStack.emailSignupsTable.grantReadWriteData(formsLambda);
     dynamoStack.vendorApplicationsTable.grantWriteData(formsLambda);
     dynamoStack.volunteerApplicationsTable.grantWriteData(formsLambda);
-    dynamoStack.artistApplicationsTable.grantWriteData(formsLambda);
-    dynamoStack.sponsorInquiriesTable.grantWriteData(formsLambda);
+    dynamoStack.artistApplicationsTable.grantReadWriteData(formsLambda);
+    dynamoStack.sponsorInquiriesTable.grantReadWriteData(formsLambda);
+    adminKeySecret.grantRead(formsLambda);
 
     // SES send permission — domain verification happens in Phase 5 cutover
     formsLambda.addToRolePolicy(new iam.PolicyStatement({
       actions: ['ses:SendEmail', 'ses:SendRawEmail'],
       resources: ['*'],
     }));
-
-    // Secrets Manager — read Google service account credentials
-    googleSecret.grantRead(formsLambda);
 
     // ── Photos Lambda ─────────────────────────────────────────────────────────
     const photosLambda = new NodejsFunction(this, 'PhotosLambda', {
@@ -171,6 +162,10 @@ export class BackendStack extends cdk.Stack {
     api.addRoutes({ path: '/api/events', methods: [apigateway.HttpMethod.GET], integration: eventsIntegration });
     api.addRoutes({ path: '/api/events/{id}', methods: [apigateway.HttpMethod.GET], integration: eventsIntegration });
     api.addRoutes({ path: '/api/forms/{proxy+}', methods: [apigateway.HttpMethod.POST], integration: formsIntegration });
+    api.addRoutes({ path: '/api/admin/submissions/artists', methods: [apigateway.HttpMethod.GET], integration: formsIntegration });
+    api.addRoutes({ path: '/api/admin/submissions/sponsors', methods: [apigateway.HttpMethod.GET], integration: formsIntegration });
+    api.addRoutes({ path: '/api/admin/submissions/sponsors/{id}', methods: [apigateway.HttpMethod.PATCH], integration: formsIntegration });
+    api.addRoutes({ path: '/api/admin/submissions/email-signups', methods: [apigateway.HttpMethod.GET], integration: formsIntegration });
     api.addRoutes({ path: '/api/gallery', methods: [apigateway.HttpMethod.GET], integration: photosIntegration });
     api.addRoutes({ path: '/api/admin/photos/presign', methods: [apigateway.HttpMethod.POST], integration: photosIntegration });
     api.addRoutes({ path: '/api/admin/photos', methods: [apigateway.HttpMethod.GET, apigateway.HttpMethod.POST, apigateway.HttpMethod.PATCH, apigateway.HttpMethod.DELETE], integration: photosIntegration });
