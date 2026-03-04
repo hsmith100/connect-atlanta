@@ -9,8 +9,6 @@ export const ses = new SESClient({ region: 'us-east-1' });
 
 export const TABLES = {
   emailSignups: process.env.EMAIL_SIGNUPS_TABLE!,
-  vendorApplications: process.env.VENDOR_APPLICATIONS_TABLE!,
-  volunteerApplications: process.env.VOLUNTEER_APPLICATIONS_TABLE!,
   artistApplications: process.env.ARTIST_APPLICATIONS_TABLE!,
   sponsorInquiries: process.env.SPONSOR_INQUIRIES_TABLE!,
 };

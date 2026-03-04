@@ -11,8 +11,6 @@ interface DynamoStackProps extends cdk.StackProps {
 export class DynamoStack extends cdk.Stack {
   public readonly eventsTable: dynamodb.Table;
   public readonly emailSignupsTable: dynamodb.Table;
-  public readonly vendorApplicationsTable: dynamodb.Table;
-  public readonly volunteerApplicationsTable: dynamodb.Table;
   public readonly artistApplicationsTable: dynamodb.Table;
   public readonly sponsorInquiriesTable: dynamodb.Table;
   public readonly photosTable: dynamodb.Table;
@@ -43,32 +41,6 @@ export class DynamoStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.RETAIN,
     });
     this.emailSignupsTable.addGlobalSecondaryIndex({
-      indexName: 'byStatus',
-      partitionKey: { name: 'status', type: dynamodb.AttributeType.STRING },
-      sortKey: { name: 'createdAt', type: dynamodb.AttributeType.STRING },
-    });
-
-    // Vendor applications
-    this.vendorApplicationsTable = new dynamodb.Table(this, 'VendorApplicationsTable', {
-      tableName: `connect-${p}vendor-applications`,
-      partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
-      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
-    });
-    this.vendorApplicationsTable.addGlobalSecondaryIndex({
-      indexName: 'byStatus',
-      partitionKey: { name: 'status', type: dynamodb.AttributeType.STRING },
-      sortKey: { name: 'createdAt', type: dynamodb.AttributeType.STRING },
-    });
-
-    // Volunteer applications
-    this.volunteerApplicationsTable = new dynamodb.Table(this, 'VolunteerApplicationsTable', {
-      tableName: `connect-${p}volunteer-applications`,
-      partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
-      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
-    });
-    this.volunteerApplicationsTable.addGlobalSecondaryIndex({
       indexName: 'byStatus',
       partitionKey: { name: 'status', type: dynamodb.AttributeType.STRING },
       sortKey: { name: 'createdAt', type: dynamodb.AttributeType.STRING },
@@ -117,8 +89,6 @@ export class DynamoStack extends cdk.Stack {
     // Outputs — table names referenced by BackendStack Lambda env vars
     new cdk.CfnOutput(this, 'EventsTableName', { value: this.eventsTable.tableName });
     new cdk.CfnOutput(this, 'EmailSignupsTableName', { value: this.emailSignupsTable.tableName });
-    new cdk.CfnOutput(this, 'VendorApplicationsTableName', { value: this.vendorApplicationsTable.tableName });
-    new cdk.CfnOutput(this, 'VolunteerApplicationsTableName', { value: this.volunteerApplicationsTable.tableName });
     new cdk.CfnOutput(this, 'ArtistApplicationsTableName', { value: this.artistApplicationsTable.tableName });
     new cdk.CfnOutput(this, 'SponsorInquiriesTableName', { value: this.sponsorInquiriesTable.tableName });
     new cdk.CfnOutput(this, 'PhotosTableName', { value: this.photosTable.tableName });

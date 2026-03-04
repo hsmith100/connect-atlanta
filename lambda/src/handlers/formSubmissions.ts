@@ -3,8 +3,6 @@ import type { APIGatewayProxyResultV2 } from 'aws-lambda';
 import type {
   EmailSignupPayload,
   ContactFormPayload,
-  VolunteerApplicationPayload,
-  VendorApplicationPayload,
   ArtistApplicationPayload,
   SponsorInquiryPayload,
 } from '../../../shared/types/forms';
@@ -29,65 +27,6 @@ async function emailSignup(raw: FormPayload): Promise<APIGatewayProxyResultV2> {
   return created({
     success: true,
     message: "Thank you for signing up! We'll keep you updated on upcoming events.",
-    id: item.id,
-    createdAt: item.createdAt,
-  });
-}
-
-async function vendorApplication(raw: FormPayload): Promise<APIGatewayProxyResultV2> {
-  const result = parsePayload<VendorApplicationPayload>(raw, [
-    'businessName', 'contactName', 'email', 'phone', 'businessType',
-    'description', 'websiteSocial', 'pricePoint', 'hasInsurance', 'foodPermit', 'setup',
-  ]);
-  if (!result.ok) return result.err;
-  const data = result.data;
-
-  const item = {
-    ...newItem(),
-    businessName: data.businessName,
-    contactName: data.contactName,
-    email: data.email,
-    phone: data.phone,
-    businessType: data.businessType,
-    description: data.description,
-    websiteSocial: data.websiteSocial,
-    pricePoint: data.pricePoint,
-    hasInsurance: data.hasInsurance,
-    foodPermit: data.foodPermit,
-    setup: data.setup,
-    additionalComments: data.additionalComments ?? null,
-  };
-
-  await ddb.send(new PutCommand({ TableName: TABLES.vendorApplications, Item: item }));
-
-  return created({
-    success: true,
-    message: "Thank you for your vendor application! We'll review it and get back to you soon.",
-    id: item.id,
-    createdAt: item.createdAt,
-  });
-}
-
-async function volunteerApplication(raw: FormPayload): Promise<APIGatewayProxyResultV2> {
-  const result = parsePayload<VolunteerApplicationPayload>(raw, ['firstName', 'lastName', 'email', 'phone']);
-  if (!result.ok) return result.err;
-  const data = result.data;
-
-  const item = {
-    ...newItem(),
-    firstName: data.firstName,
-    lastName: data.lastName,
-    email: data.email,
-    phone: data.phone,
-    experience: data.experience ?? null,
-    skills: Array.isArray(data.skills) ? data.skills : [],
-  };
-
-  await ddb.send(new PutCommand({ TableName: TABLES.volunteerApplications, Item: item }));
-
-  return created({
-    success: true,
-    message: "Thank you for volunteering! We'll be in touch with next steps.",
     id: item.id,
     createdAt: item.createdAt,
   });
@@ -246,8 +185,6 @@ async function contactForm(raw: FormPayload): Promise<APIGatewayProxyResultV2> {
 
 export const FORM_ROUTES: Record<string, (data: FormPayload) => Promise<APIGatewayProxyResultV2>> = {
   'email-signup': emailSignup,
-  'vendor-application': vendorApplication,
-  'volunteer-application': volunteerApplication,
   'artist-application': artistApplication,
   'sponsor-inquiry': sponsorInquiry,
   'contact': contactForm,

@@ -91,8 +91,6 @@ export class BackendStack extends cdk.Stack {
       timeout: cdk.Duration.seconds(30),
       environment: {
         EMAIL_SIGNUPS_TABLE: dynamoStack.emailSignupsTable.tableName,
-        VENDOR_APPLICATIONS_TABLE: dynamoStack.vendorApplicationsTable.tableName,
-        VOLUNTEER_APPLICATIONS_TABLE: dynamoStack.volunteerApplicationsTable.tableName,
         ARTIST_APPLICATIONS_TABLE: dynamoStack.artistApplicationsTable.tableName,
         SPONSOR_INQUIRIES_TABLE: dynamoStack.sponsorInquiriesTable.tableName,
         // Email addresses — not secrets, just config
@@ -104,8 +102,6 @@ export class BackendStack extends cdk.Stack {
     });
 
     dynamoStack.emailSignupsTable.grantReadWriteData(formsLambda);
-    dynamoStack.vendorApplicationsTable.grantWriteData(formsLambda);
-    dynamoStack.volunteerApplicationsTable.grantWriteData(formsLambda);
     dynamoStack.artistApplicationsTable.grantReadWriteData(formsLambda);
     dynamoStack.sponsorInquiriesTable.grantReadWriteData(formsLambda);
     adminKeySecret.grantRead(formsLambda);
