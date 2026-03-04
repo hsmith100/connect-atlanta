@@ -1,7 +1,7 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || '';
-
 export async function fetchAPI<T>(endpoint: string, options: RequestInit = {}): Promise<T> {
-  const url = `${API_BASE_URL}${endpoint}`;
+  // Always use relative URLs — Next.js proxy handles /api/* in dev,
+  // CloudFront routes /api/* to API Gateway in production.
+  const url = endpoint;
 
   const response = await fetch(url, {
     ...options,

@@ -9,12 +9,18 @@ import * as apigateway from 'aws-cdk-lib/aws-apigatewayv2';
 import { HttpLambdaIntegration } from 'aws-cdk-lib/aws-apigatewayv2-integrations';
 import * as iam from 'aws-cdk-lib/aws-iam';
 import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
+import * as logs from 'aws-cdk-lib/aws-logs';
+import * as cloudwatch from 'aws-cdk-lib/aws-cloudwatch';
+import * as cloudwatchActions from 'aws-cdk-lib/aws-cloudwatch-actions';
+import * as sns from 'aws-cdk-lib/aws-sns';
+import * as snsSubscriptions from 'aws-cdk-lib/aws-sns-subscriptions';
 import { Construct } from 'constructs';
 import { DynamoStack } from './dynamo-stack';
 
 interface BackendStackProps extends cdk.StackProps {
   dynamoStack: DynamoStack;
   contactEmail?: string;
+  alertEmail?: string;
 }
 
 export class BackendStack extends cdk.Stack {
@@ -26,7 +32,7 @@ export class BackendStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: BackendStackProps) {
     super(scope, id, props);
 
-    const { dynamoStack, contactEmail = 'info@connectevents.co' } = props;
+    const { dynamoStack, contactEmail = 'info@connectevents.co', alertEmail = 'productions.connectatlanta@gmail.com' } = props;
     const lambdaDir = path.join(__dirname, '../../../lambda/src/handlers');
 
     // ── Media S3 Bucket ───────────────────────────────────────────────────────
@@ -169,6 +175,54 @@ export class BackendStack extends cdk.Stack {
     api.addRoutes({ path: '/api/admin/flyers/presign', methods: [apigateway.HttpMethod.POST], integration: photosIntegration });
     api.addRoutes({ path: '/api/admin/events', methods: [apigateway.HttpMethod.GET, apigateway.HttpMethod.POST], integration: photosIntegration });
     api.addRoutes({ path: '/api/admin/events/{id}', methods: [apigateway.HttpMethod.PATCH, apigateway.HttpMethod.DELETE], integration: photosIntegration });
+
+    // ── Access logging ────────────────────────────────────────────────────────
+    const accessLogGroup = new logs.LogGroup(this, 'ApiAccessLogs', {
+      retention: logs.RetentionDays.ONE_MONTH,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+
+    // ── Throttling ────────────────────────────────────────────────────────────
+    // Stage-level defaults protect all routes from abuse.
+    // 20 req/sec sustained, burst of 50 — plenty for a landing page.
+    // API Gateway returns 429 Too Many Requests when exceeded.
+    const cfnStage = api.defaultStage?.node.defaultChild as apigateway.CfnStage;
+    cfnStage.defaultRouteSettings = {
+      throttlingRateLimit: 20,
+      throttlingBurstLimit: 50,
+    };
+    cfnStage.accessLogSettings = {
+      destinationArn: accessLogGroup.logGroupArn,
+      format: JSON.stringify({
+        requestId: '$context.requestId',
+        ip: '$context.identity.sourceIp',
+        requestTime: '$context.requestTime',
+        httpMethod: '$context.httpMethod',
+        routeKey: '$context.routeKey',
+        status: '$context.status',
+        responseLength: '$context.responseLength',
+      }),
+    };
+
+    // ── Throttle alarm ────────────────────────────────────────────────────────
+    // Alert when 10+ requests are throttled in a 5-minute window.
+    const throttleMetric = new logs.MetricFilter(this, 'ThrottleMetricFilter', {
+      logGroup: accessLogGroup,
+      metricNamespace: 'ConnectAPI',
+      metricName: 'ThrottledRequests',
+      filterPattern: logs.FilterPattern.stringValue('$.status', '=', '429'),
+      metricValue: '1',
+    });
+
+    const alertTopic = new sns.Topic(this, 'AlertTopic');
+    alertTopic.addSubscription(new snsSubscriptions.EmailSubscription(alertEmail));
+
+    new cloudwatch.Alarm(this, 'ThrottleAlarm', {
+      metric: throttleMetric.metric({ statistic: 'Sum', period: cdk.Duration.minutes(5) }),
+      threshold: 10,
+      evaluationPeriods: 1,
+      alarmDescription: 'More than 10 API requests throttled in 5 minutes — possible abuse or traffic spike',
+    }).addAlarmAction(new cloudwatchActions.SnsAction(alertTopic));
 
     this.apiUrl = api.url!;
     // Strip "https://" and trailing "/" to get bare hostname for CloudFront HttpOrigin
