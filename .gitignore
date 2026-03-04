@@ -54,6 +54,9 @@ Thumbs.db
 *.sublime-project
 *.sublime-workspace
 
+# Claude Code — local user settings (machine-specific, not shared)
+.claude/settings.local.json
+
 # Docker — prod compose has committed secrets; gitignored to stop future leaks
 docker-compose.prod.yml
 *.pid

@@ -1,19 +1,23 @@
 import { useState, useEffect } from 'react'
-import { getAdminPhotos, getAdminEvents } from '../lib/api'
+import { getAdminPhotos, getAdminEvents, getAdminArtists, getAdminSponsors, getAdminEmailSignups } from '../lib/api'
 import { AuthGate } from '../components/admin/AuthGate'
 import { PhotosTab } from '../components/admin/PhotosTab'
 import { EventsTab } from '../components/admin/EventsTab'
+import { SubmissionsTab } from '../components/admin/SubmissionsTab'
 import type { Photo } from '@shared/types/photos'
 import type { Event } from '@shared/types/events'
 
 const STORAGE_KEY = 'connect_admin_key'
 
-type Tab = 'photos' | 'events'
+type Tab = 'photos' | 'events' | 'submissions'
 
 export default function AdminPage() {
   const [adminKey, setAdminKey] = useState<string | null>(null)
   const [photos, setPhotos] = useState<Photo[]>([])
   const [events, setEvents] = useState<Event[]>([])
+  const [artists, setArtists] = useState<Record<string, unknown>[]>([])
+  const [sponsors, setSponsors] = useState<Record<string, unknown>[]>([])
+  const [emailSignups, setEmailSignups] = useState<Record<string, unknown>[]>([])
   const [activeTab, setActiveTab] = useState<Tab>('photos')
 
   // Check for stored key on mount
@@ -26,12 +30,15 @@ export default function AdminPage() {
     }
   }, [])
 
-  // Load photos + events when authenticated
+  // Load all data when authenticated
   useEffect(() => {
     if (!adminKey) return
     Promise.all([
       getAdminPhotos(adminKey).then((r) => setPhotos(r.photos)),
       getAdminEvents(adminKey).then(setEvents),
+      getAdminArtists(adminKey).then((r) => setArtists(r.artists)),
+      getAdminSponsors(adminKey).then((r) => setSponsors(r.sponsors)),
+      getAdminEmailSignups(adminKey).then((r) => setEmailSignups(r.signups)),
     ]).catch(console.error)
   }, [adminKey])
 
@@ -54,7 +61,7 @@ export default function AdminPage() {
 
       {/* Tabs */}
       <div className="bg-gray-900 border-b border-gray-800 px-6 flex gap-1">
-        {(['photos', 'events'] as Tab[]).map((tab) => (
+        {(['photos', 'events', 'submissions'] as Tab[]).map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab)}
@@ -75,6 +82,14 @@ export default function AdminPage() {
       )}
       {activeTab === 'events' && (
         <EventsTab adminKey={adminKey} events={events} setEvents={setEvents} />
+      )}
+      {activeTab === 'submissions' && (
+        <SubmissionsTab
+          adminKey={adminKey}
+          artists={artists}
+          sponsors={sponsors}
+          emailSignups={emailSignups}
+        />
       )}
     </div>
   )
