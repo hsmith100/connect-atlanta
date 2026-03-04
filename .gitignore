@@ -80,6 +80,9 @@ infrastructure/cdk.out/
 infrastructure/node_modules/
 lambda/node_modules/
 
+# TypeScript incremental build cache
+*.tsbuildinfo
+
 # Misc
 .cache/
 .rsync-exclude
