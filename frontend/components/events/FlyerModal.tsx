@@ -1,4 +1,5 @@
 import { useEffect } from 'react'
+import Image from 'next/image'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 import type { Event } from '@shared/types/events'
 
@@ -65,9 +66,11 @@ export default function FlyerModal({ events, selectedIndex, onClose, onPrev, onN
                 className="relative max-w-2xl max-h-[90vh] w-full h-full flex items-center justify-center"
                 onClick={(e) => e.stopPropagation()}
             >
-                <img
+                <Image
                     src={event.flyerUrl ?? ''}
                     alt={event.title}
+                    width={1080}
+                    height={1350}
                     className="max-w-full max-h-full object-contain rounded-lg"
                 />
                 {events.length > 1 && (
