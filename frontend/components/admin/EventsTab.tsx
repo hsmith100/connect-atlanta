@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { Trash2, Upload, Save, Loader2, AlertCircle, ImageIcon, Plus, Pencil } from 'lucide-react'
-import { presignFlyer, updateEventFlyer, updateEventGoLive, updateEvent, createEvent, deleteEvent } from '../../lib/api'
+import { Trash2, Upload, Loader2, AlertCircle, ImageIcon, Plus, Pencil } from 'lucide-react'
+import { presignFlyer, updateEvent, createEvent, deleteEvent } from '../../lib/api'
 import type { Event } from '@shared/types/events'
 
 // Convert ISO datetime string to datetime-local input value (local time)
@@ -27,11 +27,7 @@ interface EventsTabProps {
 }
 
 export function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
-  const [uploading, setUploading] = useState<Record<string, boolean>>({})
   const [deleting, setDeleting] = useState<Record<string, boolean>>({})
-  const [savingGoLive, setSavingGoLive] = useState<Record<string, boolean>>({})
-  const [goLiveDates, setGoLiveDates] = useState<Record<string, string>>({})
-  const [goLiveTimes, setGoLiveTimes] = useState<Record<string, string>>({})
   const [showAddForm, setShowAddForm] = useState(false)
   const [editingEventId, setEditingEventId] = useState<string | null>(null)
   const emptyForm = { title: '', date: '', startTime: '', endTime: '', location: '', ticketingUrl: '', goLiveDate: '', goLiveTime: '' }
@@ -72,26 +68,6 @@ export function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
   }
 
   const inputCls = 'w-full bg-gray-800 text-white text-sm rounded-lg px-3 py-2 border border-gray-700 focus:outline-none focus:border-brand-primary'
-
-  async function handleSetGoLive(ev: Event) {
-    const existingLocal = ev.goLiveAt ? toDatetimeLocal(ev.goLiveAt) : ''
-    const date = ev.id in goLiveDates ? goLiveDates[ev.id] : existingLocal.slice(0, 10)
-    const time = ev.id in goLiveTimes ? goLiveTimes[ev.id] : existingLocal.slice(11, 16)
-    const goLiveAt = date ? new Date(`${date}T${time || '00:00'}`).toISOString() : null
-    setSavingGoLive((prev) => ({ ...prev, [ev.id]: true }))
-    setStatusMsg('')
-    setError('')
-    try {
-      await updateEventGoLive(adminKey, ev.id, goLiveAt)
-      setEvents((prev) => prev.map((e) => e.id === ev.id ? { ...e, goLiveAt } : e))
-      setStatusMsg(goLiveAt ? `Go-live set for "${ev.title}".` : `Schedule cleared for "${ev.title}".`)
-    } catch (err) {
-      console.error('Go-live update error:', err)
-      setError(`Failed to update go-live for "${ev.title}".`)
-    } finally {
-      setSavingGoLive((prev) => ({ ...prev, [ev.id]: false }))
-    }
-  }
 
   async function handleSaveEvent() {
     if (!newEvent.title || !newEvent.date) { setError('Title and date are required.'); return }
@@ -186,32 +162,13 @@ export function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
     }
   }
 
-  async function handleFlyerUpload(ev: Event, file: File) {
-    setUploading((prev) => ({ ...prev, [ev.id]: true }))
-    setStatusMsg('')
-    setError('')
-    try {
-      const { uploadUrl, flyerUrl } = await presignFlyer(adminKey, ev.id, file.name, file.type || 'image/jpeg')
-      const res = await fetch(uploadUrl, { method: 'PUT', body: file, headers: { 'Content-Type': file.type || 'image/jpeg' } })
-      if (!res.ok) throw new Error(`S3 upload failed: ${res.status}`)
-      await updateEventFlyer(adminKey, ev.id, flyerUrl)
-      setEvents((prev) => prev.map((e) => e.id === ev.id ? { ...e, flyerUrl } : e))
-      setStatusMsg(`Flyer updated for "${ev.title}".`)
-    } catch (err) {
-      console.error('Flyer upload error:', err)
-      setError(`Failed to upload flyer for "${ev.title}".`)
-    } finally {
-      setUploading((prev) => ({ ...prev, [ev.id]: false }))
-    }
-  }
-
   return (
     <>
       {/* Toolbar */}
       <div className="px-6 py-3 border-b border-gray-800 flex items-center justify-between">
         <span className="text-sm text-gray-400">{events.length} event{events.length !== 1 ? 's' : ''}</span>
         <button
-          onClick={() => { if (showAddForm) { resetForm() } else { setShowAddForm(true) } }}
+          onClick={() => setShowAddForm(true)}
           className="flex items-center gap-2 bg-brand-primary hover:bg-brand-primary/90 text-white rounded-lg px-4 py-1.5 text-sm font-semibold transition-colors"
         >
           <Plus size={16} /> Add Event
@@ -227,10 +184,13 @@ export function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
         </div>
       )}
 
-      {/* Add Event form */}
+      {/* Add / Edit Event modal */}
       {showAddForm && (
-        <div className="p-6 border-b border-gray-800">
-          <div className="bg-gray-900 rounded-xl border border-gray-700 p-5 space-y-4 max-w-lg">
+        <div
+          className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4"
+          onClick={(e) => { if (e.target === e.currentTarget) resetForm() }}
+        >
+          <div className="bg-gray-900 rounded-xl border border-gray-700 p-5 space-y-4 w-full max-w-lg max-h-[90vh] overflow-y-auto">
             <h3 className="text-white font-semibold">{editingEventId ? 'Edit Event' : 'New Event'}</h3>
             <div>
               <label className="block text-xs text-gray-400 mb-1">Title *</label>
@@ -324,12 +284,8 @@ export function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
         </div>
       ) : (
         <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {events.map((ev) => {
-            const existingLocal = ev.goLiveAt ? toDatetimeLocal(ev.goLiveAt) : ''
-            const glDate = ev.id in goLiveDates ? goLiveDates[ev.id] : existingLocal.slice(0, 10)
-            const glTime = ev.id in goLiveTimes ? goLiveTimes[ev.id] : existingLocal.slice(11, 16)
-            return (
-              <div key={ev.id} className="bg-gray-900 rounded-xl overflow-hidden border border-gray-800">
+          {events.map((ev) => (
+            <div key={ev.id} className="bg-gray-900 rounded-xl overflow-hidden border border-gray-800">
                 <div className="aspect-[4/5] bg-gray-800 flex items-center justify-center">
                   {ev.flyerUrl ? (
                     <img src={ev.flyerUrl} alt={ev.title} className="w-full h-full object-contain" />
@@ -365,42 +321,9 @@ export function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
                       </button>
                     </div>
                   </div>
-                  <label className={`flex items-center justify-center gap-2 w-full rounded-lg px-3 py-2 text-sm font-semibold cursor-pointer transition-colors ${uploading[ev.id] ? 'bg-gray-700 opacity-50 cursor-wait' : 'bg-brand-primary hover:bg-brand-primary/90'} text-white`}>
-                    {uploading[ev.id] ? (
-                      <><Loader2 size={14} className="animate-spin" /> Uploading…</>
-                    ) : (
-                      <><Upload size={14} /> {ev.flyerUrl ? 'Replace flyer' : 'Upload flyer'}</>
-                    )}
-                    <input type="file" accept="image/*" className="hidden" disabled={uploading[ev.id]} onChange={(e) => { const file = e.target.files?.[0]; if (file) handleFlyerUpload(ev, file); e.target.value = '' }} />
-                  </label>
-                  <div className="space-y-1.5">
-                    <p className="text-xs text-gray-400">Go-live — leave blank to clear schedule</p>
-                    <div className="flex gap-1.5">
-                      <input
-                        type="date"
-                        value={glDate}
-                        onChange={(e) => setGoLiveDates((prev) => ({ ...prev, [ev.id]: e.target.value }))}
-                        className="flex-1 bg-gray-800 text-white text-xs rounded-lg px-2 py-1.5 border border-gray-700 focus:outline-none focus:border-brand-primary"
-                      />
-                      <input
-                        type="time"
-                        value={glTime}
-                        onChange={(e) => setGoLiveTimes((prev) => ({ ...prev, [ev.id]: e.target.value }))}
-                        className="w-24 bg-gray-800 text-white text-xs rounded-lg px-2 py-1.5 border border-gray-700 focus:outline-none focus:border-brand-primary"
-                      />
-                    </div>
-                    <button
-                      onClick={() => handleSetGoLive(ev)}
-                      disabled={savingGoLive[ev.id]}
-                      className="flex items-center justify-center gap-1.5 w-full bg-gray-700 hover:bg-gray-600 text-white rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors disabled:opacity-50"
-                    >
-                      {savingGoLive[ev.id] ? <><Loader2 size={12} className="animate-spin" /> Saving…</> : <><Save size={12} /> Set Go-Live</>}
-                    </button>
-                  </div>
                 </div>
-              </div>
-            )
-          })}
+            </div>
+          ))}
         </div>
       )}
     </>
