@@ -26,9 +26,9 @@ export function ArtistsSection({ artists }: Props) {
           <button
             onClick={() => downloadCsv(
               'dj-applications.csv',
-              ['DJ Name', 'Email', 'City', 'Main Genre', 'Submitted'],
+              ['DJ Name', 'Full Legal Name', 'Email', 'Phone', 'City', 'Instagram', 'Preferred Contact', 'Main Genre', 'Sub Genre', 'Other Sub Genre', 'Other Genre', 'SoundCloud', 'Spotify', 'Live Performance Links', 'Rekordbox Familiar', 'Artist Bio', 'B2B Favorite', 'Promo Kit Links', 'Additional Info', 'Submitted'],
               filtered,
-              ['djName', 'email', 'city', 'mainGenre', 'createdAt'],
+              ['djName', 'fullLegalName', 'email', 'phone', 'city', 'instagramLink', 'contactMethod', 'mainGenre', 'subGenre', 'otherSubGenre', 'otherGenreText', 'soundcloudLink', 'spotifyLink', 'livePerformanceLinks', 'rekordboxFamiliar', 'artistBio', 'b2bFavorite', 'promoKitLinks', 'additionalInfo', 'createdAt'],
             )}
             className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded text-sm transition-colors"
           >

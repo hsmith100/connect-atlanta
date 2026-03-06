@@ -143,7 +143,7 @@ async function sponsorInquiry(raw: FormPayload): Promise<APIGatewayProxyResultV2
 
   await ddb.send(new PutCommand({ TableName: TABLES.sponsorInquiries, Item: item }));
 
-  void sendEmail(
+  await sendEmail(
     `New Sponsor Inquiry from ${data.company}`,
     `New Sponsor Inquiry\n\nName: ${data.name}\nCompany: ${data.company}\nEmail: ${data.email}\nPhone: ${data.phone}\n\nProduct/Industry:\n${data.productIndustry}\n\nSubmitted via connectevents.co`,
   );
@@ -172,7 +172,7 @@ async function contactForm(raw: FormPayload): Promise<APIGatewayProxyResultV2> {
 
   await ddb.send(new PutCommand({ TableName: TABLES.emailSignups, Item: item }));
 
-  void sendEmail(
+  await sendEmail(
     `Contact Form: ${data.subject}`,
     `New Contact Form Submission\n\nFrom: ${data.name}\nEmail: ${data.email}\nSubject: ${data.subject}\n\nMessage:\n${data.message}\n\n---\nSent via connectevents.co`,
   );
