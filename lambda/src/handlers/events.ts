@@ -47,10 +47,10 @@ export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGateway
     const method = event.requestContext.http.method;
     const path = event.rawPath;
 
-    if (method === 'GET' && path === '/api/events') return listEvents();
+    if (method === 'GET' && path === '/api/events') return await listEvents();
 
     const match = path.match(/^\/api\/events\/([^/]+)$/);
-    if (method === 'GET' && match) return getEvent(match[1]);
+    if (method === 'GET' && match) return await getEvent(match[1]);
 
     return errResponse(404, 'Not found');
   } catch (e) {
