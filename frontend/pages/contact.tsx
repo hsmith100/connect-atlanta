@@ -536,45 +536,45 @@ export default function Contact() {
 
             <div className="space-y-4">
               {/* FAQ Items */}
-              <div className="collapse collapse-plus bg-brand-bg border border-brand-primary/10">
-                <input type="checkbox" defaultChecked />
-                <div className="collapse-title text-xl font-bold text-brand-header">
+              <details className="rounded-xl border border-brand-primary/10 bg-brand-bg group">
+                <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-4 text-xl font-bold text-brand-header">
                   How can I perform at Beats on the Beltline?
-                </div>
-                <div className="collapse-content text-brand-header/80">
+                  <span className="ml-4 text-brand-primary transition-transform duration-200 group-open:rotate-45">+</span>
+                </summary>
+                <div className="px-4 pb-4 text-brand-header/80">
                   <p>Head over to our <a href="/join" className="text-brand-primary hover:text-brand-header">Join Us page</a> and fill out the artist application form. We review all submissions and reach out to selected artists.</p>
                 </div>
-              </div>
+              </details>
 
-              <div className="collapse collapse-plus bg-brand-bg border border-brand-primary/10">
-                <input type="checkbox" defaultChecked />
-                <div className="collapse-title text-xl font-bold text-brand-header">
+              <details className="rounded-xl border border-brand-primary/10 bg-brand-bg group">
+                <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-4 text-xl font-bold text-brand-header">
                   How can I become a vendor?
-                </div>
-                <div className="collapse-content text-brand-header/80">
+                  <span className="ml-4 text-brand-primary transition-transform duration-200 group-open:rotate-45">+</span>
+                </summary>
+                <div className="px-4 pb-4 text-brand-header/80">
                   <p>Head over to our <a href="/join" className="text-brand-primary hover:text-brand-header">Join Us page</a> and fill out the vendor application form.</p>
                 </div>
-              </div>
+              </details>
 
-              <div className="collapse collapse-plus bg-brand-bg border border-brand-primary/10">
-                <input type="checkbox" defaultChecked />
-                <div className="collapse-title text-xl font-bold text-brand-header">
+              <details className="rounded-xl border border-brand-primary/10 bg-brand-bg group">
+                <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-4 text-xl font-bold text-brand-header">
                   Are you available for partnerships?
-                </div>
-                <div className="collapse-content text-brand-header/80">
+                  <span className="ml-4 text-brand-primary transition-transform duration-200 group-open:rotate-45">+</span>
+                </summary>
+                <div className="px-4 pb-4 text-brand-header/80">
                   <p>Yes! We are always open to new brand partnerships and sponsorship opportunities. Email us at <a href="mailto:info@connectevents.co" className="text-brand-primary hover:text-brand-header">info@connectevents.co</a> to discuss collaboration possibilities.</p>
                 </div>
-              </div>
+              </details>
 
-              <div className="collapse collapse-plus bg-brand-bg border border-brand-primary/10">
-                <input type="checkbox" defaultChecked />
-                <div className="collapse-title text-xl font-bold text-brand-header">
+              <details className="rounded-xl border border-brand-primary/10 bg-brand-bg group">
+                <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-4 text-xl font-bold text-brand-header">
                   When is the next event?
-                </div>
-                <div className="collapse-content text-brand-header/80">
+                  <span className="ml-4 text-brand-primary transition-transform duration-200 group-open:rotate-45">+</span>
+                </summary>
+                <div className="px-4 pb-4 text-brand-header/80">
                   <p>Check out our <a href="/events" className="text-brand-primary hover:text-brand-header">Events page</a> for upcoming dates, or sign up for our text and email updates to be the first to know about new event announcements.</p>
                 </div>
-              </div>
+              </details>
             </div>
           </div>
         </section>
