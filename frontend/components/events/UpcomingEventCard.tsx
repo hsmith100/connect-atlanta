@@ -38,40 +38,31 @@ export default function UpcomingEventCard({ event }: UpcomingEventCardProps) {
                     <div className="space-y-4 mb-8">
                         <div className="flex items-start gap-4 text-brand-text">
                             <Calendar size={28} className="text-brand-primary mt-1 flex-shrink-0" strokeWidth={2} />
-                            <div>
-                                <p className="text-2xl font-bold text-brand-header">{formatEventDate(event.date)}</p>
-                                <p className="text-lg text-brand-text/80">Mark your calendar!</p>
-                            </div>
+                            <p className="text-2xl font-bold text-brand-header">{formatEventDate(event.date)}</p>
                         </div>
 
                         {event.startTime && (
                             <div className="flex items-start gap-4 text-brand-text">
                                 <Clock size={28} className="text-brand-primary mt-1 flex-shrink-0" strokeWidth={2} />
-                                <div>
-                                    <p className="text-2xl font-bold text-brand-header">
-                                        {event.endTime
-                                            ? `${formatTime(event.startTime)} – ${formatTime(event.endTime)}`
-                                            : formatTime(event.startTime)}
-                                    </p>
-                                    <p className="text-lg text-brand-text/80">All afternoon & evening</p>
-                                </div>
+                                <p className="text-2xl font-bold text-brand-header">
+                                    {event.endTime
+                                        ? `${formatTime(event.startTime)} – ${formatTime(event.endTime)}`
+                                        : formatTime(event.startTime)}
+                                </p>
                             </div>
                         )}
 
                         {event.location && (
                             <div className="flex items-start gap-4 text-brand-text">
                                 <MapPin size={28} className="text-brand-primary mt-1 flex-shrink-0" strokeWidth={2} />
-                                <div>
-                                    <p className="text-2xl font-bold text-brand-header">{event.location}</p>
-                                    <p className="text-lg text-brand-text/80">Atlanta&apos;s premier trail</p>
-                                </div>
+                                <p className="text-2xl font-bold text-brand-header">{event.location}</p>
                             </div>
                         )}
                     </div>
 
-                    <p className="text-xl text-brand-text mb-8 leading-relaxed">
-                        Join us for an unforgettable day of music, art, and community along Atlanta&apos;s iconic Beltline. Free admission, world-class DJs, and amazing vibes!
-                    </p>
+                    {event.description && (
+                        <p className="text-xl text-brand-text mb-8 leading-relaxed">{event.description}</p>
+                    )}
 
                     {event.ticketingUrl && (
                         <a
@@ -80,7 +71,7 @@ export default function UpcomingEventCard({ event }: UpcomingEventCardProps) {
                             rel="noopener noreferrer"
                             className="btn-festival text-xl py-4 transform hover:scale-105 transition-all block text-center"
                         >
-                            Get Info & Updates
+                            {event.buttonText || 'Get Info & Updates'}
                         </a>
                     )}
                 </div>

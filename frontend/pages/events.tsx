@@ -16,6 +16,41 @@ import FlyerModal from '../components/events/FlyerModal'
 // Matches the actual GET /api/gallery response shape
 type EventGalleryData = { photos: Photo[] };
 
+// Returns start and end datetimes for an event, handling midnight crossover.
+// Times are parsed as local time. If endTime < startTime, end is next calendar day.
+function getEventDatetimes(event: Event): { start: Date; end: Date } {
+    const start = event.startTime
+        ? new Date(`${event.date}T${event.startTime}`)
+        : new Date(`${event.date}T23:59:59`)
+
+    let end: Date
+    if (event.endTime) {
+        end = new Date(`${event.date}T${event.endTime}`)
+        if (end <= start) end.setDate(end.getDate() + 1) // crosses midnight
+    } else {
+        end = new Date(`${event.date}T23:59:59`)
+    }
+
+    return { start, end }
+}
+
+// Returns the id of the event that should be the active tab.
+// Priority: earliest unstarted event. If all have started, latest start time.
+function getDefaultActiveId(events: Event[]): string | null {
+    if (events.length === 0) return null
+    const now = new Date()
+    const unstarted = events.filter(e => now < getEventDatetimes(e).start)
+    if (unstarted.length > 0) {
+        return unstarted.sort((a, b) =>
+            getEventDatetimes(a).start.getTime() - getEventDatetimes(b).start.getTime()
+        )[0].id
+    }
+    // All started — show the one with the latest start time
+    return [...events].sort((a, b) =>
+        getEventDatetimes(b).start.getTime() - getEventDatetimes(a).start.getTime()
+    )[0].id
+}
+
 export default function Events() {
     const router = useRouter()
     const [isModalOpen, setIsModalOpen] = useState(false)
@@ -29,16 +64,23 @@ export default function Events() {
 
     const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([])
     const [pastEvents, setPastEvents] = useState<Event[]>([])
+    const [activeEventId, setActiveEventId] = useState<string | null>(null)
     const [selectedFlyerIndex, setSelectedFlyerIndex] = useState<number | null>(null)
 
-    // Load events on mount — split by date
+    // Load events on mount — split using time-aware logic
     useEffect(() => {
         async function loadEvents() {
             try {
                 const events = await getEvents()
-                const today = new Date().toISOString().slice(0, 10) // "YYYY-MM-DD"
-                setUpcomingEvents(events.filter((e) => e.date > today))
-                setPastEvents(events.filter((e) => e.date <= today))
+                const now = new Date()
+                // Upcoming = not yet ended; past = end time has passed
+                const upcoming = events
+                    .filter(e => now < getEventDatetimes(e).end)
+                    .sort((a, b) => getEventDatetimes(a).start.getTime() - getEventDatetimes(b).start.getTime())
+                const past = events.filter(e => now >= getEventDatetimes(e).end)
+                setUpcomingEvents(upcoming)
+                setPastEvents(past)
+                setActiveEventId(getDefaultActiveId(upcoming))
             } catch (err) {
                 console.error('Failed to load events:', err)
                 setError('Failed to load events. Please try again later.')
@@ -182,9 +224,29 @@ export default function Events() {
                                 </div>
                             ) : (
                                 <div className="max-w-5xl mx-auto">
-                                    {upcomingEvents.map((event) => (
-                                        <UpcomingEventCard key={event.id} event={event} />
-                                    ))}
+                                    {/* Tab switcher — only shown when there are multiple upcoming events */}
+                                    {upcomingEvents.length > 1 && (
+                                        <div className="flex gap-2 mb-8 max-w-lg mx-auto">
+                                            {upcomingEvents.map((event) => (
+                                                <button
+                                                    key={event.id}
+                                                    onClick={() => setActiveEventId(event.id)}
+                                                    className={`flex-1 py-2.5 px-4 rounded-full font-bold text-sm transition-all duration-200 ${
+                                                        activeEventId === event.id
+                                                            ? 'bg-brand-header text-white shadow-md'
+                                                            : 'bg-white/60 text-brand-header hover:bg-white/90 border border-brand-header/20'
+                                                    }`}
+                                                >
+                                                    {event.title}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                    {/* Show the active event card */}
+                                    {(() => {
+                                        const active = upcomingEvents.find(e => e.id === activeEventId) ?? upcomingEvents[0]
+                                        return active ? <UpcomingEventCard key={active.id} event={active} /> : null
+                                    })()}
                                 </div>
                             )}
                         </div>
