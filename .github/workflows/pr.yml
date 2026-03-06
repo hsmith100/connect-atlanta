@@ -5,65 +5,17 @@ on:
     branches: [main]
 
 jobs:
-  # ── Stage 1: Quality checks (parallel) ──────────────────────────────────────
+  # ── Stage 1: Quality checks ──────────────────────────────────────────────────
 
-  lint-frontend:
-    name: Lint — frontend
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-      - run: npm ci --prefix frontend
-      - run: npm run lint --prefix frontend
-
-  typecheck-lambda:
-    name: Typecheck — lambda
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: lambda/package-lock.json
-      - run: npm ci --prefix lambda
-      - run: npm run typecheck --prefix lambda
-
-  typecheck-frontend:
-    name: Typecheck — frontend
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-      - run: npm ci --prefix frontend
-      - run: npm run typecheck --prefix frontend
-
-  typecheck-infra:
-    name: Typecheck — infrastructure
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: infrastructure/package-lock.json
-      - run: npm ci --prefix infrastructure
-      - run: npm run build --prefix infrastructure
+  quality-checks:
+    name: Quality Checks
+    uses: ./.github/workflows/quality-checks.yml
 
   # ── Stage 2: Synth & build (parallel, after checks pass) ────────────────────
 
   synth:
     name: CDK synth
-    needs: [lint-frontend, typecheck-frontend, typecheck-lambda, typecheck-infra]
+    needs: [quality-checks]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -79,7 +31,7 @@ jobs:
 
   build-frontend:
     name: Build — frontend
-    needs: [lint-frontend, typecheck-frontend, typecheck-lambda, typecheck-infra]
+    needs: [quality-checks]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
