@@ -5,10 +5,12 @@ import Header from '../components/layout/Header'
 import Footer from '../components/layout/Footer'
 import ConnectModal from '../components/ConnectModal'
 import Image from 'next/image'
-import { Music, Headphones, Users, Camera, Calendar, Loader2 } from 'lucide-react'
+import { Calendar, Loader2 } from 'lucide-react'
 import { organizationSchema, websiteSchema, eventSeriesSchema, faqSchema } from '../lib/structuredData'
-import { getEvents } from '../lib/api'
+import { getEvents, getHeroCards } from '../lib/api'
 import type { Event } from '@shared/types/events'
+import type { HeroCard } from '@shared/types/heroCards'
+import { HeroCardVisual } from '../components/HeroCardVisual'
 import UpcomingEventCard from '../components/events/UpcomingEventCard'
 import EventFlyerCard from '../components/events/EventFlyerCard'
 import FlyerModal from '../components/events/FlyerModal'
@@ -25,6 +27,13 @@ export default function Home() {
   const [cardsVisible, setCardsVisible] = useState(false)
   const cardsRef = useRef<HTMLDivElement>(null)
   const formRef = useRef<HTMLFormElement>(null)
+
+  // Hero cards state
+  const [heroCards, setHeroCards] = useState<HeroCard[]>([])
+
+  useEffect(() => {
+    getHeroCards().then(setHeroCards).catch((err) => console.error('Failed to load hero cards:', err))
+  }, [])
 
   // Events state
   const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([])
@@ -190,145 +199,19 @@ export default function Home() {
               </h1>
             </div>
 
-            {/* Hero Cards Grid - Modern Landscape Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 max-w-7xl mx-auto">
-
-              {/* Beats on the Beltline Card */}
-              <a href="https://bit.ly/botbapril" target="_blank" rel="noopener noreferrer" className="block h-full">
-                <div className="relative border-2 border-brand-primary/20 rounded-2xl overflow-hidden shadow-lg hover:border-brand-primary hover:shadow-2xl transition-all group h-full">
-                  <div className="relative aspect-[4/3] md:aspect-[3/4] overflow-hidden">
-                    {/* Background Image */}
-                    <Image
-                      src="/images/RR-9.jpg"
-                      alt="Beats on the Beltline"
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    {/* Dark Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/20"></div>
-
-                    {/* Content Overlay */}
-                    <div className="absolute inset-0 p-6 flex flex-col justify-end">
-                      <div className="mb-3">
-                        <Headphones size={36} className="text-white mb-2" strokeWidth={1.5} />
-                      </div>
-                      <h2 className="font-title text-xl md:text-2xl font-black text-white mb-3 uppercase hero-card-title animate-slide-down animate-delay-100 md:min-h-[3.5rem]">
-                        Beats on the Beltline
-                      </h2>
-                      <p className="text-white/90 mb-4 text-sm leading-relaxed md:min-h-[3rem]">
-                        Atlanta's premier free outdoor electronic music experience is April 25th!
-                      </p>
-                      <div className="btn-festival w-full relative z-10 text-center pointer-events-none">
-                        Attend Next Event
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </a>
-
-              {/* Merch Card */}
-              <Link href="/merch" className="block h-full">
-                <div className="relative border-2 border-brand-primary/20 rounded-2xl overflow-hidden shadow-lg hover:border-brand-primary hover:shadow-2xl transition-all group h-full">
-                  <div className="relative aspect-[4/3] md:aspect-[3/4] overflow-hidden">
-                    {/* Background Image */}
-                    <Image
-                      src="/images/merch/discotee.jpg"
-                      alt="Connect Merchandise"
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    {/* Dark Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/20"></div>
-
-                    {/* Content Overlay */}
-                    <div className="absolute inset-0 p-6 flex flex-col justify-end">
-                      <div className="mb-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-white mb-2">
-                          <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                          <line x1="3" y1="6" x2="21" y2="6"></line>
-                          <path d="M16 10a4 4 0 0 1-8 0"></path>
-                        </svg>
-                      </div>
-                      <h3 className="font-title text-2xl md:text-3xl font-black text-white mb-3 uppercase hero-card-title animate-slide-down animate-delay-200 md:min-h-[3.5rem]">
-                        Merch
-                      </h3>
-                      <p className="text-white/90 mb-4 text-sm leading-relaxed md:min-h-[3rem]">
-                        Rep the festival with official gear and apparel.
-                      </p>
-                      <button className="btn-festival w-full">
-                        Shop Now
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-
-              {/* Join Us Card */}
-              <Link href="/join" className="block h-full">
-                <div className="relative border-2 border-brand-primary/20 rounded-2xl overflow-hidden shadow-lg hover:border-brand-primary hover:shadow-2xl transition-all group h-full">
-                  <div className="relative aspect-[4/3] md:aspect-[3/4] overflow-hidden">
-                    {/* Background Image */}
-                    <Image
-                      src="/images/vendor pic 2 - webiste.jpg"
-                      alt="Join Us"
-                      fill
-                      className="object-cover object-left group-hover:scale-105 transition-transform duration-500"
-                    />
-                    {/* Dark Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/20"></div>
-
-                    {/* Content Overlay */}
-                    <div className="absolute inset-0 p-6 flex flex-col justify-end">
-                      <div className="mb-3">
-                        <Users size={36} className="text-white mb-2" strokeWidth={1.5} />
-                      </div>
-                      <h3 className="font-title text-2xl md:text-3xl font-black text-white mb-3 uppercase hero-card-title animate-slide-down animate-delay-300 md:min-h-[3.5rem]">
-                        Join Us
-                      </h3>
-                      <p className="text-white/90 mb-4 text-sm leading-relaxed md:min-h-[3rem]">
-                        Volunteer, perform, or vend at our events.
-                      </p>
-                      <button className="btn-festival w-full">
-                        Get Involved
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-
-              {/* Event Gallery Card */}
-              <Link href="/gallery" className="block h-full">
-                <div className="relative border-2 border-brand-primary/20 rounded-2xl overflow-hidden shadow-lg hover:border-brand-primary hover:shadow-2xl transition-all group h-full">
-                  <div className="relative aspect-[4/3] md:aspect-[3/4] overflow-hidden">
-                    {/* Background Image */}
-                    <Image
-                      src="/images/event gallery pic 1.jpg"
-                      alt="Event Gallery"
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
-                    {/* Dark Overlay */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-black/20"></div>
-
-                    {/* Content Overlay */}
-                    <div className="absolute inset-0 p-6 flex flex-col justify-end">
-                      <div className="mb-3">
-                        <Camera size={36} className="text-white mb-2" strokeWidth={1.5} />
-                      </div>
-                      <h3 className="font-title text-xl md:text-2xl font-black text-white mb-3 uppercase hero-card-title animate-slide-down animate-delay-300 md:min-h-[3.5rem]">
-                        Event Gallery
-                      </h3>
-                      <p className="text-white/90 mb-4 text-sm leading-relaxed md:min-h-[3rem]">
-                        Check out our vibe.
-                      </p>
-                      <button className="btn-festival w-full">
-                        View Gallery
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </Link>
-
+            {/* Hero Cards Grid - Admin-managed */}
+            <div className="flex flex-col md:flex-row md:justify-center md:flex-wrap gap-4 max-w-7xl mx-auto">
+              {heroCards.map((card) =>
+                card.linkUrl.startsWith('http') ? (
+                  <a key={card.id} href={card.linkUrl} target="_blank" rel="noopener noreferrer" className="block h-full md:w-72">
+                    <HeroCardVisual card={card} />
+                  </a>
+                ) : (
+                  <Link key={card.id} href={card.linkUrl} className="block h-full md:w-72">
+                    <HeroCardVisual card={card} />
+                  </Link>
+                )
+              )}
             </div>
           </div>
         </section>

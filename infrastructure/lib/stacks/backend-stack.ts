@@ -130,6 +130,7 @@ export class BackendStack extends cdk.Stack {
       environment: {
         PHOTOS_TABLE: dynamoStack.photosTable.tableName,
         EVENTS_TABLE: dynamoStack.eventsTable.tableName,
+        HERO_CARDS_TABLE: dynamoStack.heroCardsTable.tableName,
         MEDIA_BUCKET: mediaBucket.bucketName,
         CLOUDFRONT_DOMAIN: mediaDistribution.distributionDomainName,
         ADMIN_SECRET_ARN: adminKeySecret.secretArn,
@@ -137,6 +138,7 @@ export class BackendStack extends cdk.Stack {
     });
 
     dynamoStack.photosTable.grantReadWriteData(photosLambda);
+    dynamoStack.heroCardsTable.grantReadWriteData(photosLambda);
     // Write access to events table — admin can update flyerUrl on event records
     dynamoStack.eventsTable.grantReadWriteData(photosLambda);
     mediaBucket.grantReadWrite(photosLambda);
@@ -175,6 +177,10 @@ export class BackendStack extends cdk.Stack {
     api.addRoutes({ path: '/api/admin/flyers/presign', methods: [apigateway.HttpMethod.POST], integration: photosIntegration });
     api.addRoutes({ path: '/api/admin/events', methods: [apigateway.HttpMethod.GET, apigateway.HttpMethod.POST], integration: photosIntegration });
     api.addRoutes({ path: '/api/admin/events/{id}', methods: [apigateway.HttpMethod.PATCH, apigateway.HttpMethod.DELETE], integration: photosIntegration });
+    api.addRoutes({ path: '/api/hero-cards', methods: [apigateway.HttpMethod.GET], integration: photosIntegration });
+    api.addRoutes({ path: '/api/admin/hero-cards', methods: [apigateway.HttpMethod.GET, apigateway.HttpMethod.POST], integration: photosIntegration });
+    api.addRoutes({ path: '/api/admin/hero-cards/presign', methods: [apigateway.HttpMethod.POST], integration: photosIntegration });
+    api.addRoutes({ path: '/api/admin/hero-cards/{id}', methods: [apigateway.HttpMethod.PATCH, apigateway.HttpMethod.DELETE], integration: photosIntegration });
 
     // ── Access logging ────────────────────────────────────────────────────────
     const accessLogGroup = new logs.LogGroup(this, 'ApiAccessLogs', {
