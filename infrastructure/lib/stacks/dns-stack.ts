@@ -46,6 +46,13 @@ export class DnsStack extends cdk.Stack {
       ],
     });
 
+    // SPF record — authorizes Google Workspace to send on behalf of connectevents.co.
+    // Without this, receiving servers reject outbound mail as "unauthenticated".
+    new route53.TxtRecord(this, 'SpfRecord', {
+      zone: this.hostedZone,
+      values: ['v=spf1 include:_spf.google.com ~all'],
+    });
+
     new cdk.CfnOutput(this, 'HostedZoneId', {
       value: this.hostedZone.hostedZoneId,
       description: 'Route53 Hosted Zone ID',
