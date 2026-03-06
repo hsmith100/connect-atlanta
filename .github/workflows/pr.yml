@@ -48,10 +48,10 @@ jobs:
           path: frontend/out/
           retention-days: 1
 
-  # ── Stage 3: Deploy to staging ───────────────────────────────────────────────
+  # ── Stage 3: Deploy to dev ───────────────────────────────────────────────────
 
-  deploy-staging:
-    name: Deploy — staging
+  deploy-dev:
+    name: Deploy — dev
     needs: [synth, build-frontend]
     runs-on: ubuntu-latest
     permissions:
@@ -79,8 +79,8 @@ jobs:
       - name: Install lambda dependencies
         run: npm ci --prefix lambda
 
-      - name: CDK deploy staging
-        run: npx cdk deploy ConnectStagingDynamoStack ConnectStagingBackendStack ConnectStagingFrontendStack --require-approval never
+      - name: CDK deploy dev
+        run: npx cdk deploy ConnectDevDynamoStack ConnectDevBackendStack ConnectDevFrontendStack --require-approval never
         working-directory: infrastructure
 
       - name: Download frontend build
@@ -89,28 +89,37 @@ jobs:
           name: frontend-out
           path: frontend/out/
 
-      - name: Sync frontend to staging S3
+      - name: Sync frontend to dev S3
         run: |
           BUCKET=$(aws cloudformation describe-stacks \
-            --stack-name ConnectStagingFrontendStack \
+            --stack-name ConnectDevFrontendStack \
             --query 'Stacks[0].Outputs[?OutputKey==`FrontendBucketName`].OutputValue' \
             --output text)
           aws s3 sync frontend/out/ s3://$BUCKET --delete
 
-      - name: Invalidate staging CloudFront
+      - name: Invalidate dev CloudFront
         run: |
           DIST_ID=$(aws cloudformation describe-stacks \
-            --stack-name ConnectStagingFrontendStack \
+            --stack-name ConnectDevFrontendStack \
             --query 'Stacks[0].Outputs[?OutputKey==`CloudFrontDistributionId`].OutputValue' \
             --output text)
           aws cloudfront create-invalidation --distribution-id $DIST_ID --paths "/*"
 
-      - name: Comment staging URL on PR
+      - name: Get dev CloudFront URL
+        id: dev-url
+        run: |
+          URL=$(aws cloudformation describe-stacks \
+            --stack-name ConnectDevFrontendStack \
+            --query 'Stacks[0].Outputs[?OutputKey==`CloudFrontUrl`].OutputValue' \
+            --output text)
+          echo "url=$URL" >> $GITHUB_OUTPUT
+
+      - name: Comment dev URL on PR
         uses: actions/github-script@v7
         with:
           script: |
-            const marker = '<!-- staging-deploy-comment -->';
-            const body = `${marker}\n✅ Staging deployed: https://d36pa7dr4nksf5.cloudfront.net`;
+            const marker = '<!-- dev-deploy-comment -->';
+            const body = `${marker}\n✅ Dev deployed: ${{ steps.dev-url.outputs.url }}`;
 
             const comments = await github.rest.issues.listComments({
               issue_number: context.issue.number,

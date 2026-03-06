@@ -26,10 +26,11 @@ connect-atlanta/
 
 ## Environments
 
-| Environment | URL |
-|---|---|
-| Production | https://connectevents.co |
-| Staging | https://d36pa7dr4nksf5.cloudfront.net |
+| Environment | URL | Purpose | Deploys on |
+|---|---|---|---|
+| Dev | https://d2gqwwd1lyhnar.cloudfront.net | Branch previews + local dev | PR open/update |
+| Staging | https://d36pa7dr4nksf5.cloudfront.net | QA gate + admin playground | Push to `main` |
+| Production | https://connectevents.co | Live site | After staging regression tests pass |
 
 ## Local Development
 
@@ -39,14 +40,11 @@ connect-atlanta/
 # Install all dependencies
 npm run install:all
 
-# Copy env file and fill in values
-cp frontend/.env.local.example frontend/.env.local
-
-# Start frontend dev server
+# Start frontend dev server (proxies /api/* to dev API Gateway)
 npm run dev --prefix frontend
 ```
 
-The dev server proxies `/api/*` requests to the staging API Gateway URL set in `NEXT_PUBLIC_API_URL`.
+The dev server proxies `/api/*` requests to the dev API Gateway URL configured in `frontend/.env.local` (`NEXT_PUBLIC_API_URL`). This file is gitignored — the current dev API URL is `https://xfsvqay2a7.execute-api.us-east-1.amazonaws.com`.
 
 ## CDK Stacks
 
@@ -54,32 +52,26 @@ The dev server proxies `/api/*` requests to the staging API Gateway URL set in `
 |---|---|
 | `ConnectCiStack` | GitHub Actions OIDC provider + deploy IAM role |
 | `ConnectDnsStack` | Route 53 hosted zone + ACM certificate |
-| `ConnectDynamoStack` | DynamoDB tables |
-| `ConnectBackendStack` | API Gateway + Lambda handlers |
-| `ConnectFrontendStack` | S3 bucket + CloudFront distribution |
-
-Staging equivalents are prefixed with `ConnectStaging*` (no custom domain).
+| `ConnectDynamoStack` | Production DynamoDB tables |
+| `ConnectBackendStack` | Production API Gateway + Lambda handlers |
+| `ConnectFrontendStack` | Production S3 bucket + CloudFront distribution |
+| `ConnectStagingDynamo/Backend/FrontendStack` | Staging environment (no custom domain) |
+| `ConnectDevDynamo/Backend/FrontendStack` | Dev environment (no custom domain) |
 
 ## Deployment
 
 Deployments are fully automated via GitHub Actions:
 
-- **Pull requests** → quality checks → build → deploy to staging
-- **Push to `main`** → quality checks → build → deploy to production
+- **Pull requests** → quality checks → build → deploy to **dev**
+- **Push to `main`** → quality checks → build → deploy to **staging** → regression tests → deploy to **production**
 
 ### Manual deployment (emergency only)
 
 ```bash
 # Deploy infrastructure
-npm run deploy:prod       # production stacks
-npm run deploy:staging    # staging stacks
-
-# Sync frontend after build
-npm run build:frontend
-npm run sync:prod         # or sync:staging
-
-# Invalidate CloudFront cache
-npm run invalidate:prod   # or invalidate:staging
+npx cdk deploy ConnectDynamoStack ConnectBackendStack ConnectFrontendStack --require-approval never      # prod
+npx cdk deploy ConnectStagingDynamoStack ConnectStagingBackendStack ConnectStagingFrontendStack --require-approval never  # staging
+npx cdk deploy ConnectDevDynamoStack ConnectDevBackendStack ConnectDevFrontendStack --require-approval never              # dev
 ```
 
 ---
