@@ -2,35 +2,27 @@
 SYNC IMPACT REPORT
 ==================
 Generated: 2026-03-06
-Version change: 1.2.0 → 1.2.1 (PATCH — clarify current deployment reality: staging always
-  promotes to production on merge to main; no manual verification gate required)
+Version change: 1.2.1 → 1.3.0 (MINOR — Principle X rewritten from "no testing gate" to mandatory
+  unit tests now that Jest infrastructure is fully operational in both lambda/ and frontend/)
 
 Modified principles:
-  ~ III. Environment Discipline — removed "deploys only after staging regression tests pass";
-         production now deploys automatically after staging. Will be revisited when
-         automation tests are introduced.
-  ~ X.   Testing Standards — removed manual staging verification requirement; current policy
-         is automatic promotion on merge to main.
-
-Modified sections:
-  ~ Development Workflow > Branching & Deployment — removed "regression tests" gate from
-    the merge-to-main flow.
+  ~ X. Testing Standards — replaced placeholder deferral with concrete, enforceable unit test
+       mandate. Infrastructure (Jest + ts-jest for lambda, Jest + RTL for frontend) is live.
+       CI test gates are active. Tests are now a required merge gate alongside lint/typecheck/build.
 
 Added sections: none
 Removed sections: none
 
 Template consistency review:
-  ✅ .specify/templates/plan-template.md — no updates needed.
-  ✅ .specify/templates/spec-template.md — no updates needed.
-  ✅ .specify/templates/tasks-template.md — no updates needed.
+  ✅ .specify/templates/plan-template.md — no updates needed; Testing field captures framework.
+  ✅ .specify/templates/spec-template.md — no updates needed; testing section already mandatory.
+  ✅ .specify/templates/tasks-template.md — updated: tests are no longer optional per Principle X.
   ✅ .specify/templates/constitution-template.md — source template intact; no drift.
   ℹ️  .specify/templates/commands/ — no command files found; skipped.
 
 Deferred TODOs:
-  - Automation testing constitution: defer to future spec.
-  - Unit testing constitution: defer to future spec.
   - Integration testing constitution: defer to future spec.
-  - Promotion gate (regression tests blocking prod): reinstate when automation tests defined.
+  - Promotion gate (regression tests blocking prod): reinstate when integration tests defined.
 -->
 
 # Connect Atlanta Constitution
@@ -95,10 +87,26 @@ lambda — never duplicate type definitions across packages. Linting and formatt
 in CI before a PR can merge.
 
 ### X. Testing Standards
-There is currently no automated or required manual testing gate. Merging to `main` always promotes
-to production via staging — no verification step blocks the promotion. This policy will be updated
-when an automation test strategy is defined in a dedicated future spec. Until that spec is ratified,
-the CI quality checks (lint, type-check, build) are the only mandatory gates before merge.
+Unit tests are REQUIRED for all new code. The test infrastructure is fully operational:
+
+- **Lambda** (`lambda/`): Jest + ts-jest. Run with `npm test`. Test files are colocated with source
+  (e.g., `formShared.test.ts` next to `formShared.ts`). AWS SDK is mocked via `aws-sdk-client-mock`.
+- **Frontend** (`frontend/`): Jest + React Testing Library. Run with `npm test -- --ci`. Test files
+  are colocated with components and lib files.
+
+**What MUST be tested:**
+- All new Lambda handler functions and lib utilities
+- All new frontend components that contain logic (state, API calls, conditional rendering)
+- All new pure utility functions (`lib/formatters.ts`, `lib/api/`, `submissions/shared.ts`, etc.)
+
+**What is exempt:**
+- Purely presentational components with no logic
+- CDK infrastructure code
+- Next.js page files that are thin wrappers around tested components
+
+Both test suites run as mandatory CI gates (`test-lambda` and `test-frontend` jobs in
+`.github/workflows/quality-checks.yml`) — a PR MUST NOT be merged if any test fails. Tests MUST
+pass alongside lint, typecheck, and build before merge.
 
 ### XI. User Experience Consistency
 All UI MUST use Tailwind utility classes — no inline styles, no CSS modules, no styled-components.
@@ -154,4 +162,4 @@ update `LAST_AMENDED_DATE`, and regenerate the Sync Impact Report comment above.
 Constitution Check in its plan.md confirming no principle violations. Violations MUST be documented
 in the Complexity Tracking table with justification.
 
-**Version**: 1.2.1 | **Ratified**: 2026-03-06 | **Last Amended**: 2026-03-06
+**Version**: 1.3.0 | **Ratified**: 2026-03-06 | **Last Amended**: 2026-03-06
