@@ -30,7 +30,7 @@ export function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
   const [deleting, setDeleting] = useState<Record<string, boolean>>({})
   const [showAddForm, setShowAddForm] = useState(false)
   const [editingEventId, setEditingEventId] = useState<string | null>(null)
-  const emptyForm = { title: '', date: '', startTime: '', endTime: '', location: '', ticketingUrl: '', goLiveDate: '', goLiveTime: '' }
+  const emptyForm = { title: '', date: '', startTime: '', endTime: '', location: '', ticketingUrl: '', goLiveDate: '', goLiveTime: '', description: '', buttonText: '' }
   const [newEvent, setNewEvent] = useState(emptyForm)
   const [newEventFile, setNewEventFile] = useState<File | null>(null)
   const [newEventPreview, setNewEventPreview] = useState<string | null>(null)
@@ -59,6 +59,8 @@ export function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
       ticketingUrl: ev.ticketingUrl ?? '',
       goLiveDate: existingLocal.slice(0, 10),
       goLiveTime: existingLocal.slice(11, 16),
+      description: ev.description ?? '',
+      buttonText: ev.buttonText ?? '',
     })
     setNewEventFile(null)
     setNewEventPreview(ev.flyerUrl ?? null)
@@ -98,6 +100,8 @@ export function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
           endTime: newEvent.endTime || null,
           location: newEvent.location || null,
           ticketingUrl: newEvent.ticketingUrl || null,
+          description: newEvent.description || null,
+          buttonText: newEvent.buttonText || null,
           goLiveAt,
           ...(flyerUrl ? { flyerUrl } : {}),
         })
@@ -109,6 +113,8 @@ export function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
           endTime: newEvent.endTime || null,
           location: newEvent.location || null,
           ticketingUrl: newEvent.ticketingUrl || null,
+          description: newEvent.description || null,
+          buttonText: newEvent.buttonText || null,
           goLiveAt,
           ...(flyerUrl ? { flyerUrl } : {}),
         } : e))
@@ -127,6 +133,8 @@ export function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
           ...(newEvent.location ? { location: newEvent.location } : {}),
           ...(flyerUrl ? { flyerUrl } : {}),
           ...(newEvent.ticketingUrl ? { ticketingUrl: newEvent.ticketingUrl } : {}),
+          ...(newEvent.description ? { description: newEvent.description } : {}),
+          ...(newEvent.buttonText ? { buttonText: newEvent.buttonText } : {}),
           ...(goLiveAt ? { goLiveAt } : {}),
         })
         setEvents((prev) => [...prev, {
@@ -134,6 +142,8 @@ export function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
           startTime: newEvent.startTime || null, endTime: newEvent.endTime || null,
           location: newEvent.location || null, flyerUrl: flyerUrl ?? null,
           ticketingUrl: newEvent.ticketingUrl || null, goLiveAt: goLiveAt ?? null,
+          description: newEvent.description || null,
+          buttonText: newEvent.buttonText || null,
         }])
         setStatusMsg(`Event "${newEvent.title}" created.`)
       }
@@ -247,6 +257,20 @@ export function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
             <div>
               <label className="block text-xs text-gray-400 mb-1">Ticketing / Info URL</label>
               <input type="url" value={newEvent.ticketingUrl} onChange={(e) => setNewEvent((p) => ({ ...p, ticketingUrl: e.target.value }))} placeholder="https://..." className={inputCls} />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-400 mb-1">Description (optional — shown on event card)</label>
+              <textarea
+                value={newEvent.description}
+                onChange={(e) => setNewEvent((p) => ({ ...p, description: e.target.value }))}
+                placeholder="Join us for an unforgettable night of music..."
+                rows={3}
+                className={inputCls + ' resize-none'}
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-gray-400 mb-1">Button Text (optional — defaults to "Get Info & Updates")</label>
+              <input type="text" value={newEvent.buttonText} onChange={(e) => setNewEvent((p) => ({ ...p, buttonText: e.target.value }))} placeholder="Get Tickets" className={inputCls} />
             </div>
             <div>
               <label className="block text-xs text-gray-400 mb-1">Go-live — leave blank for always live</label>

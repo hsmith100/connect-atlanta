@@ -39,6 +39,8 @@ export async function createEvent(event: APIGatewayProxyEventV2): Promise<APIGat
     flyerUrl?: string;
     goLiveAt?: string;
     ticketingUrl?: string;
+    description?: string;
+    buttonText?: string;
   } = JSON.parse(event.body ?? '{}');
 
   if (!body.id || !body.title || !body.date) {
@@ -58,6 +60,8 @@ export async function createEvent(event: APIGatewayProxyEventV2): Promise<APIGat
       ...(body.flyerUrl ? { flyerUrl: body.flyerUrl } : {}),
       ...(body.goLiveAt ? { goLiveAt: body.goLiveAt } : {}),
       ...(body.ticketingUrl ? { ticketingUrl: body.ticketingUrl } : {}),
+      ...(body.description ? { description: body.description } : {}),
+      ...(body.buttonText ? { buttonText: body.buttonText } : {}),
     },
     ConditionExpression: 'attribute_not_exists(id)',
   }));
@@ -105,6 +109,8 @@ export async function updateEventFlyer(event: APIGatewayProxyEventV2): Promise<A
     startTime?: string | null;
     endTime?: string | null;
     location?: string | null;
+    description?: string | null;
+    buttonText?: string | null;
   } = JSON.parse(event.body ?? '{}');
 
   const setParts: string[] = [];
@@ -153,6 +159,14 @@ export async function updateEventFlyer(event: APIGatewayProxyEventV2): Promise<A
   if (body.ticketingUrl !== undefined) {
     if (body.ticketingUrl === null) removeParts.push('ticketingUrl');
     else { setParts.push('ticketingUrl = :tu'); values[':tu'] = body.ticketingUrl; }
+  }
+  if (body.description !== undefined) {
+    if (body.description === null) removeParts.push('description');
+    else { setParts.push('description = :desc'); values[':desc'] = body.description; }
+  }
+  if (body.buttonText !== undefined) {
+    if (body.buttonText === null) removeParts.push('buttonText');
+    else { setParts.push('buttonText = :bt'); values[':bt'] = body.buttonText; }
   }
 
   if (setParts.length === 0 && removeParts.length === 0) {

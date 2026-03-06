@@ -10,7 +10,7 @@ export async function getAdminEvents(adminKey: string): Promise<Event[]> {
 
 export async function createEvent(
   adminKey: string,
-  event: { id: string; title: string; date: string; startTime?: string; endTime?: string; location?: string; flyerUrl?: string; goLiveAt?: string; ticketingUrl?: string },
+  event: { id: string; title: string; date: string; startTime?: string; endTime?: string; location?: string; flyerUrl?: string; goLiveAt?: string; ticketingUrl?: string; description?: string; buttonText?: string },
 ): Promise<void> {
   await fetchAPI<{ created: boolean }>('/api/admin/events', {
     method: 'POST',
@@ -56,6 +56,8 @@ export async function updateEvent(
     ticketingUrl?: string | null;
     goLiveAt?: string | null;
     flyerUrl?: string;
+    description?: string | null;
+    buttonText?: string | null;
   },
 ): Promise<void> {
   await fetchAPI<{ updated: boolean }>(`/api/admin/events/${eventId}`, {
