@@ -74,6 +74,6 @@ export async function sendEmail(subject: string, body: string): Promise<void> {
       },
     }));
   } catch (e) {
-    console.warn('SES send failed (non-fatal):', e);
+    console.error('SES send failed:', e);
   }
 }
