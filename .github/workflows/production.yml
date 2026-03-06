@@ -5,52 +5,17 @@ on:
     branches: [main]
 
 jobs:
-  # ── Stage 1: Quality checks (parallel) ──────────────────────────────────────
+  # ── Stage 1: Quality checks ──────────────────────────────────────────────────
 
-  lint-frontend:
-    name: Lint — frontend
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-      - run: npm ci --prefix frontend
-      - run: npm run lint --prefix frontend
-
-  typecheck-lambda:
-    name: Typecheck — lambda
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: lambda/package-lock.json
-      - run: npm ci --prefix lambda
-      - run: npm run typecheck --prefix lambda
-
-  typecheck-infra:
-    name: Typecheck — infrastructure
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: infrastructure/package-lock.json
-      - run: npm ci --prefix infrastructure
-      - run: npm run build --prefix infrastructure
+  quality-checks:
+    name: Quality Checks
+    uses: ./.github/workflows/quality-checks.yml
 
   # ── Stage 2: Synth & build (parallel, after checks pass) ────────────────────
 
   synth:
     name: CDK synth
-    needs: [lint-frontend, typecheck-lambda, typecheck-infra]
+    needs: [quality-checks]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -66,7 +31,7 @@ jobs:
 
   build-frontend:
     name: Build — frontend
-    needs: [lint-frontend, typecheck-lambda, typecheck-infra]
+    needs: [quality-checks]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -83,11 +48,68 @@ jobs:
           path: frontend/out/
           retention-days: 1
 
-  # ── Stage 3: Deploy to production ───────────────────────────────────────────
+  # ── Stage 3: Deploy to staging ───────────────────────────────────────────────
+
+  deploy-staging:
+    name: Deploy — staging
+    needs: [synth, build-frontend]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: infrastructure/package-lock.json
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Install infrastructure dependencies
+        run: npm ci --prefix infrastructure
+
+      - name: Install lambda dependencies
+        run: npm ci --prefix lambda
+
+      - name: CDK deploy staging
+        run: npx cdk deploy ConnectStagingDynamoStack ConnectStagingBackendStack ConnectStagingFrontendStack --require-approval never
+        working-directory: infrastructure
+
+      - name: Download frontend build
+        uses: actions/download-artifact@v4
+        with:
+          name: frontend-out
+          path: frontend/out/
+
+      - name: Sync frontend to staging S3
+        run: |
+          BUCKET=$(aws cloudformation describe-stacks \
+            --stack-name ConnectStagingFrontendStack \
+            --query 'Stacks[0].Outputs[?OutputKey==`FrontendBucketName`].OutputValue' \
+            --output text)
+          aws s3 sync frontend/out/ s3://$BUCKET --delete
+
+      - name: Invalidate staging CloudFront
+        run: |
+          DIST_ID=$(aws cloudformation describe-stacks \
+            --stack-name ConnectStagingFrontendStack \
+            --query 'Stacks[0].Outputs[?OutputKey==`CloudFrontDistributionId`].OutputValue' \
+            --output text)
+          aws cloudfront create-invalidation --distribution-id $DIST_ID --paths "/*"
+
+  # ── Stage 4: Deploy to production ───────────────────────────────────────────
+  # TODO: add e2e tests job here between staging and prod when ready
 
   deploy-production:
     name: Deploy — production
-    needs: [synth, build-frontend]
+    needs: [deploy-staging]
     runs-on: ubuntu-latest
     permissions:
       id-token: write
