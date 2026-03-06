@@ -50,14 +50,14 @@ export default function Header() {
         }`}
     >
       <nav className="section-container py-2.5 md:py-4">
-        <div className="relative flex items-center justify-between md:justify-between">
-          {/* Spacer for mobile to maintain layout */}
-          <div className="md:hidden w-12"></div>
+        <div className="flex items-center justify-between md:justify-start">
+          {/* Invisible spacer on mobile matches hamburger width to truly center the logo */}
+          <div className="w-10 md:hidden" aria-hidden="true" />
 
           {/* Logo - Centered on mobile, left on desktop */}
           <Link
             href="/"
-            className="flex flex-col items-center group md:absolute md:left-0 md:translate-x-0"
+            className="flex-1 flex flex-col items-center md:flex-none group"
             onClick={closeMobileMenu}
           >
             <img
