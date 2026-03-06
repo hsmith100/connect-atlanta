@@ -1,24 +1,27 @@
 import { useState, useEffect } from 'react'
-import { getAdminPhotos, getAdminEvents, getAdminArtists, getAdminSponsors, getAdminEmailSignups } from '../lib/api'
+import { getAdminPhotos, getAdminEvents, getAdminArtists, getAdminSponsors, getAdminEmailSignups, getAdminHeroCards } from '../lib/api'
 import { AuthGate } from '../components/admin/AuthGate'
 import { PhotosTab } from '../components/admin/PhotosTab'
 import { EventsTab } from '../components/admin/EventsTab'
 import { SubmissionsTab } from '../components/admin/SubmissionsTab'
+import { HeroCardsTab } from '../components/admin/HeroCardsTab'
 import type { Photo } from '@shared/types/photos'
 import type { Event } from '@shared/types/events'
+import type { HeroCard } from '@shared/types/heroCards'
 
 const STORAGE_KEY = 'connect_admin_key'
 
-type Tab = 'photos' | 'events' | 'submissions'
+type Tab = 'photos' | 'events' | 'hero-cards' | 'submissions'
 
 export default function AdminPage() {
   const [adminKey, setAdminKey] = useState<string | null>(null)
   const [photos, setPhotos] = useState<Photo[]>([])
   const [events, setEvents] = useState<Event[]>([])
+  const [heroCards, setHeroCards] = useState<HeroCard[]>([])
   const [artists, setArtists] = useState<Record<string, unknown>[]>([])
   const [sponsors, setSponsors] = useState<Record<string, unknown>[]>([])
   const [emailSignups, setEmailSignups] = useState<Record<string, unknown>[]>([])
-  const [activeTab, setActiveTab] = useState<Tab>('photos')
+  const [activeTab, setActiveTab] = useState<Tab>('hero-cards')
 
   // Check for stored key on mount
   useEffect(() => {
@@ -36,6 +39,7 @@ export default function AdminPage() {
     Promise.all([
       getAdminPhotos(adminKey).then((r) => setPhotos(r.photos)),
       getAdminEvents(adminKey).then(setEvents),
+      getAdminHeroCards(adminKey).then(setHeroCards),
       getAdminArtists(adminKey).then((r) => setArtists(r.artists)),
       getAdminSponsors(adminKey).then((r) => setSponsors(r.sponsors)),
       getAdminEmailSignups(adminKey).then((r) => setEmailSignups(r.signups)),
@@ -61,17 +65,22 @@ export default function AdminPage() {
 
       {/* Tabs */}
       <div className="bg-gray-900 border-b border-gray-800 px-6 flex gap-1">
-        {(['photos', 'events', 'submissions'] as Tab[]).map((tab) => (
+        {([
+          { id: 'hero-cards', label: 'Hero Cards' },
+          { id: 'photos', label: 'Photos' },
+          { id: 'events', label: 'Events' },
+          { id: 'submissions', label: 'Submissions' },
+        ] as { id: Tab; label: string }[]).map(({ id, label }) => (
           <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-4 py-3 text-sm font-semibold capitalize border-b-2 transition-colors ${
-              activeTab === tab
+            key={id}
+            onClick={() => setActiveTab(id)}
+            className={`px-4 py-3 text-sm font-semibold border-b-2 transition-colors ${
+              activeTab === id
                 ? 'border-brand-primary text-brand-primary'
                 : 'border-transparent text-gray-400 hover:text-white'
             }`}
           >
-            {tab}
+            {label}
           </button>
         ))}
       </div>
@@ -82,6 +91,9 @@ export default function AdminPage() {
       )}
       {activeTab === 'events' && (
         <EventsTab adminKey={adminKey} events={events} setEvents={setEvents} />
+      )}
+      {activeTab === 'hero-cards' && (
+        <HeroCardsTab adminKey={adminKey} heroCards={heroCards} setHeroCards={setHeroCards} />
       )}
       {activeTab === 'submissions' && (
         <SubmissionsTab

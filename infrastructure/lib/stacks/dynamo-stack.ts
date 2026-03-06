@@ -14,6 +14,7 @@ export class DynamoStack extends cdk.Stack {
   public readonly artistApplicationsTable: dynamodb.Table;
   public readonly sponsorInquiriesTable: dynamodb.Table;
   public readonly photosTable: dynamodb.Table;
+  public readonly heroCardsTable: dynamodb.Table;
 
   constructor(scope: Construct, id: string, props: DynamoStackProps = {}) {
     super(scope, id, props);
@@ -86,11 +87,26 @@ export class DynamoStack extends cdk.Stack {
       sortKey: { name: 'sortOrder', type: dynamodb.AttributeType.NUMBER },
     });
 
+    // Hero cards — admin-managed home page hero cards with sort order and visibility
+    // GSI byOrder: lists all cards sorted by sortOrder for home page display
+    this.heroCardsTable = new dynamodb.Table(this, 'HeroCardsTable', {
+      tableName: `connect-${p}hero-cards`,
+      partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
+      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
+      removalPolicy: cdk.RemovalPolicy.RETAIN,
+    });
+    this.heroCardsTable.addGlobalSecondaryIndex({
+      indexName: 'byOrder',
+      partitionKey: { name: 'entity', type: dynamodb.AttributeType.STRING },
+      sortKey: { name: 'sortOrder', type: dynamodb.AttributeType.NUMBER },
+    });
+
     // Outputs — table names referenced by BackendStack Lambda env vars
     new cdk.CfnOutput(this, 'EventsTableName', { value: this.eventsTable.tableName });
     new cdk.CfnOutput(this, 'EmailSignupsTableName', { value: this.emailSignupsTable.tableName });
     new cdk.CfnOutput(this, 'ArtistApplicationsTableName', { value: this.artistApplicationsTable.tableName });
     new cdk.CfnOutput(this, 'SponsorInquiriesTableName', { value: this.sponsorInquiriesTable.tableName });
     new cdk.CfnOutput(this, 'PhotosTableName', { value: this.photosTable.tableName });
+    new cdk.CfnOutput(this, 'HeroCardsTableName', { value: this.heroCardsTable.tableName });
   }
 }

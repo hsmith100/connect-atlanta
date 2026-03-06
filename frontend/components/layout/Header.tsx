@@ -105,12 +105,6 @@ export default function Header() {
               Join Us
             </Link>
             <Link
-              href="/merch"
-              className="text-gray-800 hover:text-brand-primary transition-colors font-medium"
-            >
-              Merch
-            </Link>
-            <Link
               href="/contact"
               className="text-gray-800 hover:text-brand-primary transition-colors font-medium"
             >
@@ -175,13 +169,6 @@ export default function Header() {
               className="block text-gray-800 hover:text-brand-primary transition-colors font-medium py-2 px-4 rounded-lg hover:bg-gray-100"
             >
               Join Us
-            </Link>
-            <Link
-              href="/merch"
-              onClick={closeMobileMenu}
-              className="block text-gray-800 hover:text-brand-primary transition-colors font-medium py-2 px-4 rounded-lg hover:bg-gray-100"
-            >
-              Merch
             </Link>
             <Link
               href="/contact"
