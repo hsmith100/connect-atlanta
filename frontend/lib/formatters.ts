@@ -7,13 +7,12 @@ export const formatTime = (t: string): string => {
 }
 
 // Format date to "Month Day(th), Year"
+// Parse parts directly to avoid UTC-midnight timezone shift from new Date("YYYY-MM-DD")
 export const formatEventDate = (dateString: string | undefined): string => {
     if (!dateString) return ''
 
-    const date = new Date(dateString)
-    const month = date.toLocaleDateString('en-US', { month: 'long' })
-    const day = date.getDate()
-    const year = date.getFullYear()
+    const [year, month, day] = dateString.split('-').map(Number)
+    const monthName = new Date(year, month - 1, day).toLocaleDateString('en-US', { month: 'long' })
 
     const getOrdinalSuffix = (d: number): string => {
         if (d > 3 && d < 21) return 'th'
@@ -25,5 +24,5 @@ export const formatEventDate = (dateString: string | undefined): string => {
         }
     }
 
-    return `${month} ${day}${getOrdinalSuffix(day)}, ${year}`
+    return `${monthName} ${day}${getOrdinalSuffix(day)}, ${year}`
 }
