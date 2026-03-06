@@ -34,8 +34,15 @@ new FrontendStack(app, 'ConnectFrontendStack', { env, dnsStack, backendStack });
 new CiStack(app, 'ConnectCiStack', { env });
 
 // ── Staging ───────────────────────────────────────────────────────────────────
-// Full staging environment — S3 + CloudFront (no custom domain) + Lambda + DynamoDB.
-// Staging CloudFront URL is shared with the team to review changes before prod.
+// Prod-like environment — deployed on every push to main before production.
+// Used for regression testing and admin QA before touching prod data.
 const stagingDynamoStack = new DynamoStack(app, 'ConnectStagingDynamoStack', { env, tablePrefix: 'staging-' });
 const stagingBackendStack = new BackendStack(app, 'ConnectStagingBackendStack', { env, dynamoStack: stagingDynamoStack, contactEmail: 'productions.connectatlanta@gmail.com' });
 new FrontendStack(app, 'ConnectStagingFrontendStack', { env, backendStack: stagingBackendStack });
+
+// ── Dev ───────────────────────────────────────────────────────────────────────
+// Branch preview environment — deployed on every PR. Local dev points here.
+// Data persists but is disposable. No custom domain.
+const devDynamoStack = new DynamoStack(app, 'ConnectDevDynamoStack', { env, tablePrefix: 'dev-' });
+const devBackendStack = new BackendStack(app, 'ConnectDevBackendStack', { env, dynamoStack: devDynamoStack, contactEmail: 'productions.connectatlanta@gmail.com' });
+new FrontendStack(app, 'ConnectDevFrontendStack', { env, backendStack: devBackendStack });

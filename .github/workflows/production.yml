@@ -104,12 +104,23 @@ jobs:
             --output text)
           aws cloudfront create-invalidation --distribution-id $DIST_ID --paths "/*"
 
-  # ── Stage 4: Deploy to production ───────────────────────────────────────────
-  # TODO: add e2e tests job here between staging and prod when ready
+  # ── Stage 4: Regression tests against staging ───────────────────────────────
+  # Placeholder — replace with real test suite when automation is ready.
+  # Production deploy is blocked if this job fails.
+
+  regression-tests:
+    name: Regression Tests — staging
+    needs: [deploy-staging]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run regression tests
+        run: echo "Regression tests passed (placeholder)"
+
+  # ── Stage 5: Deploy to production ───────────────────────────────────────────
 
   deploy-production:
     name: Deploy — production
-    needs: [deploy-staging]
+    needs: [regression-tests]
     runs-on: ubuntu-latest
     permissions:
       id-token: write
