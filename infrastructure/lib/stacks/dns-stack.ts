@@ -34,6 +34,18 @@ export class DnsStack extends cdk.Stack {
       validation: acm.CertificateValidation.fromDns(this.hostedZone),
     });
 
+    // Google Workspace MX records for info@connectevents.co
+    new route53.MxRecord(this, 'GoogleWorkspaceMx', {
+      zone: this.hostedZone,
+      values: [
+        { priority: 1,  hostName: 'aspmx.l.google.com' },
+        { priority: 5,  hostName: 'alt1.aspmx.l.google.com' },
+        { priority: 5,  hostName: 'alt2.aspmx.l.google.com' },
+        { priority: 10, hostName: 'alt3.aspmx.l.google.com' },
+        { priority: 10, hostName: 'alt4.aspmx.l.google.com' },
+      ],
+    });
+
     new cdk.CfnOutput(this, 'HostedZoneId', {
       value: this.hostedZone.hostedZoneId,
       description: 'Route53 Hosted Zone ID',
