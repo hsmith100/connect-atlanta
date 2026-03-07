@@ -8,12 +8,14 @@ import Image from 'next/image'
 import { Calendar, Loader2 } from 'lucide-react'
 import { organizationSchema, websiteSchema, eventSeriesSchema, faqSchema } from '../lib/structuredData'
 import { getEvents, getHeroCards } from '../lib/api'
+import { getEventDatetimes, getDefaultActiveId } from '../lib/formatters'
 import type { Event } from '@shared/types/events'
 import type { HeroCard } from '@shared/types/heroCards'
 import { HeroCardVisual } from '../components/HeroCardVisual'
 import UpcomingEventCard from '../components/events/UpcomingEventCard'
 import EventFlyerCard from '../components/events/EventFlyerCard'
 import FlyerModal from '../components/events/FlyerModal'
+import EventTabBar from '../components/events/EventTabBar'
 
 interface SignupFormData {
   name: string;
@@ -39,6 +41,7 @@ export default function Home() {
   const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([])
   const [pastEvents, setPastEvents] = useState<Event[]>([])
   const [eventsLoading, setEventsLoading] = useState(true)
+  const [activeEventId, setActiveEventId] = useState<string | null>(null)
   const [selectedFlyerIndex, setSelectedFlyerIndex] = useState<number | null>(null)
 
   useEffect(() => {
@@ -46,7 +49,9 @@ export default function Home() {
       try {
         const events = await getEvents()
         const today = new Date().toISOString().slice(0, 10)
-        setUpcomingEvents(events.filter((e) => e.date >= today))
+        const upcoming = events.filter((e) => e.date >= today)
+        setUpcomingEvents(upcoming)
+        setActiveEventId(getDefaultActiveId(upcoming))
         setPastEvents(
           events
             .filter((e) => e.date < today)
@@ -330,10 +335,16 @@ export default function Home() {
                 </button>
               </div>
             ) : (
-              <div className="max-w-5xl mx-auto space-y-8">
-                {upcomingEvents.map((event) => (
-                  <UpcomingEventCard key={event.id} event={event} />
-                ))}
+              <div className="max-w-5xl mx-auto">
+                <EventTabBar
+                  events={upcomingEvents}
+                  activeEventId={activeEventId}
+                  onSelect={setActiveEventId}
+                />
+                {(() => {
+                  const active = upcomingEvents.find(e => e.id === activeEventId) ?? upcomingEvents[0]
+                  return active ? <UpcomingEventCard key={active.id} event={active} /> : null
+                })()}
               </div>
             )}
           </div>

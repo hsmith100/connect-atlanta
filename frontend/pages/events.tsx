@@ -8,48 +8,14 @@ import { Calendar, Music, Loader2, AlertCircle, X, ChevronLeft, ChevronRight } f
 import { getEvents, getEventGallery } from '../lib/api'
 import type { Event } from '@shared/types/events'
 import type { Photo } from '@shared/types/photos'
-import { formatEventDate } from '../lib/formatters'
+import { formatEventDate, getEventDatetimes, getDefaultActiveId } from '../lib/formatters'
 import UpcomingEventCard from '../components/events/UpcomingEventCard'
 import EventFlyerCard from '../components/events/EventFlyerCard'
 import FlyerModal from '../components/events/FlyerModal'
+import EventTabBar from '../components/events/EventTabBar'
 
 // Matches the actual GET /api/gallery response shape
 type EventGalleryData = { photos: Photo[] };
-
-// Returns start and end datetimes for an event, handling midnight crossover.
-// Times are parsed as local time. If endTime < startTime, end is next calendar day.
-function getEventDatetimes(event: Event): { start: Date; end: Date } {
-    const start = event.startTime
-        ? new Date(`${event.date}T${event.startTime}`)
-        : new Date(`${event.date}T23:59:59`)
-
-    let end: Date
-    if (event.endTime) {
-        end = new Date(`${event.date}T${event.endTime}`)
-        if (end <= start) end.setDate(end.getDate() + 1) // crosses midnight
-    } else {
-        end = new Date(`${event.date}T23:59:59`)
-    }
-
-    return { start, end }
-}
-
-// Returns the id of the event that should be the active tab.
-// Priority: earliest unstarted event. If all have started, latest start time.
-function getDefaultActiveId(events: Event[]): string | null {
-    if (events.length === 0) return null
-    const now = new Date()
-    const unstarted = events.filter(e => now < getEventDatetimes(e).start)
-    if (unstarted.length > 0) {
-        return unstarted.sort((a, b) =>
-            getEventDatetimes(a).start.getTime() - getEventDatetimes(b).start.getTime()
-        )[0].id
-    }
-    // All started — show the one with the latest start time
-    return [...events].sort((a, b) =>
-        getEventDatetimes(b).start.getTime() - getEventDatetimes(a).start.getTime()
-    )[0].id
-}
 
 export default function Events() {
     const router = useRouter()
@@ -224,24 +190,11 @@ export default function Events() {
                                 </div>
                             ) : (
                                 <div className="max-w-5xl mx-auto">
-                                    {/* Tab switcher — only shown when there are multiple upcoming events */}
-                                    {upcomingEvents.length > 1 && (
-                                        <div className="flex gap-2 mb-8 max-w-lg mx-auto">
-                                            {upcomingEvents.map((event) => (
-                                                <button
-                                                    key={event.id}
-                                                    onClick={() => setActiveEventId(event.id)}
-                                                    className={`flex-1 py-2.5 px-4 rounded-full font-bold text-sm transition-all duration-200 ${
-                                                        activeEventId === event.id
-                                                            ? 'bg-brand-header text-white shadow-md'
-                                                            : 'bg-white/60 text-brand-header hover:bg-white/90 border border-brand-header/20'
-                                                    }`}
-                                                >
-                                                    {event.title}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    )}
+                                    <EventTabBar
+                                        events={upcomingEvents}
+                                        activeEventId={activeEventId}
+                                        onSelect={setActiveEventId}
+                                    />
                                     {/* Show the active event card */}
                                     {(() => {
                                         const active = upcomingEvents.find(e => e.id === activeEventId) ?? upcomingEvents[0]
