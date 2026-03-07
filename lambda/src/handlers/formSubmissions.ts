@@ -35,8 +35,7 @@ async function emailSignup(raw: FormPayload): Promise<APIGatewayProxyResultV2> {
 async function artistApplication(raw: FormPayload): Promise<APIGatewayProxyResultV2> {
   const result = parsePayload<ArtistApplicationPayload>(raw, [
     'email', 'fullLegalName', 'djName', 'city', 'phone', 'instagramLink',
-    'contactMethod', 'mainGenre', 'subGenre', 'livePerformanceLinks',
-    'soundcloudLink', 'spotifyLink', 'rekordboxFamiliar',
+    'contactMethod', 'mainGenre', 'subGenre', 'rekordboxFamiliar',
   ]);
   if (!result.ok) return result.err;
   const data = result.data;
