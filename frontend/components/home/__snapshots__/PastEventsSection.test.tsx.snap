@@ -1,0 +1,61 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`matches snapshot with events 1`] = `
+<div>
+  <section
+    class="py-6 md:py-10 bg-brand-bg"
+  >
+    <div
+      class="section-container"
+    >
+      <h2
+        class="font-title text-5xl md:text-7xl font-black text-center mb-10 text-brand-header uppercase"
+      >
+        PAST EVENTS
+      </h2>
+      <div
+        class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8"
+      >
+        <div
+          data-testid="flyer-card"
+        >
+          Spring Beats
+        </div>
+        <div
+          data-testid="flyer-card"
+        >
+          Summer Beats
+        </div>
+      </div>
+      <div
+        class="text-center mt-10"
+      >
+        <a
+          class="btn-festival-outline btn-lg"
+          href="/events"
+        >
+          View all events →
+        </a>
+      </div>
+    </div>
+  </section>
+</div>
+`;
+
+exports[`matches snapshot with no events 1`] = `
+<div>
+  <section
+    class="py-6 md:py-10 bg-brand-bg"
+  >
+    <div
+      class="section-container"
+    >
+      <h2
+        class="font-title text-5xl md:text-7xl font-black text-center mb-10 text-brand-header uppercase"
+      >
+        PAST EVENTS
+      </h2>
+    </div>
+  </section>
+</div>
+`;
