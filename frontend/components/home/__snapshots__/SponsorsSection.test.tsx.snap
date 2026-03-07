@@ -1,0 +1,131 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`matches snapshot 1`] = `
+<div>
+  <section
+    class="py-6 md:py-10 hero-bg-gold"
+  >
+    <div
+      class="section-container"
+    >
+      <h2
+        class="font-title text-3xl md:text-4xl font-black text-center mb-6 text-brand-header uppercase"
+      >
+        Sponsors
+      </h2>
+      <div
+        class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 items-center max-w-3xl mx-auto"
+      >
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="Coke Zero"
+            class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/sponsors/coke-zero.svg"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="Deep Eddy"
+            class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/sponsors/deep-eddy.svg"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="Lunazul"
+            class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/sponsors/lunazul.svg"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="EVDY"
+            class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/sponsors/evdy.svg"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="Simply Pop"
+            class="object-contain max-w-[60px] max-h-[35px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/sponsors/simply-pop.svg"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="Nine Dot"
+            class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/sponsors/nine-dot.svg"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="Amiqo"
+            class="object-contain max-w-[60px] max-h-[35px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/sponsors/amiqo.svg"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="4Ever Young"
+            class="object-contain max-w-[60px] max-h-[35px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/sponsors/4ever-young.svg"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="Sub Riot"
+            class="object-contain max-w-[80px] max-h-[65px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/sponsors/sub-riot.svg"
+            width="100"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+`;
