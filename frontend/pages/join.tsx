@@ -245,616 +245,613 @@ export default function JoinUs() {
           {/* Volunteer */}
           {activeTab === 'volunteer' && (
             <div id="application-form" className="py-12 md:py-20">
-            <div className="section-container max-w-4xl">
-              <div className="text-center mb-12">
-                <div className="mb-6 text-brand-primary flex justify-center">
-                  <Users size={64} strokeWidth={1.5} />
+              <div className="section-container max-w-4xl">
+                <div className="text-center mb-12">
+                  <div className="mb-6 text-brand-primary flex justify-center">
+                    <Users size={64} strokeWidth={1.5} />
+                  </div>
+                  <h2 className="font-title text-4xl md:text-6xl font-black mb-6 text-brand-header uppercase">
+                    Volunteer Application
+                  </h2>
+                  <p className="text-xl text-brand-text font-bold max-w-2xl mx-auto">
+                    Help make the magic happen! Join our volunteer team and be part of creating an unforgettable experience.
+                  </p>
                 </div>
-                <h2 className="font-title text-4xl md:text-6xl font-black mb-6 text-brand-header uppercase">
-                  Volunteer Application
-                </h2>
-                <p className="text-xl text-brand-text font-bold max-w-2xl mx-auto">
-                  Help make the magic happen! Join our volunteer team and be part of creating an unforgettable experience.
-                </p>
-              </div>
 
-              <div className="text-center">
-                <a
-                  href="https://forms.gle/fWyoSrm2koijynxS7"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-festival btn-lg inline-flex items-center gap-2"
-                  onClick={() => gtag.trackVolunteerApplication()}
-                >
-                  <Users size={20} />
-                  Apply to Volunteer
-                </a>
-              </div>
+                <div className="text-center">
+                  <a
+                    href="https://forms.gle/fWyoSrm2koijynxS7"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-festival btn-lg inline-flex items-center gap-2"
+                    onClick={() => gtag.trackVolunteerApplication()}
+                  >
+                    <Users size={20} />
+                    Apply to Volunteer
+                  </a>
+                </div>
 
-            </div>
+              </div>
             </div>
           )}
 
           {/* Vendor */}
           {activeTab === 'vendor' && (
             <div id="application-form" className="py-12 md:py-20">
-            <div className="section-container max-w-4xl">
-              <div className="text-center mb-12">
-                <div className="mb-6 text-brand-primary flex justify-center">
-                  <Store size={64} strokeWidth={1.5} />
+              <div className="section-container max-w-4xl">
+                <div className="text-center mb-12">
+                  <div className="mb-6 text-brand-primary flex justify-center">
+                    <Store size={64} strokeWidth={1.5} />
+                  </div>
+                  <h2 className="font-title text-4xl md:text-6xl font-black mb-6 text-brand-header uppercase">
+                    Vendor Application
+                  </h2>
+                  <p className="text-xl text-brand-text font-bold max-w-2xl mx-auto">
+                    Join 30+ local vendors, food partners, and creative businesses at Atlanta's premier festival.
+                  </p>
                 </div>
-                <h2 className="font-title text-4xl md:text-6xl font-black mb-6 text-brand-header uppercase">
-                  Vendor Application
-                </h2>
-                <p className="text-xl text-brand-text font-bold max-w-2xl mx-auto">
-                  Join 30+ local vendors, food partners, and creative businesses at Atlanta's premier festival.
-                </p>
-              </div>
 
-              <div className="text-center">
-                <a
-                  href="https://forms.gle/UcEf4GF1Hg4FaY8D9"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-festival btn-lg inline-flex items-center gap-2"
-                  onClick={() => gtag.trackVendorApplication()}
-                >
-                  <Store size={20} />
-                  Apply as a Vendor
-                </a>
+                <div className="text-center">
+                  <a
+                    href="https://forms.gle/UcEf4GF1Hg4FaY8D9"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-festival btn-lg inline-flex items-center gap-2"
+                    onClick={() => gtag.trackVendorApplication()}
+                  >
+                    <Store size={20} />
+                    Apply as a Vendor
+                  </a>
+                </div>
               </div>
-            </div>
             </div>
           )}
 
           {/* DJ Form */}
           {activeTab === 'dj' && (
             <div id="application-form" className="py-12 md:py-20">
-            <div className="section-container max-w-4xl">
-              {/* DJ Info */}
-              <div className="text-center mb-12">
-                <div className="mb-6 text-brand-primary flex justify-center">
-                  <Music size={64} strokeWidth={1.5} />
-                </div>
-                <h2 className="font-title text-4xl md:text-6xl font-black mb-6 text-brand-header uppercase">
-                  DJ Application
-                </h2>
-                <p className="text-xl text-brand-text font-bold max-w-2xl mx-auto">
-                  We feature a variety of electronic music including house, bass, UKG, and DnB.
-                </p>
-              </div>
-
-              {/* Success/Error Messages */}
-              {artistStatus === 'success' && (
-                <div className="mb-6 p-4 bg-green-50 border-2 border-green-500 rounded-lg text-center">
-                  <p className="text-green-800 font-semibold">
-                    🎉 Thank you for your application! We'll review your music and be in touch soon.
+              <div className="section-container max-w-4xl">
+                {/* DJ Info */}
+                <div className="text-center mb-12">
+                  <div className="mb-6 text-brand-primary flex justify-center">
+                    <Music size={64} strokeWidth={1.5} />
+                  </div>
+                  <h2 className="font-title text-4xl md:text-6xl font-black mb-6 text-brand-header uppercase">
+                    DJ Application
+                  </h2>
+                  <p className="text-xl text-brand-text font-bold max-w-2xl mx-auto">
+                    We feature a variety of electronic music including house, bass, UKG, and DnB.
                   </p>
                 </div>
-              )}
 
-              {artistStatus === 'error' && (
-                <div className="mb-6 p-4 bg-red-50 border-2 border-red-500 rounded-lg text-center">
-                  <p className="text-red-800 font-semibold">
-                    ❌ Oops! Something went wrong. Please try again.
-                  </p>
+                {/* Success/Error Messages */}
+                {artistStatus === 'success' && (
+                  <div className="mb-6 p-4 bg-green-50 border-2 border-green-500 rounded-lg text-center">
+                    <p className="text-green-800 font-semibold">
+                      🎉 Thank you for your application! We'll review your music and be in touch soon.
+                    </p>
+                  </div>
+                )}
+
+                {artistStatus === 'error' && (
+                  <div className="mb-6 p-4 bg-red-50 border-2 border-red-500 rounded-lg text-center">
+                    <p className="text-red-800 font-semibold">
+                      ❌ Oops! Something went wrong. Please try again.
+                    </p>
+                  </div>
+                )}
+
+                {/* DJ Form */}
+                <div className="relative p-4 md:p-8 rounded-2xl overflow-hidden shadow-xl bg-white">
+                  <div className="absolute inset-0"></div>
+                  <form
+                    ref={artistFormRef}
+                    onSubmit={handleArtistSubmit}
+                    className="relative z-10 space-y-6"
+                  >
+                    {/* Email */}
+                    <div className="form-control">
+                      <label className="label flex-col items-start">
+                        <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
+                          <Mail size={16} className="inline mr-2" />
+                          Email *
+                        </span>
+                      </label>
+                      <input
+                        type="email"
+                        name="email"
+                        value={artistData.email}
+                        onChange={handleArtistChange}
+                        placeholder="your@email.com"
+                        className="input input-bordered w-full focus:input-primary"
+                        disabled={artistSubmitting}
+                        required
+                      />
+                    </div>
+
+                    {/* Full Legal Name */}
+                    <div className="form-control">
+                      <label className="label flex-col items-start">
+                        <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
+                          <User size={16} className="inline mr-2" />
+                          Full legal name *
+                        </span>
+                      </label>
+                      <input
+                        type="text"
+                        name="fullLegalName"
+                        value={artistData.fullLegalName}
+                        onChange={handleArtistChange}
+                        placeholder="Your full legal name"
+                        className="input input-bordered w-full focus:input-primary"
+                        disabled={artistSubmitting}
+                        required
+                      />
+                    </div>
+
+                    {/* DJ Name / Alias */}
+                    <div className="form-control">
+                      <label className="label flex-col items-start">
+                        <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
+                          <Music size={16} className="inline mr-2" />
+                          DJ Name / Alias *
+                        </span>
+                      </label>
+                      <input
+                        type="text"
+                        name="djName"
+                        value={artistData.djName}
+                        onChange={handleArtistChange}
+                        placeholder="Your DJ/Artist name"
+                        className="input input-bordered w-full focus:input-primary"
+                        disabled={artistSubmitting}
+                        required
+                      />
+                    </div>
+
+                    {/* City */}
+                    <div className="form-control">
+                      <label className="label flex-col items-start">
+                        <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
+                          <MapPin size={16} className="inline mr-2" />
+                          What City are you Located? *
+                        </span>
+                      </label>
+                      <input
+                        type="text"
+                        name="city"
+                        value={artistData.city}
+                        onChange={handleArtistChange}
+                        placeholder="City name"
+                        className="input input-bordered w-full focus:input-primary"
+                        disabled={artistSubmitting}
+                        required
+                      />
+                    </div>
+
+                    {/* Phone Number */}
+                    <div className="form-control">
+                      <label className="label flex-col items-start">
+                        <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
+                          <Phone size={16} className="inline mr-2" />
+                          Phone number *
+                        </span>
+                      </label>
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={artistData.phone}
+                        onChange={handleArtistChange}
+                        placeholder="(555) 123-4567"
+                        className="input input-bordered w-full focus:input-primary"
+                        disabled={artistSubmitting}
+                        required
+                      />
+                    </div>
+
+                    {/* Instagram Link */}
+                    <div className="form-control">
+                      <label className="label flex-col items-start">
+                        <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
+                          <LinkIcon size={16} className="inline mr-2" />
+                          Instagram Link *
+                        </span>
+                      </label>
+                      <input
+                        type="url"
+                        name="instagramLink"
+                        value={artistData.instagramLink}
+                        onChange={handleArtistChange}
+                        placeholder="https://instagram.com/..."
+                        className="input input-bordered w-full focus:input-primary"
+                        disabled={artistSubmitting}
+                        required
+                      />
+                    </div>
+
+                    {/* Contact Method */}
+                    <div className="form-control">
+                      <label className="label flex-col items-start">
+                        <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
+                          <MessageSquare size={16} className="inline mr-2" />
+                          What is the best way to contact you? *
+                        </span>
+                      </label>
+                      <div className="space-y-3 mt-2">
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="radio"
+                            name="contactMethod"
+                            value="email"
+                            checked={artistData.contactMethod === 'email'}
+                            onChange={handleArtistChange}
+                            className="radio radio-primary"
+                            disabled={artistSubmitting}
+                            required
+                          />
+                          <span className="text-brand-header">Email</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="radio"
+                            name="contactMethod"
+                            value="text"
+                            checked={artistData.contactMethod === 'text'}
+                            onChange={handleArtistChange}
+                            className="radio radio-primary"
+                            disabled={artistSubmitting}
+                          />
+                          <span className="text-brand-header">Text Message</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="radio"
+                            name="contactMethod"
+                            value="instagram"
+                            checked={artistData.contactMethod === 'instagram'}
+                            onChange={handleArtistChange}
+                            className="radio radio-primary"
+                            disabled={artistSubmitting}
+                          />
+                          <span className="text-brand-header">Instagram DM</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Artist Bio */}
+                    <div className="form-control">
+                      <label className="label flex-col items-start">
+                        <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
+                          Tell us about you! What makes you stand out as an artist?
+                        </span>
+                      </label>
+                      <textarea
+                        name="artistBio"
+                        value={artistData.artistBio}
+                        onChange={handleArtistChange}
+                        placeholder="Your answer"
+                        rows={4}
+                        className="textarea textarea-bordered w-full focus:textarea-primary"
+                        disabled={artistSubmitting}
+                      />
+                    </div>
+
+                    {/* B2B Favorite */}
+                    <div className="form-control">
+                      <label className="label flex-col items-start">
+                        <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
+                          Do you have a favorite DJ you like to B2B with? If so, who?
+                        </span>
+                      </label>
+                      <textarea
+                        name="b2bFavorite"
+                        value={artistData.b2bFavorite}
+                        onChange={handleArtistChange}
+                        placeholder="Your answer"
+                        rows={3}
+                        className="textarea textarea-bordered w-full focus:textarea-primary"
+                        disabled={artistSubmitting}
+                      />
+                    </div>
+
+                    {/* Main Genre */}
+                    <div className="form-control">
+                      <label className="label flex-col items-start">
+                        <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
+                          What is your Main Genre? *
+                        </span>
+                      </label>
+                      <select
+                        name="mainGenre"
+                        value={artistData.mainGenre}
+                        onChange={handleArtistChange}
+                        className="select select-bordered w-full focus:select-primary"
+                        disabled={artistSubmitting}
+                        required
+                      >
+                        <option value="">Choose</option>
+                        <option value="House">House</option>
+                        <option value="Afro House">Afro House</option>
+                        <option value="Bass House">Bass House</option>
+                        <option value="Tech House">Tech House</option>
+                        <option value="Disco House">Disco House</option>
+                        <option value="Progressive House">Progressive House</option>
+                        <option value="Future House">Future House</option>
+                        <option value="Big Room">Big Room</option>
+                        <option value="Bass">Bass</option>
+                        <option value="Dubstep">Dubstep</option>
+                        <option value="Melodic Dubstep">Melodic Dubstep</option>
+                        <option value="Riddim">Riddim</option>
+                        <option value="Drum & Bass">Drum & Bass</option>
+                        <option value="Jungle">Jungle</option>
+                        <option value="Deep House">Deep House</option>
+                        <option value="UK Garage">UK Garage</option>
+                        <option value="Bassline">Bassline</option>
+                        <option value="Techno">Techno</option>
+                        <option value="Hardstyle">Hardstyle</option>
+                        <option value="Brostep">Brostep</option>
+                        <option value="Trap">Trap</option>
+                        <option value="Future Bass">Future Bass</option>
+                        <option value="Moombahton">Moombahton</option>
+                        <option value="Open Format">Open Format</option>
+                        <option value="Other (Please fill in below)">Other (Please fill in below)</option>
+                      </select>
+                    </div>
+
+                    {/* Sub Genre */}
+                    <div className="form-control">
+                      <label className="label flex-col items-start">
+                        <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
+                          What is your Sub Genre? *
+                        </span>
+                      </label>
+                      <select
+                        name="subGenre"
+                        value={artistData.subGenre}
+                        onChange={handleArtistChange}
+                        className="select select-bordered w-full focus:select-primary"
+                        disabled={artistSubmitting}
+                        required
+                      >
+                        <option value="">Choose</option>
+                        <option value="House">House</option>
+                        <option value="Afro House">Afro House</option>
+                        <option value="Bass House">Bass House</option>
+                        <option value="Tech House">Tech House</option>
+                        <option value="Disco House">Disco House</option>
+                        <option value="Progressive House">Progressive House</option>
+                        <option value="Future House">Future House</option>
+                        <option value="Big Room">Big Room</option>
+                        <option value="Bass">Bass</option>
+                        <option value="Dubstep">Dubstep</option>
+                        <option value="Melodic Dubstep">Melodic Dubstep</option>
+                        <option value="Riddim">Riddim</option>
+                        <option value="Drum & Bass">Drum & Bass</option>
+                        <option value="Jungle">Jungle</option>
+                        <option value="Deep House">Deep House</option>
+                        <option value="UK Garage">UK Garage</option>
+                        <option value="Bassline">Bassline</option>
+                        <option value="Techno">Techno</option>
+                        <option value="Hardstyle">Hardstyle</option>
+                        <option value="Brostep">Brostep</option>
+                        <option value="Trap">Trap</option>
+                        <option value="Future Bass">Future Bass</option>
+                        <option value="Moombahton">Moombahton</option>
+                        <option value="Open Format">Open Format</option>
+                        <option value="Other (Please fill in below)">Other (Please fill in below)</option>
+                      </select>
+                    </div>
+
+                    {/* Other Sub Genre */}
+                    <div className="form-control">
+                      <label className="label flex-col items-start">
+                        <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
+                          What is your other Sub Genre?
+                        </span>
+                      </label>
+                      <select
+                        name="otherSubGenre"
+                        value={artistData.otherSubGenre}
+                        onChange={handleArtistChange}
+                        className="select select-bordered w-full focus:select-primary"
+                        disabled={artistSubmitting}
+                      >
+                        <option value="">Choose</option>
+                        <option value="House">House</option>
+                        <option value="Afro House">Afro House</option>
+                        <option value="Bass House">Bass House</option>
+                        <option value="Tech House">Tech House</option>
+                        <option value="Disco House">Disco House</option>
+                        <option value="Progressive House">Progressive House</option>
+                        <option value="Future House">Future House</option>
+                        <option value="Big Room">Big Room</option>
+                        <option value="Bass">Bass</option>
+                        <option value="Dubstep">Dubstep</option>
+                        <option value="Melodic Dubstep">Melodic Dubstep</option>
+                        <option value="Riddim">Riddim</option>
+                        <option value="Drum & Bass">Drum & Bass</option>
+                        <option value="Jungle">Jungle</option>
+                        <option value="Deep House">Deep House</option>
+                        <option value="UK Garage">UK Garage</option>
+                        <option value="Bassline">Bassline</option>
+                        <option value="Techno">Techno</option>
+                        <option value="Hardstyle">Hardstyle</option>
+                        <option value="Brostep">Brostep</option>
+                        <option value="Trap">Trap</option>
+                        <option value="Future Bass">Future Bass</option>
+                        <option value="Moombahton">Moombahton</option>
+                        <option value="Open Format">Open Format</option>
+                        <option value="Other (Please fill in below)">Other (Please fill in below)</option>
+                      </select>
+                    </div>
+
+                    {/* Other Genre Text */}
+                    <div className="form-control">
+                      <label className="label flex-col items-start">
+                        <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
+                          Fill in your "Other" Genre Selections Here
+                        </span>
+                      </label>
+                      <textarea
+                        name="otherGenreText"
+                        value={artistData.otherGenreText}
+                        onChange={handleArtistChange}
+                        placeholder="Your answer"
+                        rows={3}
+                        className="textarea textarea-bordered w-full focus:textarea-primary"
+                        disabled={artistSubmitting}
+                      />
+                    </div>
+
+                    {/* Live Performance Links */}
+                    <div className="form-control">
+                      <label className="label flex-col items-start">
+                        <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
+                          <LinkIcon size={16} className="inline mr-2" />
+                          Links to any live performances
+                        </span>
+                      </label>
+                      <textarea
+                        name="livePerformanceLinks"
+                        value={artistData.livePerformanceLinks}
+                        onChange={handleArtistChange}
+                        placeholder="Your answer"
+                        rows={3}
+                        className="textarea textarea-bordered w-full focus:textarea-primary"
+                        disabled={artistSubmitting}
+                      />
+                    </div>
+
+                    {/* Soundcloud Mix Link */}
+                    <div className="form-control">
+                      <label className="label flex-col items-start">
+                        <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
+                          <Headphones size={16} className="inline mr-2" />
+                          Soundcloud Mix Link
+                        </span>
+                      </label>
+                      <input
+                        type="url"
+                        name="soundcloudLink"
+                        value={artistData.soundcloudLink}
+                        onChange={handleArtistChange}
+                        placeholder="Your answer"
+                        className="input input-bordered w-full focus:input-primary"
+                        disabled={artistSubmitting}
+                      />
+                    </div>
+
+                    {/* Spotify Link */}
+                    <div className="form-control">
+                      <label className="label flex-col items-start">
+                        <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
+                          <Music size={16} className="inline mr-2" />
+                          Spotify Link
+                        </span>
+                      </label>
+                      <input
+                        type="url"
+                        name="spotifyLink"
+                        value={artistData.spotifyLink}
+                        onChange={handleArtistChange}
+                        placeholder="Your answer"
+                        className="input input-bordered w-full focus:input-primary"
+                        disabled={artistSubmitting}
+                      />
+                    </div>
+
+                    {/* Additional Information Section Header */}
+                    <div className="pt-6 pb-2 border-t-2 border-brand-primary">
+                      <h3 className="text-2xl font-bold text-brand-primary uppercase">Additional Information</h3>
+                    </div>
+
+                    {/* Rekordbox Familiar */}
+                    <div className="form-control">
+                      <label className="label flex-col items-start">
+                        <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
+                          Are you familiar with the USB export for XDJs / CDJs using Rekordbox? *
+                        </span>
+                      </label>
+                      <div className="space-y-3 mt-2">
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="radio"
+                            name="rekordboxFamiliar"
+                            value="Yes"
+                            checked={artistData.rekordboxFamiliar === 'Yes'}
+                            onChange={handleArtistChange}
+                            className="radio radio-primary"
+                            disabled={artistSubmitting}
+                            required
+                          />
+                          <span className="text-brand-header">Yes</span>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <input
+                            type="radio"
+                            name="rekordboxFamiliar"
+                            value="No"
+                            checked={artistData.rekordboxFamiliar === 'No'}
+                            onChange={handleArtistChange}
+                            className="radio radio-primary"
+                            disabled={artistSubmitting}
+                          />
+                          <span className="text-brand-header">No</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Promo Kit Links */}
+                    <div className="form-control">
+                      <label className="label flex-col items-start">
+                        <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
+                          <LinkIcon size={16} className="inline mr-2" />
+                          Please link any promo and Press Kits
+                        </span>
+                      </label>
+                      <textarea
+                        name="promoKitLinks"
+                        value={artistData.promoKitLinks}
+                        onChange={handleArtistChange}
+                        placeholder="Your answer"
+                        rows={3}
+                        className="textarea textarea-bordered w-full focus:textarea-primary"
+                        disabled={artistSubmitting}
+                      />
+                    </div>
+
+                    {/* Additional Info */}
+                    <div className="form-control">
+                      <label className="label flex-col items-start">
+                        <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
+                          Anything else ya wanna add? 😊
+                        </span>
+                      </label>
+                      <textarea
+                        name="additionalInfo"
+                        value={artistData.additionalInfo}
+                        onChange={handleArtistChange}
+                        placeholder="Your answer"
+                        rows={4}
+                        className="textarea textarea-bordered w-full focus:textarea-primary"
+                        disabled={artistSubmitting}
+                      />
+                    </div>
+
+                    {/* Submit Button */}
+                    <div className="pt-6">
+                      <button
+                        type="submit"
+                        disabled={artistSubmitting}
+                        className="btn-festival btn-lg w-full disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        <Music size={20} className="inline mr-2" />
+                        {artistSubmitting ? 'Submitting...' : 'Submit DJ Application'}
+                      </button>
+                    </div>
+                  </form>
                 </div>
-              )}
-
-              {/* DJ Form */}
-              <div className="relative p-4 md:p-8 rounded-2xl overflow-hidden shadow-xl bg-white">
-                <div className="absolute inset-0"></div>
-                <form
-                  ref={artistFormRef}
-                  onSubmit={handleArtistSubmit}
-                  className="relative z-10 space-y-6"
-                >
-                  {/* Email */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        <Mail size={16} className="inline mr-2" />
-                        Email *
-                      </span>
-                    </label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={artistData.email}
-                      onChange={handleArtistChange}
-                      placeholder="your@email.com"
-                      className="input input-bordered w-full focus:input-primary"
-                      disabled={artistSubmitting}
-                      required
-                    />
-                  </div>
-
-                  {/* Full Legal Name */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        <User size={16} className="inline mr-2" />
-                        Full legal name *
-                      </span>
-                    </label>
-                    <input
-                      type="text"
-                      name="fullLegalName"
-                      value={artistData.fullLegalName}
-                      onChange={handleArtistChange}
-                      placeholder="Your full legal name"
-                      className="input input-bordered w-full focus:input-primary"
-                      disabled={artistSubmitting}
-                      required
-                    />
-                  </div>
-
-                  {/* DJ Name / Alias */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        <Music size={16} className="inline mr-2" />
-                        DJ Name / Alias *
-                      </span>
-                    </label>
-                    <input
-                      type="text"
-                      name="djName"
-                      value={artistData.djName}
-                      onChange={handleArtistChange}
-                      placeholder="Your DJ/Artist name"
-                      className="input input-bordered w-full focus:input-primary"
-                      disabled={artistSubmitting}
-                      required
-                    />
-                  </div>
-
-                  {/* City */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        <MapPin size={16} className="inline mr-2" />
-                        What City are you Located? *
-                      </span>
-                    </label>
-                    <input
-                      type="text"
-                      name="city"
-                      value={artistData.city}
-                      onChange={handleArtistChange}
-                      placeholder="City name"
-                      className="input input-bordered w-full focus:input-primary"
-                      disabled={artistSubmitting}
-                      required
-                    />
-                  </div>
-
-                  {/* Phone Number */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        <Phone size={16} className="inline mr-2" />
-                        Phone number *
-                      </span>
-                    </label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={artistData.phone}
-                      onChange={handleArtistChange}
-                      placeholder="(555) 123-4567"
-                      className="input input-bordered w-full focus:input-primary"
-                      disabled={artistSubmitting}
-                      required
-                    />
-                  </div>
-
-                  {/* Instagram Link */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        <LinkIcon size={16} className="inline mr-2" />
-                        Instagram Link *
-                      </span>
-                    </label>
-                    <input
-                      type="url"
-                      name="instagramLink"
-                      value={artistData.instagramLink}
-                      onChange={handleArtistChange}
-                      placeholder="https://instagram.com/..."
-                      className="input input-bordered w-full focus:input-primary"
-                      disabled={artistSubmitting}
-                      required
-                    />
-                  </div>
-
-                  {/* Contact Method */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        <MessageSquare size={16} className="inline mr-2" />
-                        What is the best way to contact you? *
-                      </span>
-                    </label>
-                    <div className="space-y-3 mt-2">
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="radio"
-                          name="contactMethod"
-                          value="email"
-                          checked={artistData.contactMethod === 'email'}
-                          onChange={handleArtistChange}
-                          className="radio radio-primary"
-                          disabled={artistSubmitting}
-                          required
-                        />
-                        <span className="text-brand-header">Email</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="radio"
-                          name="contactMethod"
-                          value="text"
-                          checked={artistData.contactMethod === 'text'}
-                          onChange={handleArtistChange}
-                          className="radio radio-primary"
-                          disabled={artistSubmitting}
-                        />
-                        <span className="text-brand-header">Text Message</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="radio"
-                          name="contactMethod"
-                          value="instagram"
-                          checked={artistData.contactMethod === 'instagram'}
-                          onChange={handleArtistChange}
-                          className="radio radio-primary"
-                          disabled={artistSubmitting}
-                        />
-                        <span className="text-brand-header">Instagram DM</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Artist Bio */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        Tell us about you! What makes you stand out as an artist?
-                      </span>
-                    </label>
-                    <textarea
-                      name="artistBio"
-                      value={artistData.artistBio}
-                      onChange={handleArtistChange}
-                      placeholder="Your answer"
-                      rows={4}
-                      className="textarea textarea-bordered w-full focus:textarea-primary"
-                      disabled={artistSubmitting}
-                    />
-                  </div>
-
-                  {/* B2B Favorite */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        Do you have a favorite DJ you like to B2B with? If so, who?
-                      </span>
-                    </label>
-                    <textarea
-                      name="b2bFavorite"
-                      value={artistData.b2bFavorite}
-                      onChange={handleArtistChange}
-                      placeholder="Your answer"
-                      rows={3}
-                      className="textarea textarea-bordered w-full focus:textarea-primary"
-                      disabled={artistSubmitting}
-                    />
-                  </div>
-
-                  {/* Main Genre */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        What is your Main Genre? *
-                      </span>
-                    </label>
-                    <select
-                      name="mainGenre"
-                      value={artistData.mainGenre}
-                      onChange={handleArtistChange}
-                      className="select select-bordered w-full focus:select-primary"
-                      disabled={artistSubmitting}
-                      required
-                    >
-                      <option value="">Choose</option>
-                      <option value="House">House</option>
-                      <option value="Afro House">Afro House</option>
-                      <option value="Bass House">Bass House</option>
-                      <option value="Tech House">Tech House</option>
-                      <option value="Disco House">Disco House</option>
-                      <option value="Progressive House">Progressive House</option>
-                      <option value="Future House">Future House</option>
-                      <option value="Big Room">Big Room</option>
-                      <option value="Bass">Bass</option>
-                      <option value="Dubstep">Dubstep</option>
-                      <option value="Melodic Dubstep">Melodic Dubstep</option>
-                      <option value="Riddim">Riddim</option>
-                      <option value="Drum & Bass">Drum & Bass</option>
-                      <option value="Jungle">Jungle</option>
-                      <option value="Deep House">Deep House</option>
-                      <option value="UK Garage">UK Garage</option>
-                      <option value="Bassline">Bassline</option>
-                      <option value="Techno">Techno</option>
-                      <option value="Hardstyle">Hardstyle</option>
-                      <option value="Brostep">Brostep</option>
-                      <option value="Trap">Trap</option>
-                      <option value="Future Bass">Future Bass</option>
-                      <option value="Moombahton">Moombahton</option>
-                      <option value="Open Format">Open Format</option>
-                      <option value="Other (Please fill in below)">Other (Please fill in below)</option>
-                    </select>
-                  </div>
-
-                  {/* Sub Genre */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        What is your Sub Genre? *
-                      </span>
-                    </label>
-                    <select
-                      name="subGenre"
-                      value={artistData.subGenre}
-                      onChange={handleArtistChange}
-                      className="select select-bordered w-full focus:select-primary"
-                      disabled={artistSubmitting}
-                      required
-                    >
-                      <option value="">Choose</option>
-                      <option value="House">House</option>
-                      <option value="Afro House">Afro House</option>
-                      <option value="Bass House">Bass House</option>
-                      <option value="Tech House">Tech House</option>
-                      <option value="Disco House">Disco House</option>
-                      <option value="Progressive House">Progressive House</option>
-                      <option value="Future House">Future House</option>
-                      <option value="Big Room">Big Room</option>
-                      <option value="Bass">Bass</option>
-                      <option value="Dubstep">Dubstep</option>
-                      <option value="Melodic Dubstep">Melodic Dubstep</option>
-                      <option value="Riddim">Riddim</option>
-                      <option value="Drum & Bass">Drum & Bass</option>
-                      <option value="Jungle">Jungle</option>
-                      <option value="Deep House">Deep House</option>
-                      <option value="UK Garage">UK Garage</option>
-                      <option value="Bassline">Bassline</option>
-                      <option value="Techno">Techno</option>
-                      <option value="Hardstyle">Hardstyle</option>
-                      <option value="Brostep">Brostep</option>
-                      <option value="Trap">Trap</option>
-                      <option value="Future Bass">Future Bass</option>
-                      <option value="Moombahton">Moombahton</option>
-                      <option value="Open Format">Open Format</option>
-                      <option value="Other (Please fill in below)">Other (Please fill in below)</option>
-                    </select>
-                  </div>
-
-                  {/* Other Sub Genre */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        What is your other Sub Genre?
-                      </span>
-                    </label>
-                    <select
-                      name="otherSubGenre"
-                      value={artistData.otherSubGenre}
-                      onChange={handleArtistChange}
-                      className="select select-bordered w-full focus:select-primary"
-                      disabled={artistSubmitting}
-                    >
-                      <option value="">Choose</option>
-                      <option value="House">House</option>
-                      <option value="Afro House">Afro House</option>
-                      <option value="Bass House">Bass House</option>
-                      <option value="Tech House">Tech House</option>
-                      <option value="Disco House">Disco House</option>
-                      <option value="Progressive House">Progressive House</option>
-                      <option value="Future House">Future House</option>
-                      <option value="Big Room">Big Room</option>
-                      <option value="Bass">Bass</option>
-                      <option value="Dubstep">Dubstep</option>
-                      <option value="Melodic Dubstep">Melodic Dubstep</option>
-                      <option value="Riddim">Riddim</option>
-                      <option value="Drum & Bass">Drum & Bass</option>
-                      <option value="Jungle">Jungle</option>
-                      <option value="Deep House">Deep House</option>
-                      <option value="UK Garage">UK Garage</option>
-                      <option value="Bassline">Bassline</option>
-                      <option value="Techno">Techno</option>
-                      <option value="Hardstyle">Hardstyle</option>
-                      <option value="Brostep">Brostep</option>
-                      <option value="Trap">Trap</option>
-                      <option value="Future Bass">Future Bass</option>
-                      <option value="Moombahton">Moombahton</option>
-                      <option value="Open Format">Open Format</option>
-                      <option value="Other (Please fill in below)">Other (Please fill in below)</option>
-                    </select>
-                  </div>
-
-                  {/* Other Genre Text */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        Fill in your "Other" Genre Selections Here
-                      </span>
-                    </label>
-                    <textarea
-                      name="otherGenreText"
-                      value={artistData.otherGenreText}
-                      onChange={handleArtistChange}
-                      placeholder="Your answer"
-                      rows={3}
-                      className="textarea textarea-bordered w-full focus:textarea-primary"
-                      disabled={artistSubmitting}
-                    />
-                  </div>
-
-                  {/* Live Performance Links */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        <LinkIcon size={16} className="inline mr-2" />
-                        Links to any live performances *
-                      </span>
-                    </label>
-                    <textarea
-                      name="livePerformanceLinks"
-                      value={artistData.livePerformanceLinks}
-                      onChange={handleArtistChange}
-                      placeholder="Your answer"
-                      rows={3}
-                      className="textarea textarea-bordered w-full focus:textarea-primary"
-                      disabled={artistSubmitting}
-                      required
-                    />
-                  </div>
-
-                  {/* Soundcloud Mix Link */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        <Headphones size={16} className="inline mr-2" />
-                        Soundcloud Mix Link *
-                      </span>
-                    </label>
-                    <input
-                      type="url"
-                      name="soundcloudLink"
-                      value={artistData.soundcloudLink}
-                      onChange={handleArtistChange}
-                      placeholder="Your answer"
-                      className="input input-bordered w-full focus:input-primary"
-                      disabled={artistSubmitting}
-                      required
-                    />
-                  </div>
-
-                  {/* Spotify Link */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        <Music size={16} className="inline mr-2" />
-                        Spotify Link *
-                      </span>
-                    </label>
-                    <input
-                      type="url"
-                      name="spotifyLink"
-                      value={artistData.spotifyLink}
-                      onChange={handleArtistChange}
-                      placeholder="Your answer"
-                      className="input input-bordered w-full focus:input-primary"
-                      disabled={artistSubmitting}
-                      required
-                    />
-                  </div>
-
-                  {/* Additional Information Section Header */}
-                  <div className="pt-6 pb-2 border-t-2 border-brand-primary">
-                    <h3 className="text-2xl font-bold text-brand-primary uppercase">Additional Information</h3>
-                  </div>
-
-                  {/* Rekordbox Familiar */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        Are you familiar with the USB export for XDJs / CDJs using Rekordbox? *
-                      </span>
-                    </label>
-                    <div className="space-y-3 mt-2">
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="radio"
-                          name="rekordboxFamiliar"
-                          value="Yes"
-                          checked={artistData.rekordboxFamiliar === 'Yes'}
-                          onChange={handleArtistChange}
-                          className="radio radio-primary"
-                          disabled={artistSubmitting}
-                          required
-                        />
-                        <span className="text-brand-header">Yes</span>
-                      </div>
-                      <div className="flex items-center gap-3">
-                        <input
-                          type="radio"
-                          name="rekordboxFamiliar"
-                          value="No"
-                          checked={artistData.rekordboxFamiliar === 'No'}
-                          onChange={handleArtistChange}
-                          className="radio radio-primary"
-                          disabled={artistSubmitting}
-                        />
-                        <span className="text-brand-header">No</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Promo Kit Links */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        <LinkIcon size={16} className="inline mr-2" />
-                        Please link any promo and Press Kits
-                      </span>
-                    </label>
-                    <textarea
-                      name="promoKitLinks"
-                      value={artistData.promoKitLinks}
-                      onChange={handleArtistChange}
-                      placeholder="Your answer"
-                      rows={3}
-                      className="textarea textarea-bordered w-full focus:textarea-primary"
-                      disabled={artistSubmitting}
-                    />
-                  </div>
-
-                  {/* Additional Info */}
-                  <div className="form-control">
-                    <label className="label flex-col items-start">
-                      <span className="label-text font-semibold text-brand-header text-sm md:text-base max-w-full break-words whitespace-normal">
-                        Anything else ya wanna add? 😊
-                      </span>
-                    </label>
-                    <textarea
-                      name="additionalInfo"
-                      value={artistData.additionalInfo}
-                      onChange={handleArtistChange}
-                      placeholder="Your answer"
-                      rows={4}
-                      className="textarea textarea-bordered w-full focus:textarea-primary"
-                      disabled={artistSubmitting}
-                    />
-                  </div>
-
-                  {/* Submit Button */}
-                  <div className="pt-6">
-                    <button
-                      type="submit"
-                      disabled={artistSubmitting}
-                      className="btn-festival btn-lg w-full disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <Music size={20} className="inline mr-2" />
-                      {artistSubmitting ? 'Submitting...' : 'Submit DJ Application'}
-                    </button>
-                  </div>
-                </form>
               </div>
-            </div>
             </div>
           )}
         </section>
