@@ -17,3 +17,12 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_REPO: ${{ github.repository }}
+
+      - name: Delete all artifacts
+        run: |
+          gh api repos/${{ github.repository }}/actions/artifacts \
+            --paginate \
+            --jq '.artifacts[] | select(.expired == false) | .id' | \
+          xargs -I{} gh api --method DELETE repos/${{ github.repository }}/actions/artifacts/{} || echo "No artifacts to delete"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
