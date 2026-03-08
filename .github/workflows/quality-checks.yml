@@ -139,16 +139,9 @@ jobs:
           name: coverage-lambda
           path: lambda/coverage
 
-      - name: Install SonarScanner
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y openjdk-11-jre
-          wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
-          unzip sonar-scanner-cli-4.8.0.2856-linux.zip
-          export PATH="$PATH:$(pwd)/sonar-scanner-4.8.0.2856-linux/bin"
-
-      - name: Run SonarScanner
-        run: sonar-scanner
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: SonarCloud Scan
+        uses: sonarsource/sonarcloud-github-action@v2
+        with:
+          projectBaseDir: .
+          args: -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
