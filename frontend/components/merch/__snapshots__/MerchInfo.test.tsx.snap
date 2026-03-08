@@ -1,0 +1,144 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`matches snapshot 1`] = `
+<div>
+  <section
+    class="py-12 md:py-20 bg-brand-bg"
+  >
+    <div
+      class="section-container max-w-4xl"
+    >
+      <h2
+        class="font-title text-4xl md:text-6xl font-black text-center mb-12 text-brand-header uppercase"
+      >
+        Why Shop With Us?
+      </h2>
+      <div
+        class="grid grid-cols-1 md:grid-cols-3 gap-8"
+      >
+        <div
+          class="text-center"
+        >
+          <div
+            class="mb-4 text-brand-primary flex justify-center"
+          >
+            <svg
+              fill="none"
+              height="48"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="48"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M20 7h-9"
+              />
+              <path
+                d="M14 17H5"
+              />
+              <circle
+                cx="17"
+                cy="17"
+                r="3"
+              />
+              <circle
+                cx="7"
+                cy="7"
+                r="3"
+              />
+            </svg>
+          </div>
+          <h3
+            class="text-xl font-bold text-brand-header mb-2"
+          >
+            Quality Materials
+          </h3>
+          <p
+            class="text-brand-header/70"
+          >
+            Premium fabrics and prints that last
+          </p>
+        </div>
+        <div
+          class="text-center"
+        >
+          <div
+            class="mb-4 text-brand-primary flex justify-center"
+          >
+            <svg
+              fill="none"
+              height="48"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="48"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"
+              />
+              <polyline
+                points="3.27 6.96 12 12.01 20.73 6.96"
+              />
+              <line
+                x1="12"
+                x2="12"
+                y1="22.08"
+                y2="12"
+              />
+            </svg>
+          </div>
+          <h3
+            class="text-xl font-bold text-brand-header mb-2"
+          >
+            Fast Shipping
+          </h3>
+          <p
+            class="text-brand-header/70"
+          >
+            Get your gear delivered quickly
+          </p>
+        </div>
+        <div
+          class="text-center"
+        >
+          <div
+            class="mb-4 text-brand-primary flex justify-center"
+          >
+            <svg
+              fill="none"
+              height="48"
+              stroke="currentColor"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+              width="48"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+              />
+            </svg>
+          </div>
+          <h3
+            class="text-xl font-bold text-brand-header mb-2"
+          >
+            Support the Scene
+          </h3>
+          <p
+            class="text-brand-header/70"
+          >
+            Your purchase supports local music
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+`;

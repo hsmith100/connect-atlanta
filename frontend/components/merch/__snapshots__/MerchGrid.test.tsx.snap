@@ -1,0 +1,180 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`matches snapshot 1`] = `
+<div>
+  <div>
+    <div
+      class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto mb-12"
+    >
+      <a
+        class="block bg-brand-bg-cream border-2 border-brand-primary/20 rounded-2xl overflow-hidden shadow-md hover:border-brand-primary hover:shadow-xl transition-all group cursor-pointer"
+        href="https://connectmerch-shop.fourthwall.com/products/beats-on-the-beltline-2025-white-tee"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        <div
+          class="relative aspect-square overflow-hidden"
+        >
+          <img
+            alt="Beats on the Beltline 2025 White Tee"
+            src="/images/merch/whitetshirt.jpg"
+          />
+        </div>
+        <div
+          class="p-6"
+        >
+          <h3
+            class="text-lg font-bold text-brand-header mb-3 leading-tight"
+          >
+            Beats on the Beltline 2025 White Tee
+          </h3>
+          <p
+            class="text-2xl font-bold text-brand-primary"
+          >
+            $35.00
+          </p>
+        </div>
+      </a>
+      <a
+        class="block bg-brand-bg-cream border-2 border-brand-primary/20 rounded-2xl overflow-hidden shadow-md hover:border-brand-primary hover:shadow-xl transition-all group cursor-pointer"
+        href="https://connectmerch-shop.fourthwall.com/products/beats-on-the-beltline-2025-retro-tee-2"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        <div
+          class="relative aspect-square overflow-hidden"
+        >
+          <img
+            alt="Beats on the Beltline 2025 Black Retro Tee"
+            src="/images/merch/retrotee.jpg"
+          />
+        </div>
+        <div
+          class="p-6"
+        >
+          <h3
+            class="text-lg font-bold text-brand-header mb-3 leading-tight"
+          >
+            Beats on the Beltline 2025 Black Retro Tee
+          </h3>
+          <p
+            class="text-2xl font-bold text-brand-primary"
+          >
+            $35.00
+          </p>
+        </div>
+      </a>
+      <a
+        class="block bg-brand-bg-cream border-2 border-brand-primary/20 rounded-2xl overflow-hidden shadow-md hover:border-brand-primary hover:shadow-xl transition-all group cursor-pointer"
+        href="https://connectmerch-shop.fourthwall.com/products/beats-on-the-beltline-2025-disco-tee-2"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        <div
+          class="relative aspect-square overflow-hidden"
+        >
+          <img
+            alt="Beats on the Beltline 2025 Disco Tee"
+            src="/images/merch/discotee.jpg"
+          />
+        </div>
+        <div
+          class="p-6"
+        >
+          <h3
+            class="text-lg font-bold text-brand-header mb-3 leading-tight"
+          >
+            Beats on the Beltline 2025 Disco Tee
+          </h3>
+          <p
+            class="text-2xl font-bold text-brand-primary"
+          >
+            $35.00
+          </p>
+        </div>
+      </a>
+      <a
+        class="block bg-brand-bg-cream border-2 border-brand-primary/20 rounded-2xl overflow-hidden shadow-md hover:border-brand-primary hover:shadow-xl transition-all group cursor-pointer"
+        href="https://connectmerch-shop.fourthwall.com/products/beats-on-the-beltline-circle-sticker"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        <div
+          class="relative aspect-square overflow-hidden"
+        >
+          <img
+            alt="Beats on the Beltline Circle Sticker"
+            src="/images/merch/circle sticker.png"
+          />
+        </div>
+        <div
+          class="p-6"
+        >
+          <h3
+            class="text-lg font-bold text-brand-header mb-3 leading-tight"
+          >
+            Beats on the Beltline Circle Sticker
+          </h3>
+          <p
+            class="text-2xl font-bold text-brand-primary"
+          >
+            $4.00
+          </p>
+        </div>
+      </a>
+      <a
+        class="block bg-brand-bg-cream border-2 border-brand-primary/20 rounded-2xl overflow-hidden shadow-md hover:border-brand-primary hover:shadow-xl transition-all group cursor-pointer"
+        href="https://connectmerch-shop.fourthwall.com/products/beats-on-the-beltline-block-sticker"
+        rel="noopener noreferrer"
+        target="_blank"
+      >
+        <div
+          class="relative aspect-square overflow-hidden"
+        >
+          <img
+            alt="Beats on the Beltline Block Sticker"
+            src="/images/merch/blocksticker.png"
+          />
+        </div>
+        <div
+          class="p-6"
+        >
+          <h3
+            class="text-lg font-bold text-brand-header mb-3 leading-tight"
+          >
+            Beats on the Beltline Block Sticker
+          </h3>
+          <p
+            class="text-2xl font-bold text-brand-primary"
+          >
+            $4.00
+          </p>
+        </div>
+      </a>
+    </div>
+    <div
+      class="text-center max-w-3xl mx-auto"
+    >
+      <div
+        class="bg-brand-bg-cream border-2 border-brand-primary/20 p-8 rounded-2xl shadow-lg"
+      >
+        <h2
+          class="font-title text-3xl md:text-5xl font-black mb-4 text-brand-header uppercase"
+        >
+          Get Your Merch
+        </h2>
+        <p
+          class="text-xl text-brand-header/80 mb-6"
+        >
+          All merchandise is available for purchase at our events. Follow us on social media for announcements about upcoming festivals and merch drops!
+        </p>
+        <p
+          class="text-lg text-brand-header/70"
+        >
+          Can't make it to an event? Order online anytime.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+`;
