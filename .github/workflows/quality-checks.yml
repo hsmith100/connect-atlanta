@@ -142,6 +142,4 @@ jobs:
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@master
         with:
-          organization: hsmith100         # exact name in SonarCloud
-          projectKey: hsmith100_connect-atlanta
           token: ${{ secrets.SONAR_TOKEN }}
