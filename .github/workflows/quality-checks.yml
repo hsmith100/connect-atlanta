@@ -30,6 +30,32 @@ jobs:
       - run: npm ci --prefix frontend
       - run: npm run typecheck --prefix frontend
 
+  lint-lambda:
+    name: Lint — lambda
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: lambda/package-lock.json
+      - run: npm ci --prefix lambda
+      - run: npm run lint --prefix lambda
+
+  lint-infra:
+    name: Lint — infrastructure
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: infrastructure/package-lock.json
+      - run: npm ci --prefix infrastructure
+      - run: npm run lint --prefix infrastructure
+
   typecheck-lambda:
     name: Typecheck — lambda
     runs-on: ubuntu-latest
