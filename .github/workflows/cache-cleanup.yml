@@ -22,7 +22,7 @@ jobs:
         run: |
           gh api repos/${{ github.repository }}/actions/artifacts \
             --paginate \
-            --jq '.artifacts[] | select(.expired == false) | .id' | \
+            --jq '.artifacts[].id' | \
           xargs -I{} gh api --method DELETE repos/${{ github.repository }}/actions/artifacts/{} || echo "No artifacts to delete"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
