@@ -26,6 +26,11 @@ function fillRequiredFields() {
 beforeEach(() => {
   jest.clearAllMocks()
   global.fetch = jest.fn()
+  jest.spyOn(console, 'error').mockImplementation(() => {})
+})
+
+afterEach(() => {
+  jest.restoreAllMocks()
 })
 
 // ── rendering ─────────────────────────────────────────────────────────────────
