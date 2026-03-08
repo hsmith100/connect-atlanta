@@ -140,6 +140,8 @@ jobs:
           path: lambda/coverage
 
       - name: Run SonarQube scanner
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
           npm install -g sonar-scanner
           sonar-scanner \
@@ -147,6 +149,6 @@ jobs:
             -Dsonar.organization=hsmith100 \
             -Dsonar.sources=. \
             -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-            
+            -Dsonar.login=$SONAR_TOKEN
+
 
