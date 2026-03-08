@@ -1,6 +1,6 @@
 import 'aws-sdk-client-mock-jest';
 import { mockClient } from 'aws-sdk-client-mock';
-import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
+import { SendEmailCommand } from '@aws-sdk/client-ses';
 import type { APIGatewayProxyStructuredResultV2 } from 'aws-lambda';
 import {
   ok,

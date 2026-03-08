@@ -9,7 +9,7 @@ import { PutObjectCommand, DeleteObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import type { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda';
 import type { PresignRequest, PhotoCreatePayload, PhotoUpdatePayload } from '../../../shared/types/photos';
-import { ddb, s3, PHOTOS_TABLE, MEDIA_BUCKET, ok, errResponse, requireAdmin, mediaUrl } from '../lib/photoShared';
+import { ddb, s3, PHOTOS_TABLE, MEDIA_BUCKET, ok, requireAdmin, mediaUrl } from '../lib/photoShared';
 
 export async function listAllPhotos(event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> {
   const authErr = await requireAdmin(event);

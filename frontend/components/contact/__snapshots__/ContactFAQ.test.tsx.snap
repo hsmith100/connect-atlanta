@@ -1,0 +1,140 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`matches snapshot 1`] = `
+<div>
+  <section
+    class="py-12 md:py-20 bg-brand-bg"
+  >
+    <div
+      class="section-container max-w-4xl"
+    >
+      <h2
+        class="font-title text-4xl md:text-6xl font-black text-center mb-4 text-brand-header uppercase"
+      >
+        Quick Answers
+      </h2>
+      <p
+        class="text-xl text-center text-brand-header/80 mb-12"
+      >
+        Before reaching out, check if your question is answered here
+      </p>
+      <div
+        class="space-y-4"
+      >
+        <details
+          class="rounded-xl border border-brand-primary/10 bg-brand-bg group"
+        >
+          <summary
+            class="flex cursor-pointer list-none items-center justify-between px-4 py-4 text-xl font-bold text-brand-header"
+          >
+            How can I perform at Beats on the Beltline?
+            <span
+              class="ml-4 text-brand-primary transition-transform duration-200 group-open:rotate-45"
+            >
+              +
+            </span>
+          </summary>
+          <div
+            class="px-4 pb-4 text-brand-header/80"
+          >
+            <p>
+              Head over to our 
+              <a
+                class="text-brand-primary hover:text-brand-header"
+                href="/join"
+              >
+                Join Us page
+              </a>
+               and fill out the artist application form. We review all submissions and reach out to selected artists.
+            </p>
+          </div>
+        </details>
+        <details
+          class="rounded-xl border border-brand-primary/10 bg-brand-bg group"
+        >
+          <summary
+            class="flex cursor-pointer list-none items-center justify-between px-4 py-4 text-xl font-bold text-brand-header"
+          >
+            How can I become a vendor?
+            <span
+              class="ml-4 text-brand-primary transition-transform duration-200 group-open:rotate-45"
+            >
+              +
+            </span>
+          </summary>
+          <div
+            class="px-4 pb-4 text-brand-header/80"
+          >
+            <p>
+              Head over to our 
+              <a
+                class="text-brand-primary hover:text-brand-header"
+                href="/join"
+              >
+                Join Us page
+              </a>
+               and fill out the vendor application form.
+            </p>
+          </div>
+        </details>
+        <details
+          class="rounded-xl border border-brand-primary/10 bg-brand-bg group"
+        >
+          <summary
+            class="flex cursor-pointer list-none items-center justify-between px-4 py-4 text-xl font-bold text-brand-header"
+          >
+            Are you available for partnerships?
+            <span
+              class="ml-4 text-brand-primary transition-transform duration-200 group-open:rotate-45"
+            >
+              +
+            </span>
+          </summary>
+          <div
+            class="px-4 pb-4 text-brand-header/80"
+          >
+            <p>
+              Yes! We are always open to new brand partnerships and sponsorship opportunities. Email us at 
+              <a
+                class="text-brand-primary hover:text-brand-header"
+                href="mailto:info@connectevents.co"
+              >
+                info@connectevents.co
+              </a>
+               to discuss collaboration possibilities.
+            </p>
+          </div>
+        </details>
+        <details
+          class="rounded-xl border border-brand-primary/10 bg-brand-bg group"
+        >
+          <summary
+            class="flex cursor-pointer list-none items-center justify-between px-4 py-4 text-xl font-bold text-brand-header"
+          >
+            When is the next event?
+            <span
+              class="ml-4 text-brand-primary transition-transform duration-200 group-open:rotate-45"
+            >
+              +
+            </span>
+          </summary>
+          <div
+            class="px-4 pb-4 text-brand-header/80"
+          >
+            <p>
+              Check out our 
+              <a
+                class="text-brand-primary hover:text-brand-header"
+                href="/events"
+              >
+                Events page
+              </a>
+               for upcoming dates, or sign up for our text and email updates to be the first to know about new event announcements.
+            </p>
+          </div>
+        </details>
+      </div>
+    </div>
+  </section>
+</div>
+`;

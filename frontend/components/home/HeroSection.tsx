@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import type { HeroCard } from '@shared/types/heroCards'
-import { HeroCardVisual } from '../HeroCardVisual'
+import { HeroCardVisual } from '../shared/HeroCardVisual'
 
 interface HeroSectionProps {
   heroCards: HeroCard[]

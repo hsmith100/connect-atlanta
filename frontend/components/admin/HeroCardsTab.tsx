@@ -2,7 +2,7 @@ import { useState, useRef, useCallback } from 'react'
 import { AlertCircle, Plus, Save } from 'lucide-react'
 import { createHeroCard, updateHeroCard, deleteHeroCard, presignHeroCardImage } from '../../lib/api'
 import type { HeroCard } from '@shared/types/heroCards'
-import { HeroCardVisual } from '../HeroCardVisual'
+import { HeroCardVisual } from '../shared/HeroCardVisual'
 import { HeroCardFormModal, HeroCardFormValues, EMPTY_HERO_CARD_FORM } from './HeroCardFormModal'
 
 interface HeroCardsTabProps {

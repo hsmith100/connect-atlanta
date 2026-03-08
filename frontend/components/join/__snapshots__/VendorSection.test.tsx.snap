@@ -1,0 +1,91 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`matches snapshot 1`] = `
+<div>
+  <div
+    class="py-12 md:py-20"
+    id="application-form"
+  >
+    <div
+      class="section-container max-w-4xl"
+    >
+      <div
+        class="text-center mb-12"
+      >
+        <div
+          class="mb-6 text-brand-primary flex justify-center"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-store"
+            fill="none"
+            height="64"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            viewBox="0 0 24 24"
+            width="64"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M15 21v-5a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v5"
+            />
+            <path
+              d="M17.774 10.31a1.12 1.12 0 0 0-1.549 0 2.5 2.5 0 0 1-3.451 0 1.12 1.12 0 0 0-1.548 0 2.5 2.5 0 0 1-3.452 0 1.12 1.12 0 0 0-1.549 0 2.5 2.5 0 0 1-3.77-3.248l2.889-4.184A2 2 0 0 1 7 2h10a2 2 0 0 1 1.653.873l2.895 4.192a2.5 2.5 0 0 1-3.774 3.244"
+            />
+            <path
+              d="M4 10.95V19a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8.05"
+            />
+          </svg>
+        </div>
+        <h2
+          class="font-title text-4xl md:text-6xl font-black mb-6 text-brand-header uppercase"
+        >
+          Vendor Application
+        </h2>
+        <p
+          class="text-xl text-brand-text font-bold max-w-2xl mx-auto"
+        >
+          Join 30+ local vendors, food partners, and creative businesses at Atlanta's premier festival.
+        </p>
+      </div>
+      <div
+        class="text-center"
+      >
+        <a
+          class="btn-festival btn-lg inline-flex items-center gap-2"
+          href="https://forms.gle/UcEf4GF1Hg4FaY8D9"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-store"
+            fill="none"
+            height="20"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M15 21v-5a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v5"
+            />
+            <path
+              d="M17.774 10.31a1.12 1.12 0 0 0-1.549 0 2.5 2.5 0 0 1-3.451 0 1.12 1.12 0 0 0-1.548 0 2.5 2.5 0 0 1-3.452 0 1.12 1.12 0 0 0-1.549 0 2.5 2.5 0 0 1-3.77-3.248l2.889-4.184A2 2 0 0 1 7 2h10a2 2 0 0 1 1.653.873l2.895 4.192a2.5 2.5 0 0 1-3.774 3.244"
+            />
+            <path
+              d="M4 10.95V19a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8.05"
+            />
+          </svg>
+          Apply as a Vendor
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+`;

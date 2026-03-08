@@ -1,0 +1,101 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`matches snapshot 1`] = `
+<div>
+  <div
+    class="py-12 md:py-20"
+    id="application-form"
+  >
+    <div
+      class="section-container max-w-4xl"
+    >
+      <div
+        class="text-center mb-12"
+      >
+        <div
+          class="mb-6 text-brand-primary flex justify-center"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-users"
+            fill="none"
+            height="64"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="1.5"
+            viewBox="0 0 24 24"
+            width="64"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+            />
+            <path
+              d="M16 3.128a4 4 0 0 1 0 7.744"
+            />
+            <path
+              d="M22 21v-2a4 4 0 0 0-3-3.87"
+            />
+            <circle
+              cx="9"
+              cy="7"
+              r="4"
+            />
+          </svg>
+        </div>
+        <h2
+          class="font-title text-4xl md:text-6xl font-black mb-6 text-brand-header uppercase"
+        >
+          Volunteer Application
+        </h2>
+        <p
+          class="text-xl text-brand-text font-bold max-w-2xl mx-auto"
+        >
+          Help make the magic happen! Join our volunteer team and be part of creating an unforgettable experience.
+        </p>
+      </div>
+      <div
+        class="text-center"
+      >
+        <a
+          class="btn-festival btn-lg inline-flex items-center gap-2"
+          href="https://forms.gle/fWyoSrm2koijynxS7"
+          rel="noopener noreferrer"
+          target="_blank"
+        >
+          <svg
+            aria-hidden="true"
+            class="lucide lucide-users"
+            fill="none"
+            height="20"
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            width="20"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+            />
+            <path
+              d="M16 3.128a4 4 0 0 1 0 7.744"
+            />
+            <path
+              d="M22 21v-2a4 4 0 0 0-3-3.87"
+            />
+            <circle
+              cx="9"
+              cy="7"
+              r="4"
+            />
+          </svg>
+          Apply to Volunteer
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+`;

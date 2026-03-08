@@ -4,6 +4,7 @@
   "description": "Lambda handlers for Connect Events",
   "private": true,
   "scripts": {
+    "lint": "eslint 'src/**/*.ts'",
     "typecheck": "tsc --noEmit",
     "test": "NODE_OPTIONS=--no-experimental-webstorage jest",
     "test:watch": "NODE_OPTIONS=--no-experimental-webstorage jest --watch"
@@ -21,8 +22,11 @@
     "@types/aws-lambda": "^8.10.0",
     "@types/jest": "^30.0.0",
     "@types/node": "^25.3.3",
+    "@typescript-eslint/eslint-plugin": "^8.56.1",
+    "@typescript-eslint/parser": "^8.56.1",
     "aws-sdk-client-mock": "^4.1.0",
     "aws-sdk-client-mock-jest": "^4.1.0",
+    "eslint": "^8.57.1",
     "jest": "^30.2.0",
     "ts-jest": "^29.4.6",
     "typescript": "~5.7.0"

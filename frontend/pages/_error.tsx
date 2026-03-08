@@ -2,7 +2,7 @@ import type { NextPageContext } from 'next'
 import Link from 'next/link'
 import Header from '../components/layout/Header'
 import Footer from '../components/layout/Footer'
-import SEO from '../components/SEO'
+import SEO from '../components/shared/SEO'
 
 interface ErrorProps {
   statusCode?: number

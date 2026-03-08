@@ -4,7 +4,7 @@ import HeroSection from './HeroSection'
 import type { HeroCard } from '@shared/types/heroCards'
 
 jest.mock('next/link', () => ({ __esModule: true, default: ({ href, children, ...rest }: any) => <a href={href} {...rest}>{children}</a> }))
-jest.mock('../HeroCardVisual', () => ({ __esModule: true, HeroCardVisual: ({ card }: any) => <div data-testid="hero-card">{card.title}</div> }))
+jest.mock('../shared/HeroCardVisual', () => ({ __esModule: true, HeroCardVisual: ({ card }: any) => <div data-testid="hero-card">{card.title}</div> }))
 
 function makeCard(id: string, title: string, linkUrl: string): HeroCard {
   return { id, title, linkUrl } as HeroCard
