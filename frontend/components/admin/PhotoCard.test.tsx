@@ -11,6 +11,7 @@ const BASE_PHOTO: Photo = {
   eventId: null,
   sortOrder: 10,
   visible: true,
+  createdAt: '2026-01-01T00:00:00.000Z',
 }
 
 const defaultProps = {
