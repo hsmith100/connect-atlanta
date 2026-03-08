@@ -139,10 +139,13 @@ jobs:
           name: coverage-lambda
           path: lambda/coverage
 
-      - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@v2
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        with:
-          projectBaseDir: .
+      - name: Run SonarQube scanner
+        run: |
+          npm install -g sonar-scanner
+          sonar-scanner \
+            -Dsonar.projectKey=hsmith100_connect-atlanta \
+            -Dsonar.organization=hsmith100 \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
