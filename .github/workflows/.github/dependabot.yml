@@ -1,0 +1,6 @@
+version: 2
+updates:
+  - package-ecosystem: "npm" # Example: npm, pip, github-actions, etc.
+    directory: "/"
+    schedule:
+      interval: "daily" # This runs the job nightly
