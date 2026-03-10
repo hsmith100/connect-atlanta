@@ -2,7 +2,7 @@ import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import JoinTabBar from './JoinTabBar'
 
-function renderBar(activeTab: 'volunteer' | 'vendor' | 'dj', isHeaderVisible = true) {
+function renderBar(activeTab: 'volunteer' | 'vendor' | 'dj' | 'sponsor', isHeaderVisible = true) {
   const onTabSelect = jest.fn()
   const { container } = render(
     <JoinTabBar activeTab={activeTab} isHeaderVisible={isHeaderVisible} onTabSelect={onTabSelect} />
@@ -30,6 +30,12 @@ it('calls onTabSelect with vendor when vendor button is clicked', () => {
   const { onTabSelect } = renderBar('volunteer')
   fireEvent.click(screen.getByRole('button', { name: /vendor/i }))
   expect(onTabSelect).toHaveBeenCalledWith('vendor')
+})
+
+it('calls onTabSelect with sponsor when sponsor button is clicked', () => {
+  const { onTabSelect } = renderBar('dj')
+  fireEvent.click(screen.getByRole('button', { name: /sponsor/i }))
+  expect(onTabSelect).toHaveBeenCalledWith('sponsor')
 })
 
 it('applies active styles to the active tab only', () => {
