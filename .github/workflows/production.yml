@@ -3,6 +3,13 @@ name: Deploy to Production
 on:
   push:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Git ref to deploy (branch, tag, or commit SHA). Defaults to main.'
+        required: false
+        default: main
+        type: string
 
 jobs:
   # ── Stage 1: Quality checks ──────────────────────────────────────────────────
@@ -19,6 +26,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -35,6 +44,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -59,6 +70,8 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
 
       - uses: actions/setup-node@v4
         with:
@@ -125,6 +138,8 @@ jobs:
       contents: read
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref || github.sha }}
 
       - uses: actions/setup-node@v4
         with:
@@ -178,3 +193,81 @@ jobs:
     uses: ./.github/workflows/e2e-smoke.yml
     with:
       base_url: https://connectevents.co
+
+  # ── Stage 7: Auto-rollback if smoke fails ────────────────────────────────────
+  # Only runs when prod deployed successfully but smoke caught a regression.
+  # Finds the last known-good SHA via the GitHub API and re-deploys it.
+
+  rollback-production:
+    name: Auto-Rollback Production
+    needs: [deploy-production, post-deploy-smoke]
+    if: needs.post-deploy-smoke.result == 'failure' && needs.deploy-production.result == 'success'
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+      actions: read
+
+    steps:
+      - name: Find last known-good production SHA
+        id: prev
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const runs = await github.rest.actions.listWorkflowRuns({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'production.yml',
+              status: 'success',
+              per_page: 5,
+            });
+            const prev = runs.data.workflow_runs.find(r => r.id !== context.runId);
+            if (!prev) core.setFailed('No previous successful production run found — manual rollback required.');
+            core.setOutput('sha', prev.head_sha);
+            console.log(`Rolling back to ${prev.head_sha} from run #${prev.run_number}`);
+
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.prev.outputs.sha }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Build frontend at previous SHA
+        run: |
+          npm ci --prefix frontend
+          npm run build --prefix frontend
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Install infrastructure and lambda dependencies
+        run: |
+          npm ci --prefix infrastructure
+          npm ci --prefix lambda
+
+      - name: CDK deploy production at previous SHA
+        run: npx cdk deploy ConnectDynamoStack ConnectBackendStack ConnectFrontendStack --require-approval never
+        working-directory: infrastructure
+
+      - name: Sync previous frontend build to production S3
+        run: |
+          BUCKET=$(aws cloudformation describe-stacks \
+            --stack-name ConnectFrontendStack \
+            --query 'Stacks[0].Outputs[?OutputKey==`FrontendBucketName`].OutputValue' \
+            --output text)
+          aws s3 sync frontend/out/ s3://$BUCKET --delete
+
+      - name: Invalidate production CloudFront
+        run: |
+          DIST_ID=$(aws cloudformation describe-stacks \
+            --stack-name ConnectFrontendStack \
+            --query 'Stacks[0].Outputs[?OutputKey==`CloudFrontDistributionId`].OutputValue' \
+            --output text)
+          aws cloudfront create-invalidation --distribution-id $DIST_ID --paths "/*"
