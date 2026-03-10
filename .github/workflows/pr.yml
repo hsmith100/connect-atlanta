@@ -122,10 +122,20 @@ jobs:
             --table-name connect-pr-${PR_NUMBER}-hero-cards \
             --item '{
               "id":        {"S": "'$(uuidgen)'"},
-              "entity":    {"S": "hero-card"},
+              "entity":    {"S": "CARD"},
               "sortOrder": {"N": "1"},
               "title":     {"S": "Beats on the Beltline"},
               "subtitle":  {"S": "PR Environment"},
+              "visible":   {"BOOL": true},
+              "createdAt": {"S": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}
+            }'
+          aws dynamodb put-item \
+            --table-name connect-pr-${PR_NUMBER}-photos \
+            --item '{
+              "id":        {"S": "'$(uuidgen)'"},
+              "entity":    {"S": "PHOTO"},
+              "sortOrder": {"N": "1"},
+              "url":       {"S": "https://placehold.co/800x800/png"},
               "visible":   {"BOOL": true},
               "createdAt": {"S": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}
             }'

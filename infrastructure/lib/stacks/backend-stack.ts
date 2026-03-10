@@ -159,7 +159,9 @@ export class BackendStack extends cdk.Stack {
           apigateway.CorsHttpMethod.DELETE,
           apigateway.CorsHttpMethod.OPTIONS,
         ],
-        allowOrigins: ['https://connectevents.co', 'https://www.connectevents.co'],
+        allowOrigins: ephemeral
+          ? ['*']
+          : ['https://connectevents.co', 'https://www.connectevents.co'],
       },
     });
 
