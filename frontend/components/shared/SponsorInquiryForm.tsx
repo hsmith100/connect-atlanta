@@ -12,6 +12,17 @@ interface SponsorFormData {
 
 const EMPTY_FORM: SponsorFormData = { name: '', email: '', phone: '', company: '', productIndustry: '' }
 
+function FormField({ label, children }: { label: React.ReactNode; children: React.ReactNode }) {
+  return (
+    <div className="form-control">
+      <label className="label flex-col items-start">
+        <span className="label-text font-semibold text-brand-header text-sm md:text-base">{label}</span>
+      </label>
+      {children}
+    </div>
+  )
+}
+
 export default function SponsorInquiryForm() {
   const formRef = useRef<HTMLDivElement>(null)
   const [formData, setFormData] = useState<SponsorFormData>(EMPTY_FORM)
@@ -84,62 +95,37 @@ export default function SponsorInquiryForm() {
 
           <div className="relative p-4 md:p-8 rounded-2xl overflow-hidden shadow-xl bg-white">
             <form onSubmit={handleSubmit} className="relative z-10 space-y-6">
-              <div className="form-control">
-                <label className="label flex-col items-start">
-                  <span className="label-text font-semibold text-brand-header text-sm md:text-base">
-                    <User size={16} className="inline mr-2" />Name *
-                  </span>
-                </label>
+              <FormField label={<><User size={16} className="inline mr-2" />Name *</>}>
                 <input type="text" name="name" value={formData.name} onChange={handleChange}
                   placeholder="Your full name" className="input input-bordered w-full focus:input-primary"
                   disabled={submitting} required />
-              </div>
+              </FormField>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="form-control">
-                  <label className="label flex-col items-start">
-                    <span className="label-text font-semibold text-brand-header text-sm md:text-base">
-                      <Mail size={16} className="inline mr-2" />Email *
-                    </span>
-                  </label>
+                <FormField label={<><Mail size={16} className="inline mr-2" />Email *</>}>
                   <input type="email" name="email" value={formData.email} onChange={handleChange}
                     placeholder="your@email.com" className="input input-bordered w-full focus:input-primary"
                     disabled={submitting} required />
-                </div>
-                <div className="form-control">
-                  <label className="label flex-col items-start">
-                    <span className="label-text font-semibold text-brand-header text-sm md:text-base">
-                      <Phone size={16} className="inline mr-2" />Phone Number *
-                    </span>
-                  </label>
+                </FormField>
+                <FormField label={<><Phone size={16} className="inline mr-2" />Phone Number *</>}>
                   <input type="tel" name="phone" value={formData.phone} onChange={handleChange}
                     placeholder="(555) 123-4567" className="input input-bordered w-full focus:input-primary"
                     disabled={submitting} required />
-                </div>
+                </FormField>
               </div>
 
-              <div className="form-control">
-                <label className="label flex-col items-start">
-                  <span className="label-text font-semibold text-brand-header text-sm md:text-base">
-                    <Building2 size={16} className="inline mr-2" />Company *
-                  </span>
-                </label>
+              <FormField label={<><Building2 size={16} className="inline mr-2" />Company *</>}>
                 <input type="text" name="company" value={formData.company} onChange={handleChange}
                   placeholder="Your company name" className="input input-bordered w-full focus:input-primary"
                   disabled={submitting} required />
-              </div>
+              </FormField>
 
-              <div className="form-control">
-                <label className="label flex-col items-start">
-                  <span className="label-text font-semibold text-brand-header text-sm md:text-base">
-                    <Briefcase size={16} className="inline mr-2" />Product/Industry *
-                  </span>
-                </label>
+              <FormField label={<><Briefcase size={16} className="inline mr-2" />Product/Industry *</>}>
                 <textarea name="productIndustry" value={formData.productIndustry} onChange={handleChange}
                   className="textarea textarea-bordered h-24 focus:textarea-primary w-full"
                   placeholder="Tell us about your product or industry..."
                   disabled={submitting} required />
-              </div>
+              </FormField>
 
               <div className="pt-6">
                 <button type="submit" disabled={submitting}

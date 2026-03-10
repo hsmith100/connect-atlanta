@@ -20,6 +20,10 @@ afterEach(() => {
   jest.restoreAllMocks()
 })
 
+function submitForm() {
+  fireEvent.submit(screen.getByRole('button', { name: /submit inquiry/i }).closest('form')!)
+}
+
 function fillForm() {
   fireEvent.change(screen.getByPlaceholderText('Your full name'), { target: { name: 'name', value: 'Acme Corp' } })
   fireEvent.change(screen.getByPlaceholderText('your@email.com'), { target: { name: 'email', value: 'sponsor@acme.com' } })
@@ -53,21 +57,21 @@ describe('successful submission', () => {
   it('shows success banner', async () => {
     render(<SponsorInquiryForm />)
     fillForm()
-    fireEvent.submit(screen.getByRole('button', { name: /submit inquiry/i }).closest('form')!)
+    submitForm()
     await waitFor(() => expect(screen.getByText(/thank you for your interest/i)).toBeInTheDocument())
   })
 
   it('clears the form after submit', async () => {
     render(<SponsorInquiryForm />)
     fillForm()
-    fireEvent.submit(screen.getByRole('button', { name: /submit inquiry/i }).closest('form')!)
+    submitForm()
     await waitFor(() => expect((screen.getByPlaceholderText('Your full name') as HTMLInputElement).value).toBe(''))
   })
 
   it('fires gtag sponsor inquiry event', async () => {
     render(<SponsorInquiryForm />)
     fillForm()
-    fireEvent.submit(screen.getByRole('button', { name: /submit inquiry/i }).closest('form')!)
+    submitForm()
     await waitFor(() => expect(trackFormSubmission).toHaveBeenCalledWith('Sponsor Inquiry'))
   })
 })
@@ -79,7 +83,7 @@ describe('failed submission', () => {
     (global.fetch as jest.Mock).mockResolvedValue({ ok: false })
     render(<SponsorInquiryForm />)
     fillForm()
-    fireEvent.submit(screen.getByRole('button', { name: /submit inquiry/i }).closest('form')!)
+    submitForm()
     await waitFor(() => expect(screen.getByText(/something went wrong/i)).toBeInTheDocument())
   })
 
@@ -87,7 +91,7 @@ describe('failed submission', () => {
     (global.fetch as jest.Mock).mockRejectedValue(new Error('Network error'))
     render(<SponsorInquiryForm />)
     fillForm()
-    fireEvent.submit(screen.getByRole('button', { name: /submit inquiry/i }).closest('form')!)
+    submitForm()
     await waitFor(() => expect(screen.getByText(/something went wrong/i)).toBeInTheDocument())
   })
 })
@@ -99,7 +103,7 @@ describe('submitting state', () => {
     (global.fetch as jest.Mock).mockImplementation(() => new Promise(() => {}))
     render(<SponsorInquiryForm />)
     fillForm()
-    fireEvent.submit(screen.getByRole('button', { name: /submit inquiry/i }).closest('form')!)
+    submitForm()
     await waitFor(() => expect(screen.getByRole('button', { name: /submitting/i })).toBeInTheDocument())
   })
 })
