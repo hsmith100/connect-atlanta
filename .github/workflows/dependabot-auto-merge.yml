@@ -11,11 +11,14 @@ jobs:
   auto-merge:
     name: Auto-merge minor and patch updates
     runs-on: ubuntu-latest
-    if: github.actor == 'dependabot[bot]'
     steps:
       - name: Fetch Dependabot metadata
         id: metadata
         uses: dependabot/fetch-metadata@v2
+        # continue-on-error so the job doesn't fail loudly on non-Dependabot PRs.
+        # If this step fails (no Dependabot metadata found), update-type will be
+        # empty and the next step's condition will not be met.
+        continue-on-error: true
 
       - name: Enable auto-merge for minor and patch updates
         if: |
