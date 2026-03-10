@@ -7,6 +7,7 @@ import JoinTabBar, { type JoinTab } from '../components/join/JoinTabBar'
 import VolunteerSection from '../components/join/VolunteerSection'
 import VendorSection from '../components/join/VendorSection'
 import DJApplicationForm from '../components/join/DJApplicationForm'
+import SponsorInquiryForm from '../components/shared/SponsorInquiryForm'
 
 export default function JoinUs() {
   const [activeTab, setActiveTab] = useState<JoinTab>('dj')
@@ -59,6 +60,7 @@ export default function JoinUs() {
           {activeTab === 'volunteer' && <VolunteerSection />}
           {activeTab === 'vendor'    && <VendorSection />}
           {activeTab === 'dj'        && <DJApplicationForm />}
+          {activeTab === 'sponsor'   && <SponsorInquiryForm />}
         </section>
 
         {/* Contact CTA */}

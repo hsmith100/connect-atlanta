@@ -1,6 +1,6 @@
-import { Users, Store, Music } from 'lucide-react'
+import { Users, Store, Music, Building2 } from 'lucide-react'
 
-export type JoinTab = 'volunteer' | 'vendor' | 'dj'
+export type JoinTab = 'volunteer' | 'vendor' | 'dj' | 'sponsor'
 
 interface JoinTabBarProps {
   activeTab: JoinTab
@@ -12,6 +12,7 @@ const TABS: { id: JoinTab; label: string; Icon: typeof Music }[] = [
   { id: 'volunteer', label: 'Volunteer', Icon: Users },
   { id: 'vendor',    label: 'Vendor',    Icon: Store },
   { id: 'dj',       label: 'DJ',        Icon: Music },
+  { id: 'sponsor',   label: 'Sponsor',   Icon: Building2 },
 ]
 
 export default function JoinTabBar({ activeTab, isHeaderVisible, onTabSelect }: JoinTabBarProps) {
