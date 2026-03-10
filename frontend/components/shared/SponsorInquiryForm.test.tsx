@@ -6,6 +6,10 @@ beforeAll(() => {
   window.HTMLElement.prototype.scrollIntoView = jest.fn()
 })
 
+function submitForm() {
+  fireEvent.submit(screen.getByRole('button', { name: /submit sponsor inquiry/i }).closest('form')!)
+}
+
 function fillRequiredFields() {
   fireEvent.change(screen.getByPlaceholderText('Your full name'), { target: { name: 'name', value: 'Jane Smith' } })
   fireEvent.change(screen.getByPlaceholderText('Your company name'), { target: { name: 'company', value: 'Acme Corp' } })
@@ -54,21 +58,21 @@ describe('successful submission', () => {
   it('shows success banner after submit', async () => {
     render(<SponsorInquiryForm />)
     fillRequiredFields()
-    fireEvent.submit(screen.getByRole('button', { name: /submit sponsor inquiry/i }).closest('form')!)
+    submitForm()
     await waitFor(() => expect(screen.getByText(/thank you for your interest/i)).toBeInTheDocument())
   })
 
   it('clears the form after successful submit', async () => {
     render(<SponsorInquiryForm />)
     fillRequiredFields()
-    fireEvent.submit(screen.getByRole('button', { name: /submit sponsor inquiry/i }).closest('form')!)
+    submitForm()
     await waitFor(() => expect((screen.getByPlaceholderText('your@email.com') as HTMLInputElement).value).toBe(''))
   })
 
   it('posts to the correct endpoint with correct payload', async () => {
     render(<SponsorInquiryForm />)
     fillRequiredFields()
-    fireEvent.submit(screen.getByRole('button', { name: /submit sponsor inquiry/i }).closest('form')!)
+    submitForm()
     await waitFor(() => expect(global.fetch).toHaveBeenCalledWith(
       '/api/forms/sponsor-inquiry',
       expect.objectContaining({
@@ -92,7 +96,7 @@ describe('failed submission', () => {
     (global.fetch as jest.Mock).mockResolvedValue({ ok: false })
     render(<SponsorInquiryForm />)
     fillRequiredFields()
-    fireEvent.submit(screen.getByRole('button', { name: /submit sponsor inquiry/i }).closest('form')!)
+    submitForm()
     await waitFor(() => expect(screen.getByText(/something went wrong/i)).toBeInTheDocument())
   })
 
@@ -100,7 +104,7 @@ describe('failed submission', () => {
     (global.fetch as jest.Mock).mockRejectedValue(new Error('Network error'))
     render(<SponsorInquiryForm />)
     fillRequiredFields()
-    fireEvent.submit(screen.getByRole('button', { name: /submit sponsor inquiry/i }).closest('form')!)
+    submitForm()
     await waitFor(() => expect(screen.getByText(/something went wrong/i)).toBeInTheDocument())
   })
 })
@@ -112,7 +116,7 @@ describe('submitting state', () => {
     (global.fetch as jest.Mock).mockImplementation(() => new Promise(() => {}))
     render(<SponsorInquiryForm />)
     fillRequiredFields()
-    fireEvent.submit(screen.getByRole('button', { name: /submit sponsor inquiry/i }).closest('form')!)
+    submitForm()
     await waitFor(() => expect(screen.getByRole('button', { name: /submitting/i })).toBeInTheDocument())
   })
 })
