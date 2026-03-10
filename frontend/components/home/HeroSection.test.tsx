@@ -11,7 +11,7 @@ function makeCard(id: string, title: string, linkUrl: string): HeroCard {
 }
 
 it('matches snapshot with no cards', () => {
-  const { container } = render(<HeroSection heroCards={[]} />)
+  const { container } = render(<HeroSection heroCards={[]} loading={false} />)
   expect(container).toMatchSnapshot()
 })
 
@@ -20,6 +20,11 @@ it('matches snapshot with internal and external cards', () => {
     makeCard('1', 'Internal Card', '/events'),
     makeCard('2', 'External Card', 'https://example.com'),
   ]
-  const { container } = render(<HeroSection heroCards={cards} />)
+  const { container } = render(<HeroSection heroCards={cards} loading={false} />)
+  expect(container).toMatchSnapshot()
+})
+
+it('matches snapshot while loading', () => {
+  const { container } = render(<HeroSection heroCards={[]} loading={true} />)
   expect(container).toMatchSnapshot()
 })
