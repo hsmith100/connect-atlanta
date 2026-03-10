@@ -7,12 +7,12 @@ jest.mock('../../lib/gtag', () => ({ trackFormSubmission: jest.fn() }))
 const { trackFormSubmission } = jest.requireMock('../../lib/gtag')
 
 beforeAll(() => {
-  window.HTMLElement.prototype.scrollIntoView = jest.fn()
+  globalThis.HTMLElement.prototype.scrollIntoView = jest.fn()
 })
 
 beforeEach(() => {
   jest.clearAllMocks()
-  global.fetch = jest.fn()
+  globalThis.fetch = jest.fn()
   jest.spyOn(console, 'error').mockImplementation(() => {})
 })
 
@@ -21,7 +21,8 @@ afterEach(() => {
 })
 
 function submitForm() {
-  fireEvent.submit(screen.getByRole('button', { name: /submit inquiry/i }).closest('form')!)
+  const form = screen.getByRole('button', { name: /submit inquiry/i }).closest('form')
+  if (form) fireEvent.submit(form)
 }
 
 function fillForm() {
@@ -51,7 +52,7 @@ describe('rendering', () => {
 
 describe('successful submission', () => {
   beforeEach(() => {
-    (global.fetch as jest.Mock).mockResolvedValue({ ok: true })
+    (globalThis.fetch as jest.Mock).mockResolvedValue({ ok: true })
   })
 
   it('shows success banner', async () => {
@@ -80,7 +81,7 @@ describe('successful submission', () => {
 
 describe('failed submission', () => {
   it('shows error banner when fetch returns non-ok', async () => {
-    (global.fetch as jest.Mock).mockResolvedValue({ ok: false })
+    (globalThis.fetch as jest.Mock).mockResolvedValue({ ok: false })
     render(<SponsorInquiryForm />)
     fillForm()
     submitForm()
@@ -88,7 +89,7 @@ describe('failed submission', () => {
   })
 
   it('shows error banner when fetch throws', async () => {
-    (global.fetch as jest.Mock).mockRejectedValue(new Error('Network error'))
+    (globalThis.fetch as jest.Mock).mockRejectedValue(new Error('Network error'))
     render(<SponsorInquiryForm />)
     fillForm()
     submitForm()
@@ -100,7 +101,7 @@ describe('failed submission', () => {
 
 describe('submitting state', () => {
   it('shows Submitting... while request is in flight', async () => {
-    (global.fetch as jest.Mock).mockImplementation(() => new Promise(() => {}))
+    (globalThis.fetch as jest.Mock).mockImplementation(() => new Promise(() => {}))
     render(<SponsorInquiryForm />)
     fillForm()
     submitForm()
