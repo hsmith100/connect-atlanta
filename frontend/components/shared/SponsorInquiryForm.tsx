@@ -12,7 +12,7 @@ interface SponsorFormData {
 
 const EMPTY_FORM: SponsorFormData = { name: '', email: '', phone: '', company: '', productIndustry: '' }
 
-function FormField({ label, children }: { label: React.ReactNode; children: React.ReactNode }) {
+function FormField({ label, children }: { readonly label: React.ReactNode; readonly children: React.ReactNode }) {
   return (
     <div className="form-control">
       <label className="label flex-col items-start">
@@ -34,6 +34,8 @@ export default function SponsorInquiryForm() {
     setFormData(prev => ({ ...prev, [name]: value } as SponsorFormData))
   }
 
+  const scrollToForm = () => formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     setSubmitting(true)
@@ -49,17 +51,17 @@ export default function SponsorInquiryForm() {
       if (response.ok) {
         setStatus('success')
         gtag.trackFormSubmission('Sponsor Inquiry')
-        formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        scrollToForm()
         setFormData(EMPTY_FORM)
         setTimeout(() => setStatus(null), 5000)
       } else {
         setStatus('error')
-        formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        scrollToForm()
       }
     } catch (error) {
       console.error('Error:', error)
       setStatus('error')
-      formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      scrollToForm()
     } finally {
       setSubmitting(false)
     }
