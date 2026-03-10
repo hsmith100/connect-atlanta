@@ -105,16 +105,14 @@ jobs:
           aws cloudfront create-invalidation --distribution-id $DIST_ID --paths "/*"
 
   # ── Stage 4: Regression tests against staging ───────────────────────────────
-  # Placeholder — replace with real test suite when automation is ready.
   # Production deploy is blocked if this job fails.
 
   regression-tests:
     name: Regression Tests — staging
     needs: [deploy-staging]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Run regression tests
-        run: echo "Regression tests passed (placeholder)"
+    uses: ./.github/workflows/e2e-regression.yml
+    with:
+      base_url: https://d36pa7dr4nksf5.cloudfront.net
 
   # ── Stage 5: Deploy to production ───────────────────────────────────────────
 
@@ -171,3 +169,12 @@ jobs:
             --query 'Stacks[0].Outputs[?OutputKey==`CloudFrontDistributionId`].OutputValue' \
             --output text)
           aws cloudfront create-invalidation --distribution-id $DIST_ID --paths "/*"
+
+  # ── Stage 6: Post-deploy smoke tests against production ─────────────────────
+
+  post-deploy-smoke:
+    name: Post-Deploy Smoke Tests
+    needs: [deploy-production]
+    uses: ./.github/workflows/e2e-smoke.yml
+    with:
+      base_url: https://connectevents.co
