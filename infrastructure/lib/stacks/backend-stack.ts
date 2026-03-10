@@ -21,6 +21,8 @@ interface BackendStackProps extends cdk.StackProps {
   dynamoStack: DynamoStack;
   contactEmail?: string;
   alertEmail?: string;
+  // When true, media bucket uses DESTROY policy and SNS alarm is skipped (ephemeral PR environments).
+  ephemeral?: boolean;
 }
 
 export class BackendStack extends cdk.Stack {
@@ -32,7 +34,7 @@ export class BackendStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: BackendStackProps) {
     super(scope, id, props);
 
-    const { dynamoStack, contactEmail = 'info@connectevents.co', alertEmail = 'productions.connectatlanta@gmail.com' } = props;
+    const { dynamoStack, contactEmail = 'info@connectevents.co', alertEmail = 'productions.connectatlanta@gmail.com', ephemeral = false } = props;
     const lambdaDir = path.join(__dirname, '../../../lambda/src/handlers');
 
     // ── Media S3 Bucket ───────────────────────────────────────────────────────
@@ -40,7 +42,8 @@ export class BackendStack extends cdk.Stack {
     // PhotosLambda; reads are served via the media CloudFront distribution below.
     const mediaBucket = new s3.Bucket(this, 'MediaBucket', {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
+      removalPolicy: ephemeral ? cdk.RemovalPolicy.DESTROY : cdk.RemovalPolicy.RETAIN,
+      autoDeleteObjects: ephemeral,
       cors: [{
         allowedMethods: [s3.HttpMethods.PUT],
         // Presigned URL provides auth — allow * so browser uploads work from any origin
@@ -212,23 +215,26 @@ export class BackendStack extends cdk.Stack {
 
     // ── Throttle alarm ────────────────────────────────────────────────────────
     // Alert when 10+ requests are throttled in a 5-minute window.
-    const throttleMetric = new logs.MetricFilter(this, 'ThrottleMetricFilter', {
-      logGroup: accessLogGroup,
-      metricNamespace: 'ConnectAPI',
-      metricName: 'ThrottledRequests',
-      filterPattern: logs.FilterPattern.stringValue('$.status', '=', '429'),
-      metricValue: '1',
-    });
+    // Skipped for ephemeral PR environments to avoid spurious confirmation emails.
+    if (!ephemeral) {
+      const throttleMetric = new logs.MetricFilter(this, 'ThrottleMetricFilter', {
+        logGroup: accessLogGroup,
+        metricNamespace: 'ConnectAPI',
+        metricName: 'ThrottledRequests',
+        filterPattern: logs.FilterPattern.stringValue('$.status', '=', '429'),
+        metricValue: '1',
+      });
 
-    const alertTopic = new sns.Topic(this, 'AlertTopic');
-    alertTopic.addSubscription(new snsSubscriptions.EmailSubscription(alertEmail));
+      const alertTopic = new sns.Topic(this, 'AlertTopic');
+      alertTopic.addSubscription(new snsSubscriptions.EmailSubscription(alertEmail));
 
-    new cloudwatch.Alarm(this, 'ThrottleAlarm', {
-      metric: throttleMetric.metric({ statistic: 'Sum', period: cdk.Duration.minutes(5) }),
-      threshold: 10,
-      evaluationPeriods: 1,
-      alarmDescription: 'More than 10 API requests throttled in 5 minutes — possible abuse or traffic spike',
-    }).addAlarmAction(new cloudwatchActions.SnsAction(alertTopic));
+      new cloudwatch.Alarm(this, 'ThrottleAlarm', {
+        metric: throttleMetric.metric({ statistic: 'Sum', period: cdk.Duration.minutes(5) }),
+        threshold: 10,
+        evaluationPeriods: 1,
+        alarmDescription: 'More than 10 API requests throttled in 5 minutes — possible abuse or traffic spike',
+      }).addAlarmAction(new cloudwatchActions.SnsAction(alertTopic));
+    }
 
     this.apiUrl = api.url!;
     // Strip "https://" and trailing "/" to get bare hostname for CloudFront HttpOrigin

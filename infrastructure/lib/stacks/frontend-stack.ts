@@ -13,6 +13,8 @@ interface FrontendStackProps extends cdk.StackProps {
   // Omit dnsStack for staging — distribution gets a plain *.cloudfront.net URL.
   // Provide dnsStack for prod — distribution gets connectevents.co + ACM cert.
   dnsStack?: DnsStack;
+  // When true, S3 bucket uses DESTROY policy (for ephemeral PR environments).
+  ephemeral?: boolean;
 }
 
 export class FrontendStack extends cdk.Stack {
@@ -23,13 +25,14 @@ export class FrontendStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: FrontendStackProps) {
     super(scope, id, props);
 
-    const { dnsStack, backendStack } = props;
+    const { dnsStack, backendStack, ephemeral = false } = props;
     const isProd = !!dnsStack;
 
     // ── S3 bucket ─────────────────────────────────────────────────────────────
     const siteBucket = new s3.Bucket(this, 'FrontendBucket', {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
+      removalPolicy: ephemeral ? cdk.RemovalPolicy.DESTROY : cdk.RemovalPolicy.RETAIN,
+      autoDeleteObjects: ephemeral,
     });
 
     // ── CloudFront OAI ────────────────────────────────────────────────────────
