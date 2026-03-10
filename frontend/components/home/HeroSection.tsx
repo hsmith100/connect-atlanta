@@ -5,8 +5,8 @@ import { HeroCardVisual } from '../shared/HeroCardVisual'
 const STAGGER_DELAYS = ['0s', '0.15s', '0.3s', '0.45s', '0.6s']
 
 interface HeroSectionProps {
-  heroCards: HeroCard[]
-  loading: boolean
+  readonly heroCards: HeroCard[]
+  readonly loading: boolean
 }
 
 export default function HeroSection({ heroCards, loading }: HeroSectionProps) {
