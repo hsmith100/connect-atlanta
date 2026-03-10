@@ -9,9 +9,9 @@ interface JoinTabBarProps {
 }
 
 const TABS: { id: JoinTab; label: string; Icon: typeof Music }[] = [
+  { id: 'dj',        label: 'DJ',        Icon: Music },
   { id: 'volunteer', label: 'Volunteer', Icon: Users },
   { id: 'vendor',    label: 'Vendor',    Icon: Store },
-  { id: 'dj',       label: 'DJ',        Icon: Music },
   { id: 'sponsor',   label: 'Sponsor',   Icon: Building2 },
 ]
 
