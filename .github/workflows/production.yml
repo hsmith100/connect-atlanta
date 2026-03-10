@@ -211,7 +211,7 @@ jobs:
     steps:
       - name: Find last known-good production SHA
         id: prev
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         with:
           script: |
             const runs = await github.rest.actions.listWorkflowRuns({
