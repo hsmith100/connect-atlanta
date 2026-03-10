@@ -144,3 +144,12 @@ jobs:
                 body,
               });
             }
+
+  # ── Stage 4: Automation tests against dev ───────────────────────────────────
+
+  automation-tests:
+    name: Automation Tests
+    needs: deploy-dev
+    uses: ./.github/workflows/e2e-regression.yml
+    with:
+      base_url: https://d2gqwwd1lyhnar.cloudfront.net
