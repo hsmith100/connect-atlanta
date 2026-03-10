@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Loader2 } from 'lucide-react'
 import type { HeroCard } from '@shared/types/heroCards'
 import { HeroCardVisual } from '../shared/HeroCardVisual'
 
@@ -30,8 +31,13 @@ export default function HeroSection({ heroCards, loading }: HeroSectionProps) {
         </div>
 
         {/* Hero Cards Grid - Admin-managed */}
+        {loading ? (
+          <div className="flex justify-center items-center py-12">
+            <Loader2 className="animate-spin text-brand-primary" size={40} />
+          </div>
+        ) : (
         <div className="flex flex-col md:flex-row md:justify-center md:flex-wrap gap-4 max-w-7xl mx-auto">
-          {!loading && heroCards.map((card, i) =>
+          {heroCards.map((card, i) =>
                 card.linkUrl.startsWith('http') ? (
                   <a
                     key={card.id}
@@ -56,6 +62,7 @@ export default function HeroSection({ heroCards, loading }: HeroSectionProps) {
               )
           }
         </div>
+        )}
       </div>
     </section>
   )
