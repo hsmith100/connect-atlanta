@@ -68,7 +68,7 @@ export default function SponsorInquiryForm() {
   }
 
   return (
-    <section className="bg-brand-bg py-12 md:py-20">
+    <div id="application-form" className="py-12 md:py-20">
       <div className="section-container max-w-6xl">
         <div className="text-center mb-12">
           <h2 className="font-title text-4xl md:text-6xl font-black mb-6 text-brand-header uppercase">
@@ -140,6 +140,6 @@ export default function SponsorInquiryForm() {
           </div>
         </div>
       </div>
-    </section>
+    </div>
   )
 }
