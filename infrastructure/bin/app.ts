@@ -44,7 +44,7 @@ new FrontendStack(app, 'ConnectStagingFrontendStack', { env, backendStack: stagi
 // Persistent environment for local development. Lambda + DynamoDB only —
 // no CloudFront (PR envs each get their own ephemeral frontend).
 const devDynamoStack = new DynamoStack(app, 'ConnectDevDynamoStack', { env, tablePrefix: 'dev-' });
-const devBackendStack = new BackendStack(app, 'ConnectDevBackendStack', { env, dynamoStack: devDynamoStack, contactEmail: 'productions.connectatlanta@gmail.com' });
+const _devBackendStack = new BackendStack(app, 'ConnectDevBackendStack', { env, dynamoStack: devDynamoStack, contactEmail: 'productions.connectatlanta@gmail.com' });
 
 // ── Per-PR ephemeral environments ─────────────────────────────────────────────
 // Created on-demand via: cdk deploy ... --context pr=<PR_NUMBER>
