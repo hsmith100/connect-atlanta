@@ -4,7 +4,7 @@ import Header from '../components/layout/Header'
 import Footer from '../components/layout/Footer'
 import SponsorDeckSlider from '../components/sponsor/SponsorDeckSlider'
 import SponsorDeckModal from '../components/sponsor/SponsorDeckModal'
-import SponsorInquiryForm from '../components/sponsor/SponsorInquiryForm'
+import SponsorInquiryForm from '../components/shared/SponsorInquiryForm'
 
 const SPONSOR_DECK_IMAGES = Array.from({ length: 14 }, (_, i) => `/images/sponsors/sponsor_deck/${i + 1}.webp`)
 

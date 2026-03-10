@@ -20,9 +20,13 @@ export default function Home() {
   const [upcomingEvents, setUpcomingEvents] = useState<Event[]>([])
   const [pastEvents, setPastEvents] = useState<Event[]>([])
   const [eventsLoading, setEventsLoading] = useState(true)
+  const [heroCardsLoading, setHeroCardsLoading] = useState(true)
 
   useEffect(() => {
-    getHeroCards().then(setHeroCards).catch(err => console.error('Failed to load hero cards:', err))
+    getHeroCards()
+      .then(setHeroCards)
+      .catch(err => console.error('Failed to load hero cards:', err))
+      .finally(() => setHeroCardsLoading(false))
   }, [])
 
   useEffect(() => {
@@ -61,7 +65,7 @@ export default function Home() {
 
       <div className="min-h-screen bg-brand-bg">
         <Header />
-        <HeroSection heroCards={heroCards} />
+        <HeroSection heroCards={heroCards} loading={heroCardsLoading} />
         <ConnectModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
         <ExperienceSection />
         <UpcomingEventsSection

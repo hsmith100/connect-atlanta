@@ -76,6 +76,38 @@ npx cdk deploy ConnectDevDynamoStack ConnectDevBackendStack ConnectDevFrontendSt
 
 ---
 
+## Testing
+
+### Unit tests
+
+```bash
+npm test --prefix frontend    # Jest + React Testing Library
+```
+
+### E2E tests
+
+Playwright tests live in `e2e/`. Two suites:
+
+| Suite | File | Purpose |
+|---|---|---|
+| Regression | `regression.spec.ts` | Full automation — gates prod deployment |
+| Smoke | `smoke.spec.ts` | Post-deploy sanity check on production |
+
+```bash
+# Install (one-time)
+cd e2e && npm install && npx playwright install
+
+# Run regression against staging
+BASE_URL=https://d36pa7dr4nksf5.cloudfront.net npx playwright test regression.spec.ts
+
+# Run smoke against production
+BASE_URL=https://connectevents.co npx playwright test smoke.spec.ts
+```
+
+See **[docs/testing/E2E-TESTING.md](docs/testing/E2E-TESTING.md)** for full reference.
+
+---
+
 ## Documentation
 
 ### Migration & Architecture

@@ -1,0 +1,13 @@
+{
+  "name": "connect-atlanta-e2e",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "playwright test",
+    "test:regression": "playwright test regression.spec.ts",
+    "test:smoke": "playwright test smoke.spec.ts"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.51.0"
+  }
+}
