@@ -59,7 +59,7 @@ if (prNum) {
     contactEmail: 'productions.connectatlanta@gmail.com',
     ephemeral: true,
   });
-  new FrontendStack(app, `ConnectPR${prNum}FrontendStack`, {
+  const _prFrontendStack = new FrontendStack(app, `ConnectPR${prNum}FrontendStack`, {
     env, backendStack: prBackendStack, ephemeral: true,
   });
 }
