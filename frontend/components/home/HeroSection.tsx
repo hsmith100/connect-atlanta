@@ -2,11 +2,14 @@ import Link from 'next/link'
 import type { HeroCard } from '@shared/types/heroCards'
 import { HeroCardVisual } from '../shared/HeroCardVisual'
 
+const STAGGER_DELAYS = ['0s', '0.15s', '0.3s', '0.45s', '0.6s']
+
 interface HeroSectionProps {
-  heroCards: HeroCard[]
+  readonly heroCards: HeroCard[]
+  readonly loading: boolean
 }
 
-export default function HeroSection({ heroCards }: HeroSectionProps) {
+export default function HeroSection({ heroCards, loading }: HeroSectionProps) {
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-8 hero-gradient-gold">
       <div className="section-container relative z-10 w-full">
@@ -28,17 +31,30 @@ export default function HeroSection({ heroCards }: HeroSectionProps) {
 
         {/* Hero Cards Grid - Admin-managed */}
         <div className="flex flex-col md:flex-row md:justify-center md:flex-wrap gap-4 max-w-7xl mx-auto">
-          {heroCards.map((card) =>
-            card.linkUrl.startsWith('http') ? (
-              <a key={card.id} href={card.linkUrl} target="_blank" rel="noopener noreferrer" className="block h-full md:w-72">
-                <HeroCardVisual card={card} />
-              </a>
-            ) : (
-              <Link key={card.id} href={card.linkUrl} className="block h-full md:w-72">
-                <HeroCardVisual card={card} />
-              </Link>
-            )
-          )}
+          {!loading && heroCards.map((card, i) =>
+                card.linkUrl.startsWith('http') ? (
+                  <a
+                    key={card.id}
+                    href={card.linkUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block h-full md:w-72"
+                    style={{ animation: `fadeInUp 0.6s ease-out ${STAGGER_DELAYS[i] ?? '0s'} both` }}
+                  >
+                    <HeroCardVisual card={card} />
+                  </a>
+                ) : (
+                  <Link
+                    key={card.id}
+                    href={card.linkUrl}
+                    className="block h-full md:w-72"
+                    style={{ animation: `fadeInUp 0.6s ease-out ${STAGGER_DELAYS[i] ?? '0s'} both` }}
+                  >
+                    <HeroCardVisual card={card} />
+                  </Link>
+                )
+              )
+          }
         </div>
       </div>
     </section>
