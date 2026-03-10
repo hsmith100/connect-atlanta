@@ -53,6 +53,7 @@ jobs:
   deploy-dev:
     name: Deploy — dev
     needs: [synth, build-frontend]
+    if: github.actor != 'dependabot[bot]'
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -150,6 +151,7 @@ jobs:
   automation-tests:
     name: Automation Tests
     needs: deploy-dev
+    if: github.actor != 'dependabot[bot]'
     uses: ./.github/workflows/e2e-regression.yml
     with:
       base_url: https://d2gqwwd1lyhnar.cloudfront.net

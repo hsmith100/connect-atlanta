@@ -8,6 +8,7 @@ export const CORE_PAGES: Page[] = [
   { route: '/events', heading: 'Events' },
   { route: '/join', heading: 'Join Us' },
   { route: '/contact', heading: 'Contact Us' },
+  { route: '/gallery', heading: 'Event Gallery' },
   { route: '/sponsor-inquiries', heading: 'Sponsor Inquiries' },
   { route: '/merch', heading: 'Merch' },
 ];
