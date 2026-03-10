@@ -126,6 +126,7 @@ jobs:
               "sortOrder": {"N": "1"},
               "title":     {"S": "Beats on the Beltline"},
               "subtitle":  {"S": "PR Environment"},
+              "linkUrl":   {"S": "/events"},
               "visible":   {"BOOL": true},
               "createdAt": {"S": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}
             }'
