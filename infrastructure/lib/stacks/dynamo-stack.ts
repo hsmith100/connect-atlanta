@@ -6,6 +6,8 @@ interface DynamoStackProps extends cdk.StackProps {
   // 'staging-' for staging, '' (default) for prod.
   // Prod tables were deployed without a prefix so we keep them as-is.
   tablePrefix?: string;
+  // When true, all tables use DESTROY removal policy (for ephemeral PR environments).
+  ephemeral?: boolean;
 }
 
 export class DynamoStack extends cdk.Stack {
@@ -19,6 +21,7 @@ export class DynamoStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: DynamoStackProps = {}) {
     super(scope, id, props);
     const p = props.tablePrefix ?? '';
+    const removalPolicy = props.ephemeral ? cdk.RemovalPolicy.DESTROY : cdk.RemovalPolicy.RETAIN;
 
     // Events table — list and detail pages
     // GSI byDate: lists all events sorted chronologically
@@ -26,7 +29,7 @@ export class DynamoStack extends cdk.Stack {
       tableName: `connect-${p}events`,
       partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
+      removalPolicy,
     });
     this.eventsTable.addGlobalSecondaryIndex({
       indexName: 'byDate',
@@ -39,7 +42,7 @@ export class DynamoStack extends cdk.Stack {
       tableName: `connect-${p}email-signups`,
       partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
+      removalPolicy,
     });
     this.emailSignupsTable.addGlobalSecondaryIndex({
       indexName: 'byStatus',
@@ -52,7 +55,7 @@ export class DynamoStack extends cdk.Stack {
       tableName: `connect-${p}artist-applications`,
       partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
+      removalPolicy,
     });
     this.artistApplicationsTable.addGlobalSecondaryIndex({
       indexName: 'byStatus',
@@ -65,7 +68,7 @@ export class DynamoStack extends cdk.Stack {
       tableName: `connect-${p}sponsor-inquiries`,
       partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
+      removalPolicy,
     });
     this.sponsorInquiriesTable.addGlobalSecondaryIndex({
       indexName: 'byStatus',
@@ -79,7 +82,7 @@ export class DynamoStack extends cdk.Stack {
       tableName: `connect-${p}photos`,
       partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
+      removalPolicy,
     });
     this.photosTable.addGlobalSecondaryIndex({
       indexName: 'byOrder',
@@ -93,7 +96,7 @@ export class DynamoStack extends cdk.Stack {
       tableName: `connect-${p}hero-cards`,
       partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
+      removalPolicy,
     });
     this.heroCardsTable.addGlobalSecondaryIndex({
       indexName: 'byOrder',

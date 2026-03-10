@@ -41,8 +41,25 @@ const stagingBackendStack = new BackendStack(app, 'ConnectStagingBackendStack', 
 new FrontendStack(app, 'ConnectStagingFrontendStack', { env, backendStack: stagingBackendStack });
 
 // ── Dev ───────────────────────────────────────────────────────────────────────
-// Branch preview environment — deployed on every PR. Local dev points here.
-// Data persists but is disposable. No custom domain.
+// Persistent environment for local development. Lambda + DynamoDB only —
+// no CloudFront (PR envs each get their own ephemeral frontend).
 const devDynamoStack = new DynamoStack(app, 'ConnectDevDynamoStack', { env, tablePrefix: 'dev-' });
-const devBackendStack = new BackendStack(app, 'ConnectDevBackendStack', { env, dynamoStack: devDynamoStack, contactEmail: 'productions.connectatlanta@gmail.com' });
-new FrontendStack(app, 'ConnectDevFrontendStack', { env, backendStack: devBackendStack });
+const _devBackendStack = new BackendStack(app, 'ConnectDevBackendStack', { env, dynamoStack: devDynamoStack, contactEmail: 'productions.connectatlanta@gmail.com' });
+
+// ── Per-PR ephemeral environments ─────────────────────────────────────────────
+// Created on-demand via: cdk deploy ... --context pr=<PR_NUMBER>
+// Destroyed automatically when the PR closes via pr-cleanup.yml
+const prNum = app.node.tryGetContext('pr');
+if (prNum) {
+  const prDynamoStack = new DynamoStack(app, `ConnectPR${prNum}DynamoStack`, {
+    env, tablePrefix: `pr-${prNum}-`, ephemeral: true,
+  });
+  const prBackendStack = new BackendStack(app, `ConnectPR${prNum}BackendStack`, {
+    env, dynamoStack: prDynamoStack,
+    contactEmail: 'productions.connectatlanta@gmail.com',
+    ephemeral: true,
+  });
+  const _prFrontendStack = new FrontendStack(app, `ConnectPR${prNum}FrontendStack`, {
+    env, backendStack: prBackendStack, ephemeral: true,
+  });
+}
