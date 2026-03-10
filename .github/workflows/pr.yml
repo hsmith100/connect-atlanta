@@ -117,8 +117,18 @@ jobs:
       - name: Seed PR environment data
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
-          NODE_PATH: lambda/node_modules
-        run: node scripts/seed-pr-env.mjs $PR_NUMBER
+        run: |
+          aws dynamodb put-item \
+            --table-name connect-pr-${PR_NUMBER}-hero-cards \
+            --item '{
+              "id":        {"S": "'$(uuidgen)'"},
+              "entity":    {"S": "hero-card"},
+              "sortOrder": {"N": "1"},
+              "title":     {"S": "Beats on the Beltline"},
+              "subtitle":  {"S": "PR Environment"},
+              "visible":   {"BOOL": true},
+              "createdAt": {"S": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}
+            }'
 
       - name: Get PR CloudFront URL
         id: pr-url
