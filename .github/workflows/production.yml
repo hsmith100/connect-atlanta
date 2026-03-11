@@ -11,6 +11,10 @@ on:
         default: main
         type: string
 
+concurrency:
+  group: production
+  cancel-in-progress: true
+
 jobs:
   # ── Stage 1: Quality checks ──────────────────────────────────────────────────
 
