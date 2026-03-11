@@ -88,7 +88,7 @@ jobs:
         working-directory: infrastructure
 
       - name: Download frontend build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: frontend-out
           path: frontend/out/
