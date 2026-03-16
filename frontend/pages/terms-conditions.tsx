@@ -175,7 +175,7 @@ export default function TermsConditions() {
 
               <h2 className="text-2xl font-bold text-brand-header mt-8 mb-4">6. Third-Party Services</h2>
               <p className="text-brand-text mb-4">
-                Our Website uses third-party services (Google Sheets, Cloudinary, SendGrid) to process and store information. While we choose reputable providers, we are not responsible for their practices or services. Please review their terms and privacy policies.
+                Our Website uses third-party services (Amazon Web Services) to process and store information. While we choose reputable providers, we are not responsible for their practices or services. Please review their terms and privacy policies.
               </p>
 
               <h2 className="text-2xl font-bold text-brand-header mt-8 mb-4">7. Disclaimers and Limitations of Liability</h2>
