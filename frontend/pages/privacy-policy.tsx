@@ -98,9 +98,7 @@ export default function PrivacyPolicy() {
                 We use third-party service providers to help us operate our website and events:
               </p>
               <ul className="list-disc list-inside text-brand-text mb-4 ml-4">
-                <li><strong>Google Sheets:</strong> For managing form submissions and applications</li>
-                <li><strong>SendGrid:</strong> For sending email communications</li>
-                <li><strong>Cloudinary:</strong> For hosting and delivering event photos</li>
+                <li><strong>Amazon Web Services (AWS):</strong> For hosting, data storage, and email communications (including DynamoDB, S3, and Amazon SES)</li>
               </ul>
               <p className="text-brand-text mb-4">
                 These service providers have access to your information only to perform specific tasks on our behalf and are obligated to protect your information.

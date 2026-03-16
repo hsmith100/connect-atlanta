@@ -7,12 +7,11 @@ Google Analytics 4 (GA4) has been integrated into the Connect Events website to 
 
 ### ✅ Tracking Features
 1. **Page View Tracking** - Automatically tracks every page visit
-2. **Form Submission Tracking** - Tracks all form completions:
+2. **Form Submission Tracking** - Tracks custom form completions:
    - DJ/Artist Applications
-   - Vendor Applications
-   - Volunteer Applications
    - Email Signup
    - Contact Form submissions
+   - *(Vendor and Volunteer forms link out to Google Forms — not tracked)*
 3. **Event Tracking** - Ready for custom events
 4. **Route Change Tracking** - Tracks navigation between pages
 
@@ -53,32 +52,19 @@ Google Analytics 4 (GA4) has been integrated into the Connect Events website to 
 4. Click **Create stream**
 5. Copy your **Measurement ID** (format: `G-XXXXXXXXXX`)
 
-### Step 3: Add Measurement ID to Production Server
+### Step 3: Add Measurement ID
 
-**On your production server:**
+The GA ID is injected at build time via the `NEXT_PUBLIC_GA_ID` environment variable.
+
+**For local development**, add to `frontend/.env.local`:
 
 ```bash
-# SSH into server
-ssh -i ~/.ssh/basb-ec2-key ubuntu@98.81.74.242
-
-# Navigate to frontend directory
-cd /opt/custom-build/Connect_site/frontend
-
-# Edit the .env file
-sudo nano .env
-
-# Add this line (replace with your actual Measurement ID):
 NEXT_PUBLIC_GA_ID=G-XXXXXXXXXX
-
-# Save and exit (Ctrl+X, Y, Enter)
 ```
 
-**Rebuild and restart the frontend container:**
+**For deployed environments**, the variable is set in the GitHub Actions workflows. Add it as a repository secret or update the workflow env block in `.github/workflows/production.yml` if you need to change the ID.
 
-```bash
-cd /opt/custom-build/Connect_site
-sudo docker-compose -f docker-compose.prod.yml up -d --build frontend
-```
+The current production Measurement ID is `G-86ZLZS2JEX`.
 
 ### Step 4: Verify Tracking is Working
 
@@ -106,8 +92,6 @@ sudo docker-compose -f docker-compose.prod.yml up -d --build frontend
 
 3. **Form Conversions**
    - DJ Application submissions
-   - Vendor Application submissions
-   - Volunteer signups
    - Email list growth
    - Contact form inquiries
 
@@ -153,8 +137,6 @@ All form submissions send custom events to GA4:
 | Event Name | Category | Label |
 |------------|----------|-------|
 | form_submission | Forms | DJ Application |
-| form_submission | Forms | Vendor Application |
-| form_submission | Forms | Volunteer Application |
 | form_submission | Forms | Email Signup |
 | form_submission | Forms | Contact Form |
 
@@ -166,25 +148,15 @@ You can find these under **Reports** → **Engagement** → **Events** → **for
 
 ### Not Seeing Data?
 
-1. **Check the Measurement ID is correct**
-   ```bash
-   ssh -i ~/.ssh/basb-ec2-key ubuntu@98.81.74.242
-   cat /opt/custom-build/Connect_site/frontend/.env | grep GA_ID
-   ```
+1. **Check the Measurement ID is correct** — confirm `NEXT_PUBLIC_GA_ID` is set and the build picked it up (it's baked in at build time for static export)
 
-2. **Verify container was rebuilt**
-   ```bash
-   ssh -i ~/.ssh/basb-ec2-key ubuntu@98.81.74.242
-   sudo docker logs connect-frontend-nextjs | grep "GA"
-   ```
-
-3. **Check browser console** 
+2. **Check browser console**
    - Open your website
    - Press F12 to open Developer Tools
    - Check Console tab for any errors
    - Look for network requests to `googletagmanager.com`
 
-4. **Clear cache and cookies**
+3. **Clear cache and cookies**
    - Hard refresh the page (Ctrl+Shift+R or Cmd+Shift+R)
    - Try in incognito/private browsing mode
 
@@ -230,11 +202,10 @@ You can find these under **Reports** → **Engagement** → **Events** → **for
 
 ---
 
-## Files Modified
+## Relevant Files
 
-- `/frontend/lib/gtag.js` - GA utility functions
-- `/frontend/pages/_app.js` - Page view tracking
-- `/frontend/pages/_document.js` - GA4 script injection
-- `/frontend/pages/contact.js` - Contact form & email signup tracking
-- `/frontend/pages/join.js` - DJ, Vendor, Volunteer form tracking
-- `/frontend/.env` - Measurement ID configuration
+- `frontend/lib/gtag.ts` — GA utility functions and form trackers
+- `frontend/pages/_app.tsx` — page view tracking on route change
+- `frontend/pages/_document.tsx` — GA4 script injection
+- `frontend/pages/contact.tsx` — contact form & email signup tracking
+- `frontend/pages/join.tsx` — DJ application tracking
