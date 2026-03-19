@@ -11,4 +11,5 @@ export const CORE_PAGES: Page[] = [
   { route: '/gallery', heading: 'Event Gallery' },
   { route: '/sponsor-inquiries', heading: 'Sponsor Inquiries' },
   { route: '/merch', heading: 'Merch' },
+  { route: '/about', heading: 'About Us' },
 ];
