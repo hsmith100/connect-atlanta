@@ -1,10 +1,11 @@
 export interface Page {
   route: string;
   heading: string;
+  headingDesktopOnly?: boolean;
 }
 
 export const CORE_PAGES: Page[] = [
-  { route: '/', heading: 'Home of Beats on the Beltline' },
+  { route: '/', heading: 'Home of Beats on the Beltline', headingDesktopOnly: true },
   { route: '/events', heading: 'Events' },
   { route: '/join', heading: 'Join Us' },
   { route: '/contact', heading: 'Contact Us' },
