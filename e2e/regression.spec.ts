@@ -22,15 +22,25 @@ test.describe('home page', () => {
 
 test.describe('navigation', () => {
   test('nav links route to the correct pages', async ({ page }) => {
+    // On mobile the desktop nav is hidden — open the hamburger menu first.
+    const openNavIfMobile = async () => {
+      if ((page.viewportSize()?.width ?? 1280) < 768) {
+        await page.getByRole('button', { name: 'Toggle mobile menu' }).click();
+      }
+    };
+
     await page.goto('/');
+    await openNavIfMobile();
     await page.getByRole('link', { name: 'Events' }).first().click();
     await expect(page).toHaveURL(/\/events/);
     await expect(page.getByRole('heading', { name: 'Events', exact: true })).toBeVisible();
 
+    await openNavIfMobile();
     await page.getByRole('link', { name: 'Join Us' }).first().click();
     await expect(page).toHaveURL(/\/join/);
     await expect(page.getByRole('heading', { name: 'Join Us', exact: true })).toBeVisible();
 
+    await openNavIfMobile();
     await page.getByRole('link', { name: 'Contact' }).first().click();
     await expect(page).toHaveURL(/\/contact/);
     await expect(page.getByRole('heading', { name: 'Contact Us', exact: true })).toBeVisible();
