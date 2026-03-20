@@ -1,38 +1,7 @@
-/* Tailwind CSS v4 */
-@import "tailwindcss";
-
-/* Keep brand colors and custom fonts from JS config */
-@config "../tailwind.config.js";
-
-/* Plugins */
-@plugin "@tailwindcss/typography";
-@plugin "@tailwindcss/forms";
-@plugin "daisyui";
-
-/* DaisyUI "connect" theme — applied via data-theme="connect" in _document.tsx */
-[data-theme="connect"] {
-  color-scheme: light;
-  --color-primary: #F7C03E;
-  --color-primary-content: #1A1A1A;
-  --color-secondary: #B8860B;
-  --color-secondary-content: #FFFFFF;
-  --color-accent: #18B4DD;
-  --color-accent-content: #FFFFFF;
-  --color-neutral: #2C2C2C;
-  --color-neutral-content: #FFFFFF;
-  --color-base-100: #FFFFFF;
-  --color-base-200: #F9F7F4;
-  --color-base-300: #F2EDE6;
-  --color-base-content: #1A1A1A;
-  --color-info: #18B4DD;
-  --color-info-content: #FFFFFF;
-  --color-success: #36D399;
-  --color-success-content: #FFFFFF;
-  --color-warning: #D99B2A;
-  --color-warning-content: #1A1A1A;
-  --color-error: #DC2626;
-  --color-error-content: #FFFFFF;
-}
+/* Tailwind CSS imports */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 /* Custom Fonts */
 @font-face {
