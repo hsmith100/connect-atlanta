@@ -16,6 +16,7 @@ export function PhotoCard({ photo, selected, onSelect, onToggleVisible, onDragSt
   return (
     <div
       draggable
+      data-photo-id={photo.id}
       onDragStart={() => onDragStart(index)}
       onDragOver={(e) => { e.preventDefault(); onDragOver(e, index) }}
       onDrop={() => onDrop(index)}
