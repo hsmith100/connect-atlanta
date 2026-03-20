@@ -60,6 +60,7 @@ jobs:
       pull-requests: write
     outputs:
       pr_url: ${{ steps.pr-url.outputs.url }}
+      admin_key_secret_arn: ${{ steps.admin-key-arn.outputs.arn }}
     steps:
       - uses: actions/checkout@v4
 
@@ -140,6 +141,17 @@ jobs:
               "createdAt": {"S": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'"}
             }'
 
+      - name: Get admin key secret ARN
+        id: admin-key-arn
+        env:
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          ARN=$(aws cloudformation describe-stacks \
+            --stack-name ConnectPR${PR_NUMBER}BackendStack \
+            --query 'Stacks[0].Outputs[?OutputKey==`AdminKeySecretArn`].OutputValue' \
+            --output text)
+          echo "arn=$ARN" >> $GITHUB_OUTPUT
+
       - name: Get PR CloudFront URL
         id: pr-url
         env:
@@ -188,5 +200,7 @@ jobs:
     name: Automation Tests
     needs: deploy-pr-env
     uses: ./.github/workflows/e2e-regression.yml
+    secrets: inherit
     with:
       base_url: ${{ needs.deploy-pr-env.outputs.pr_url }}
+      admin_key_secret_arn: ${{ needs.deploy-pr-env.outputs.admin_key_secret_arn }}

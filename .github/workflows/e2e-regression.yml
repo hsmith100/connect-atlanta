@@ -6,6 +6,9 @@ on:
       base_url:
         required: true
         type: string
+      admin_key_secret_arn:
+        required: true
+        type: string
 
 jobs:
   regression-tests:
@@ -28,8 +31,24 @@ jobs:
         run: npx playwright install --with-deps
         working-directory: e2e
 
-      - name: Run regression tests
-        run: npx playwright test regression.spec.ts
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_DEPLOY_ROLE_ARN }}
+          aws-region: us-east-1
+
+      - name: Fetch admin key
+        run: |
+          KEY=$(aws secretsmanager get-secret-value \
+            --secret-id ${{ inputs.admin_key_secret_arn }} \
+            --query SecretString \
+            --output text)
+          echo "::add-mask::$KEY"
+          echo "ADMIN_KEY=$KEY" >> $GITHUB_ENV
+
+      - name: Run regression and admin tests
+        run: npx playwright test regression.spec.ts admin.spec.ts
         working-directory: e2e
         env:
           BASE_URL: ${{ inputs.base_url }}
+          ADMIN_KEY: ${{ env.ADMIN_KEY }}

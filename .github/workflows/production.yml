@@ -72,6 +72,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
+    outputs:
+      admin_key_secret_arn: ${{ steps.admin-key-arn.outputs.arn }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -121,6 +123,15 @@ jobs:
             --output text)
           aws cloudfront create-invalidation --distribution-id $DIST_ID --paths "/*"
 
+      - name: Get staging admin key secret ARN
+        id: admin-key-arn
+        run: |
+          ARN=$(aws cloudformation describe-stacks \
+            --stack-name ConnectStagingBackendStack \
+            --query 'Stacks[0].Outputs[?OutputKey==`AdminKeySecretArn`].OutputValue' \
+            --output text)
+          echo "arn=$ARN" >> $GITHUB_OUTPUT
+
   # ── Stage 4: Regression tests against staging ───────────────────────────────
   # Production deploy is blocked if this job fails.
 
@@ -128,8 +139,10 @@ jobs:
     name: Regression Tests — staging
     needs: [deploy-staging]
     uses: ./.github/workflows/e2e-regression.yml
+    secrets: inherit
     with:
       base_url: https://d36pa7dr4nksf5.cloudfront.net
+      admin_key_secret_arn: ${{ needs.deploy-staging.outputs.admin_key_secret_arn }}
 
   # ── Stage 5: Deploy to production ───────────────────────────────────────────
 
