@@ -6,7 +6,7 @@ import type {
   ArtistApplicationPayload,
   SponsorInquiryPayload,
 } from '../../../shared/types/forms';
-import { ddb, TABLES, created, parsePayload, newItem, sendEmail, type FormPayload } from '../lib/formShared';
+import { ddb, TABLES, created, parsePayload, newItem, sendEmail, sendConfirmationEmail, type FormPayload } from '../lib/formShared';
 
 async function emailSignup(raw: FormPayload): Promise<APIGatewayProxyResultV2> {
   const result = parsePayload<EmailSignupPayload>(raw, ['name', 'email']);
@@ -23,6 +23,12 @@ async function emailSignup(raw: FormPayload): Promise<APIGatewayProxyResultV2> {
   };
 
   await ddb.send(new PutCommand({ TableName: TABLES.emailSignups, Item: item }));
+
+  await sendConfirmationEmail(
+    data.email as string,
+    "You're on the list! — Beats on the Beltline",
+    `Hi ${data.name},\n\nYou're officially on the Beats on the Beltline mailing list! 🎉\n\nWe'll reach out with updates on upcoming events, lineups, and more.\n\nSee you on the Beltline,\nThe Connect Team\nconnectevents.co`,
+  );
 
   return created({
     success: true,
@@ -85,6 +91,12 @@ async function artistApplication(raw: FormPayload): Promise<APIGatewayProxyResul
       },
     }));
 
+    await sendConfirmationEmail(
+      data.email as string,
+      'DJ Application Updated — Beats on the Beltline',
+      `Hi ${data.djName},\n\nWe've received your updated DJ application for Beats on the Beltline.\n\nOur booking team reviews all applications and will reach out if there's a match for an upcoming event.\n\nThank you for your continued interest!\n\nThe Connect Team\nconnectevents.co`,
+    );
+
     return created({
       success: true,
       message: "Your application has been updated. We'll review your submission and contact you soon.",
@@ -117,6 +129,12 @@ async function artistApplication(raw: FormPayload): Promise<APIGatewayProxyResul
 
   await ddb.send(new PutCommand({ TableName: TABLES.artistApplications, Item: item }));
 
+  await sendConfirmationEmail(
+    data.email as string,
+    'DJ Application Received — Beats on the Beltline',
+    `Hi ${data.djName},\n\nWe've received your DJ application for Beats on the Beltline. Thank you for your interest!\n\nOur booking team reviews all applications and will reach out if there's a match for an upcoming event.\n\nThe Connect Team\nconnectevents.co`,
+  );
+
   return created({
     success: true,
     message: "Thank you for your artist application! We'll review your submission and contact you soon.",
@@ -147,6 +165,12 @@ async function sponsorInquiry(raw: FormPayload): Promise<APIGatewayProxyResultV2
     `New Sponsor Inquiry\n\nName: ${data.name}\nCompany: ${data.company}\nEmail: ${data.email}\nPhone: ${data.phone}\n\nProduct/Industry:\n${data.productIndustry}\n\nSubmitted via connectevents.co`,
   );
 
+  await sendConfirmationEmail(
+    data.email as string,
+    'Sponsorship Inquiry Received — Beats on the Beltline',
+    `Hi ${data.name},\n\nThank you for your interest in sponsoring Beats on the Beltline!\n\nWe've received your inquiry and a member of our team will be in touch with you soon to discuss partnership opportunities.\n\nThe Connect Team\nconnectevents.co`,
+  );
+
   return created({
     success: true,
     message: "Thank you for your interest in sponsoring! A team member will reach out to you soon.",
@@ -174,6 +198,12 @@ async function contactForm(raw: FormPayload): Promise<APIGatewayProxyResultV2> {
   await sendEmail(
     `Contact Form: ${data.subject}`,
     `New Contact Form Submission\n\nFrom: ${data.name}\nEmail: ${data.email}\nSubject: ${data.subject}\n\nMessage:\n${data.message}\n\n---\nSent via connectevents.co`,
+  );
+
+  await sendConfirmationEmail(
+    data.email as string,
+    `Message Received — Beats on the Beltline`,
+    `Hi ${data.name},\n\nWe've received your message and will get back to you soon.\n\nYour message:\n"${data.message}"\n\nThe Connect Team\nconnectevents.co`,
   );
 
   return created({

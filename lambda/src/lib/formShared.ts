@@ -77,3 +77,18 @@ export async function sendEmail(subject: string, body: string): Promise<void> {
     console.error('SES send failed:', e);
   }
 }
+
+export async function sendConfirmationEmail(to: string, subject: string, body: string): Promise<void> {
+  try {
+    await ses.send(new SendEmailCommand({
+      Source: FROM_EMAIL,
+      Destination: { ToAddresses: [to] },
+      Message: {
+        Subject: { Data: subject },
+        Body: { Text: { Data: body } },
+      },
+    }));
+  } catch (e) {
+    console.error('SES confirmation send failed:', e);
+  }
+}
