@@ -10,6 +10,36 @@ import { getDefaultActiveId } from '../../lib/formatters'
 
 const STAGGER_DELAYS = ['0s', '0.15s', '0.3s', '0.45s', '0.6s']
 
+function HeroCardList({ cards, className }: { cards: HeroCard[]; className?: string }) {
+  return (
+    <div className={`flex flex-col md:flex-row md:justify-center gap-4 max-w-7xl mx-auto ${className ?? ''}`}>
+      {cards.map((card, i) =>
+        card.linkUrl.startsWith('http') ? (
+          <a
+            key={card.id}
+            href={card.linkUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="block h-full md:flex-1 md:min-w-0"
+            style={{ animation: `fadeInUp 0.6s ease-out ${STAGGER_DELAYS[i] ?? '0s'} both` }}
+          >
+            <HeroCardVisual card={card} />
+          </a>
+        ) : (
+          <Link
+            key={card.id}
+            href={card.linkUrl}
+            className="block h-full md:flex-1 md:min-w-0"
+            style={{ animation: `fadeInUp 0.6s ease-out ${STAGGER_DELAYS[i] ?? '0s'} both` }}
+          >
+            <HeroCardVisual card={card} />
+          </Link>
+        )
+      )}
+    </div>
+  )
+}
+
 interface HeroSectionProps {
   readonly heroCards: HeroCard[]
   readonly heroCardsLoading: boolean
@@ -70,31 +100,7 @@ export default function HeroSection({
                 <Loader2 className="animate-spin text-brand-primary" size={40} />
               </div>
             ) : heroCards.length > 0 && (
-              <div className="flex flex-col md:flex-row md:justify-center gap-4 max-w-7xl mx-auto mt-10">
-                {heroCards.map((card, i) =>
-                  card.linkUrl.startsWith('http') ? (
-                    <a
-                      key={card.id}
-                      href={card.linkUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block h-full md:flex-1 md:min-w-0"
-                      style={{ animation: `fadeInUp 0.6s ease-out ${STAGGER_DELAYS[i] ?? '0s'} both` }}
-                    >
-                      <HeroCardVisual card={card} />
-                    </a>
-                  ) : (
-                    <Link
-                      key={card.id}
-                      href={card.linkUrl}
-                      className="block h-full md:flex-1 md:min-w-0"
-                      style={{ animation: `fadeInUp 0.6s ease-out ${STAGGER_DELAYS[i] ?? '0s'} both` }}
-                    >
-                      <HeroCardVisual card={card} />
-                    </Link>
-                  )
-                )}
-              </div>
+              <HeroCardList cards={heroCards} className="mt-10" />
             )}
           </div>
         ) : heroCardsLoading ? (
@@ -102,31 +108,7 @@ export default function HeroSection({
             <Loader2 className="animate-spin text-brand-primary" size={40} />
           </div>
         ) : heroCards.length > 0 ? (
-          <div className="flex flex-col md:flex-row md:justify-center gap-4 max-w-7xl mx-auto">
-            {heroCards.map((card, i) =>
-              card.linkUrl.startsWith('http') ? (
-                <a
-                  key={card.id}
-                  href={card.linkUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block h-full md:flex-1 md:min-w-0"
-                  style={{ animation: `fadeInUp 0.6s ease-out ${STAGGER_DELAYS[i] ?? '0s'} both` }}
-                >
-                  <HeroCardVisual card={card} />
-                </a>
-              ) : (
-                <Link
-                  key={card.id}
-                  href={card.linkUrl}
-                  className="block h-full md:flex-1 md:min-w-0"
-                  style={{ animation: `fadeInUp 0.6s ease-out ${STAGGER_DELAYS[i] ?? '0s'} both` }}
-                >
-                  <HeroCardVisual card={card} />
-                </Link>
-              )
-            )}
-          </div>
+          <HeroCardList cards={heroCards} />
         ) : (
           <div className="max-w-3xl mx-auto text-center py-8">
             <div className="mb-6 text-brand-primary/40 flex justify-center">
