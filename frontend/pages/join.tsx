@@ -50,7 +50,7 @@ export default function JoinUs() {
                 Join Us
               </h1>
               <p className="text-2xl md:text-3xl text-center text-brand-text font-bold max-w-4xl mx-auto">
-                Be part of Atlanta's most vibrant festival community
+                Be part of the next Beats on the Beltline
               </p>
             </div>
           </div>
@@ -58,9 +58,9 @@ export default function JoinUs() {
           <JoinTabBar activeTab={activeTab} isHeaderVisible={isHeaderVisible} onTabSelect={handleTabSelect} />
 
           {activeTab === 'volunteer' && <VolunteerSection />}
-          {activeTab === 'vendor'    && <VendorSection />}
-          {activeTab === 'dj'        && <DJApplicationForm />}
-          {activeTab === 'sponsor'   && <SponsorInquiryForm />}
+          {activeTab === 'vendor' && <VendorSection />}
+          {activeTab === 'dj' && <DJApplicationForm />}
+          {activeTab === 'sponsor' && <SponsorInquiryForm />}
         </section>
 
         {/* Contact CTA */}

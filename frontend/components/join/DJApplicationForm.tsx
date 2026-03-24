@@ -149,7 +149,7 @@ export default function DJApplicationForm() {
             DJ Application
           </h2>
           <p className="text-xl text-brand-text font-bold max-w-2xl mx-auto">
-            We feature a variety of electronic music including house, bass, UKG, and DnB.
+            We feature a variety of electronic music.
           </p>
         </div>
 
