@@ -55,9 +55,6 @@ export default function Gallery() {
               <h1 className="font-horizon text-5xl md:text-7xl lg:text-8xl font-black mb-8 uppercase bg-gradient-to-r from-brand-pink via-brand-peach to-brand-primary bg-clip-text text-transparent">
                 Event Gallery
               </h1>
-              <p className="text-2xl md:text-3xl text-brand-text font-bold max-w-4xl mx-auto">
-                Check out our vibe
-              </p>
             </div>
 
             <GalleryGrid photos={photos} loading={loading} error={error} onImageClick={openImage} />

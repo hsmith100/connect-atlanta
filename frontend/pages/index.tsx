@@ -9,7 +9,6 @@ import type { Event } from '@shared/types/events'
 import type { HeroCard } from '@shared/types/heroCards'
 import HeroSection from '../components/home/HeroSection'
 import ExperienceSection from '../components/home/ExperienceSection'
-import UpcomingEventsSection from '../components/home/UpcomingEventsSection'
 import PastEventsSection from '../components/home/PastEventsSection'
 import SponsorsSection from '../components/home/SponsorsSection'
 import ConnectSection from '../components/home/ConnectSection'
@@ -65,14 +64,15 @@ export default function Home() {
 
       <div className="min-h-screen bg-brand-bg">
         <Header />
-        <HeroSection heroCards={heroCards} loading={heroCardsLoading} />
-        <ConnectModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-        <ExperienceSection />
-        <UpcomingEventsSection
-          events={upcomingEvents}
-          loading={eventsLoading}
+        <HeroSection
+          heroCards={heroCards}
+          heroCardsLoading={heroCardsLoading}
+          upcomingEvents={upcomingEvents}
+          eventsLoading={eventsLoading}
           onOpenModal={() => setIsModalOpen(true)}
         />
+        <ConnectModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
+        <ExperienceSection />
         <PastEventsSection events={pastEvents} loading={eventsLoading} />
         <SponsorsSection />
         <ConnectSection />
