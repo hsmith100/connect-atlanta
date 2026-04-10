@@ -152,7 +152,7 @@ jobs:
           echo "url=$URL" >> $GITHUB_OUTPUT
 
       - name: Comment PR URL on PR
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const marker = '<!-- dev-deploy-comment -->';
