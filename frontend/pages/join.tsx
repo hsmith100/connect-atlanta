@@ -49,9 +49,14 @@ export default function JoinUs() {
               <h1 className="font-horizon text-5xl md:text-7xl lg:text-8xl font-black text-center mb-8 uppercase bg-gradient-to-r from-brand-pink via-brand-peach to-brand-primary bg-clip-text text-transparent">
                 Join Us
               </h1>
-              <p className="text-2xl md:text-3xl text-center text-brand-text font-bold max-w-4xl mx-auto">
-                Be part of the next Beats on the Beltline
-              </p>
+              <div className="text-center mb-2">
+                <p className="text-2xl md:text-3xl text-brand-text font-bold">
+                  Be a part of the next BOTB on
+                </p>
+                <p className="text-2xl md:text-3xl text-brand-text font-bold mt-1">
+                  April 25, 2026 · 2pm at Historic Old Fourth Ward Skatepark Field
+                </p>
+              </div>
             </div>
           </div>
 
