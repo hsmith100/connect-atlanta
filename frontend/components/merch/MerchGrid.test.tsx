@@ -7,6 +7,17 @@ jest.mock('next/image', () => ({
   default: ({ src, alt }: { src: string; alt: string }) => <img src={src} alt={alt} />,
 }))
 
+function getLinkByText(text: string) {
+  return screen.getByText(text).closest('a') as HTMLAnchorElement
+}
+
+function assertExternalLink(link: HTMLAnchorElement, expectedHref: string) {
+  expect(link.href).toBe(expectedHref)
+  expect(link.target).toBe('_blank')
+  expect(link.rel).toContain('noopener')
+  expect(link.rel).toContain('noreferrer')
+}
+
 it('matches snapshot', () => {
   const { container } = render(<MerchGrid />)
   expect(container).toMatchSnapshot()
@@ -28,39 +39,22 @@ it('each item links to bonfire.com and opens in a new tab', () => {
 
 it('includes a Shop All link to the Bonfire store', () => {
   render(<MerchGrid />)
-  const shopAllLink = screen.getByText('Shop All on Bonfire').closest('a') as HTMLAnchorElement
+  const shopAllLink = getLinkByText('Shop All on Bonfire')
   expect(shopAllLink.href).toContain('bonfire.com/store/beats-on-the-block')
   expect(shopAllLink.target).toBe('_blank')
 })
 
 // ── per-link click tests ───────────────────────────────────────────────────────
 
-it('clicking the Colorblast Tee card opens the correct Bonfire product page in a new tab', () => {
-  render(<MerchGrid />)
-  const link = screen.getByText('BOTB 2026 Colorblast Tee').closest('a') as HTMLAnchorElement
-  fireEvent.click(link)
-  expect(link.href).toBe('https://www.bonfire.com/botb-2026-colorblast-tee/')
-  expect(link.target).toBe('_blank')
-  expect(link.rel).toContain('noopener')
-  expect(link.rel).toContain('noreferrer')
-})
+const LINK_CASES: [string, string][] = [
+  ['BOTB 2026 Colorblast Tee', 'https://www.bonfire.com/botb-2026-colorblast-tee/'],
+  ['BOTB 2026 Green Tee',      'https://www.bonfire.com/botb-2026-green-tee/'],
+  ['Shop All on Bonfire',      'https://www.bonfire.com/store/beats-on-the-block/'],
+]
 
-it('clicking the Green Tee card opens the correct Bonfire product page in a new tab', () => {
+it.each(LINK_CASES)('clicking "%s" opens the correct Bonfire page in a new tab', (label, expectedHref) => {
   render(<MerchGrid />)
-  const link = screen.getByText('BOTB 2026 Green Tee').closest('a') as HTMLAnchorElement
+  const link = getLinkByText(label)
   fireEvent.click(link)
-  expect(link.href).toBe('https://www.bonfire.com/botb-2026-green-tee/')
-  expect(link.target).toBe('_blank')
-  expect(link.rel).toContain('noopener')
-  expect(link.rel).toContain('noreferrer')
-})
-
-it('clicking Shop All on Bonfire opens the store page in a new tab', () => {
-  render(<MerchGrid />)
-  const link = screen.getByText('Shop All on Bonfire').closest('a') as HTMLAnchorElement
-  fireEvent.click(link)
-  expect(link.href).toBe('https://www.bonfire.com/store/beats-on-the-block/')
-  expect(link.target).toBe('_blank')
-  expect(link.rel).toContain('noopener')
-  expect(link.rel).toContain('noreferrer')
+  assertExternalLink(link, expectedHref)
 })
