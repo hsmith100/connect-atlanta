@@ -89,7 +89,7 @@ No new data model. The product array in `MerchGrid.tsx` retains the existing sha
 
 ```typescript
 type MerchItem = {
-  name: string    // e.g. "Beats on the Beltline 2026 White Tee"
+  name: string    // e.g. "Beats on the Block 2026 White Tee"
   price: string   // e.g. "$35.00"
   image: string   // Bonfire CDN URL (https://cdn.bonfire.com/... — verify hostname)
   url: string     // Bonfire individual product page URL

@@ -11,8 +11,8 @@ export default function Contact() {
   return (
     <>
       <SEO
-        title="Contact Us | Beats on the Beltline"
-        description="Get in touch with Beats on the Beltline. We'd love to hear from you about partnerships, performances, or general inquiries."
+        title="Contact Us | Beats on the Block"
+        description="Get in touch with Beats on the Block. We'd love to hear from you about partnerships, performances, or general inquiries."
         canonicalUrl="https://yourfestival.com/contact"
       />
 

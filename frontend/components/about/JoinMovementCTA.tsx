@@ -15,7 +15,7 @@ export default function JoinMovementCTA() {
             Want to be part of Atlanta's most vibrant music community? Stay connected with us for event updates, artist lineups, exclusive content, and giveaways.
           </p>
           <p className="text-lg leading-relaxed text-brand-text">
-            Whether you're an artist, vendor, sponsor, or music lover - there's a place for you at Beats on the Beltline.
+            Whether you're an artist, vendor, sponsor, or music lover - there's a place for you at Beats on the Block.
           </p>
         </div>
         <button onClick={() => setIsModalOpen(true)} className="btn-festival btn-lg text-xl px-12 uppercase">

@@ -1,6 +1,6 @@
 const FAQ_ITEMS = [
   {
-    question: 'How can I perform at Beats on the Beltline?',
+    question: 'How can I perform at Beats on the Block?',
     answer: <>Head over to our <a href="/join" className="text-brand-primary hover:text-brand-header">Join Us page</a> and fill out the artist application form. We review all submissions and reach out to selected artists.</>,
   },
   {

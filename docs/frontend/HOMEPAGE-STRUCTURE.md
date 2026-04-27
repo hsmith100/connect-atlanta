@@ -1,4 +1,4 @@
-# Homepage Structure - Beats on the Beltline
+# Homepage Structure - Beats on the Block
 
 ## 🎨 Live Homepage
 **URL:** http://localhost:3000

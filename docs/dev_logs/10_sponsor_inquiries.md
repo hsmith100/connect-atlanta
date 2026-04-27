@@ -9,7 +9,7 @@
 
 ## 🎯 Objective
 
-Create a dedicated sponsor inquiries page featuring an auto-cycling sponsor deck gallery and a simple contact form to capture potential sponsor leads for the 2026 Beats on the Beltline event.
+Create a dedicated sponsor inquiries page featuring an auto-cycling sponsor deck gallery and a simple contact form to capture potential sponsor leads for the 2026 Beats on the Block event.
 
 ---
 

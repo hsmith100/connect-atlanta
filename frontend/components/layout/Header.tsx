@@ -68,7 +68,7 @@ export default function Header() {
               className="hover:opacity-80 transition-opacity duration-300 h-16 w-auto md:h-12"
             />
             <span className="font-slogan text-sm text-brand-text tracking-wider uppercase mt-2 md:hidden">
-              Home of Beats on the Beltline
+              Home of Beats on the Block
             </span>
           </Link>
 

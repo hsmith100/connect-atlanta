@@ -1,6 +1,6 @@
 # Connect Atlanta
 
-Event platform for [Beats on the Beltline](https://connectevents.co) — a recurring outdoor music event on the Atlanta Beltline.
+Event platform for [Beats on the Block](https://connectevents.co) — a recurring outdoor music event on the Atlanta Beltline.
 
 ## Stack
 

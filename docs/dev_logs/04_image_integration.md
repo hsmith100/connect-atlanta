@@ -2,7 +2,7 @@
 
 **Date:** November 6, 2025  
 **Developer:** Jason (with AI assistance)  
-**Project:** Connect - Beats on the Beltline Website  
+**Project:** Connect - Beats on the Block Website  
 **Status:** ✅ Complete
 
 ---
@@ -149,7 +149,7 @@ Integrate all real image assets (logos, event flyers, sponsor logos, photos) int
 ```javascript
 <Image 
   src="/images/events/event-photo-2.png"
-  alt="Beats on the Beltline Festival"
+  alt="Beats on the Block Festival"
   width={1920}
   height={1080}
   className="object-cover w-full h-full"
@@ -671,7 +671,7 @@ The use of Next.js Image component ensures automatic optimization, responsive si
 - Clear path for optimization
 
 **Impact:**
-The homepage has transformed from a placeholder-heavy mockup to a branded, professional website that accurately represents the Beats on the Beltline festival. The real event flyers and sponsor logos add credibility and visual appeal.
+The homepage has transformed from a placeholder-heavy mockup to a branded, professional website that accurately represents the Beats on the Block festival. The real event flyers and sponsor logos add credibility and visual appeal.
 
 ---
 

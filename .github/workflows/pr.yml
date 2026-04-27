@@ -123,7 +123,7 @@ jobs:
               "id":        {"S": "'$(uuidgen)'"},
               "entity":    {"S": "CARD"},
               "sortOrder": {"N": "1"},
-              "title":     {"S": "Beats on the Beltline"},
+              "title":     {"S": "Beats on the Block"},
               "subtitle":  {"S": "PR Environment"},
               "linkUrl":   {"S": "/events"},
               "visible":   {"BOOL": true},

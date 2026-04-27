@@ -1,6 +1,6 @@
 # E2E Testing Reference
 
-Playwright end-to-end tests for Connect Atlanta / Beats on the Beltline.
+Playwright end-to-end tests for Connect Atlanta / Beats on the Block.
 
 ## Test Suites
 
@@ -17,7 +17,7 @@ Both suites are semantically separate so regression can grow independently while
 
 | Route | Assertion |
 |---|---|
-| `/` | `"Home of Beats on the Beltline"` heading visible |
+| `/` | `"Home of Beats on the Block"` heading visible |
 | `/events` | `"Events"` heading visible |
 | `/join` | `"Join Us"` heading visible |
 | `/contact` | `"Contact Us"` heading visible |

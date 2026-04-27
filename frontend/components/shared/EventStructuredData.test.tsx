@@ -67,8 +67,8 @@ describe('defaults', () => {
 
 describe('custom props', () => {
   it('uses the provided name', () => {
-    render(<EventStructuredData name="Beats on the Beltline 2026" />)
-    expect(getParsed().name).toBe('Beats on the Beltline 2026')
+    render(<EventStructuredData name="Beats on the Block 2026" />)
+    expect(getParsed().name).toBe('Beats on the Block 2026')
   })
 
   it('uses the provided description', () => {

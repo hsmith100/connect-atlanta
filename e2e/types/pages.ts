@@ -5,7 +5,7 @@ export interface Page {
 }
 
 export const CORE_PAGES: Page[] = [
-  { route: '/', heading: 'Home of Beats on the Beltline', headingDesktopOnly: true },
+  { route: '/', heading: 'Home of Beats on the Block', headingDesktopOnly: true },
   { route: '/events', heading: 'Events' },
   { route: '/join', heading: 'Join Us' },
   { route: '/contact', heading: 'Contact Us' },

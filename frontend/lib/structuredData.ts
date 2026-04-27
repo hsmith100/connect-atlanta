@@ -10,7 +10,7 @@ export const organizationSchema = {
   "legalName": "Connect Events, Inc.",
   "url": "https://connectevents.co",
   "logo": "https://connectevents.co/images/ConnectLogoBIG-Black.svg",
-  "description": "Atlanta's premier FREE outdoor electronic music festival producer. We create unforgettable daytime experiences on the Atlanta BeltLine through our Beats on the Beltline event series.",
+  "description": "Atlanta's premier FREE outdoor electronic music festival producer. We create unforgettable daytime experiences on the Atlanta BeltLine through our Beats on the Block event series.",
   "address": {
     "@type": "PostalAddress",
     "addressLocality": "Atlanta",
@@ -39,7 +39,7 @@ export const organizationSchema = {
 export const eventSeriesSchema = {
   "@context": "https://schema.org",
   "@type": "EventSeries",
-  "name": "Beats on the Beltline",
+  "name": "Beats on the Block",
   "description": "Atlanta's premier FREE outdoor electronic music festival series. Experience world-class DJs, food vendors, and community vibes on the iconic Atlanta BeltLine.",
   "url": "https://connectevents.co/events",
   "organizer": {
@@ -86,7 +86,7 @@ export function createEventSchema(event: StructuredDataEvent): object {
     "@context": "https://schema.org",
     "@type": "MusicEvent",
     "name": event.title,
-    "description": event.description || `Join us for ${event.title} - part of the Beats on the Beltline series featuring world-class DJs and amazing vibes on the Atlanta BeltLine.`,
+    "description": event.description || `Join us for ${event.title} - part of the Beats on the Block series featuring world-class DJs and amazing vibes on the Atlanta BeltLine.`,
     "startDate": event.date,
     "endDate": event.endDate || event.date,
     "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
@@ -147,7 +147,7 @@ export const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   "name": "Connect Events",
-  "alternateName": "Beats on the Beltline",
+  "alternateName": "Beats on the Block",
   "url": "https://connectevents.co",
   "description": "Atlanta's premier FREE outdoor electronic music festival",
   "publisher": {
@@ -213,23 +213,23 @@ export const faqSchema = {
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "Is Beats on the Beltline free?",
+      "name": "Is Beats on the Block free?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Yes! Beats on the Beltline is completely FREE to attend. It's a community event on the public Atlanta BeltLine with no tickets or admission fees required."
+        "text": "Yes! Beats on the Block is completely FREE to attend. It's a community event on the public Atlanta BeltLine with no tickets or admission fees required."
       }
     },
     {
       "@type": "Question",
-      "name": "Where is Beats on the Beltline located?",
+      "name": "Where is Beats on the Block located?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "Beats on the Beltline takes place on the Atlanta BeltLine in various locations around Atlanta, Georgia. Specific locations are announced for each event."
+        "text": "Beats on the Block takes place on the Atlanta BeltLine in various locations around Atlanta, Georgia. Specific locations are announced for each event."
       }
     },
     {
       "@type": "Question",
-      "name": "What kind of music is played at Beats on the Beltline?",
+      "name": "What kind of music is played at Beats on the Block?",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "We feature electronic dance music (EDM) including house, techno, deep house, and more. Our events showcase both established and up-and-coming DJs from the Atlanta electronic music scene."
@@ -237,7 +237,7 @@ export const faqSchema = {
     },
     {
       "@type": "Question",
-      "name": "Can I bring my kids to Beats on the Beltline?",
+      "name": "Can I bring my kids to Beats on the Block?",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "Yes! The event is all ages. However, attendees under 18 must be accompanied by a parent or legal guardian."
@@ -245,7 +245,7 @@ export const faqSchema = {
     },
     {
       "@type": "Question",
-      "name": "How do I apply to DJ at Beats on the Beltline?",
+      "name": "How do I apply to DJ at Beats on the Block?",
       "acceptedAnswer": {
         "@type": "Answer",
         "text": "DJs can apply through our website at connectevents.co/join. We review all applications and select performers based on their experience, style, and fit with our community-focused events."

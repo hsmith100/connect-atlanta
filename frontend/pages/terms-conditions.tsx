@@ -7,7 +7,7 @@ export default function TermsConditions() {
     <>
       <SEO 
         title="Terms & Conditions"
-        description="Terms and conditions for using the Connect Events website and attending Beats on the Beltline events."
+        description="Terms and conditions for using the Connect Events website and attending Beats on the Block events."
         canonicalUrl="https://connectevents.co/terms-conditions"
       />
       
@@ -33,7 +33,7 @@ export default function TermsConditions() {
               
               <h2 className="text-2xl font-bold text-brand-header mt-8 mb-4">1. Agreement to Terms</h2>
               <p className="text-brand-text mb-4">
-                By accessing or using the website connectevents.co ("Website") or attending Beats on the Beltline events ("Events") operated by Connect Events, Inc. ("we," "our," or "us"), you agree to be bound by these Terms and Conditions ("Terms"). If you do not agree to these Terms, please do not use our Website or attend our Events.
+                By accessing or using the website connectevents.co ("Website") or attending Beats on the Block events ("Events") operated by Connect Events, Inc. ("we," "our," or "us"), you agree to be bound by these Terms and Conditions ("Terms"). If you do not agree to these Terms, please do not use our Website or attend our Events.
               </p>
 
               <h2 className="text-2xl font-bold text-brand-header mt-8 mb-4">2. Website Use</h2>
@@ -61,7 +61,7 @@ export default function TermsConditions() {
 
               <h3 className="text-xl font-bold text-brand-header mt-6 mb-3">3.1 General Admission</h3>
               <p className="text-brand-text mb-4">
-                Beats on the Beltline is a FREE public event held on the Atlanta BeltLine. Attendance is open to all ages, but attendees under 18 must be accompanied by a parent or legal guardian.
+                Beats on the Block is a FREE public event held on the Atlanta BeltLine. Attendance is open to all ages, but attendees under 18 must be accompanied by a parent or legal guardian.
               </p>
 
               <h3 className="text-xl font-bold text-brand-header mt-6 mb-3">3.2 Assumption of Risk</h3>
@@ -274,7 +274,7 @@ export default function TermsConditions() {
 
               <div className="mt-8 p-6 bg-brand-primary/10 rounded-lg border-2 border-brand-primary/30">
                 <p className="text-sm text-brand-text">
-                  <strong>Acknowledgment:</strong> By using this Website or attending Beats on the Beltline events, you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions.
+                  <strong>Acknowledgment:</strong> By using this Website or attending Beats on the Block events, you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions.
                 </p>
               </div>
 

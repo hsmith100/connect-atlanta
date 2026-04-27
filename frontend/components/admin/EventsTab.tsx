@@ -204,7 +204,7 @@ export function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
             <h3 className="text-white font-semibold">{editingEventId ? 'Edit Event' : 'New Event'}</h3>
             <div>
               <label className="block text-xs text-gray-400 mb-1">Title *</label>
-              <input type="text" value={newEvent.title} onChange={(e) => setNewEvent((p) => ({ ...p, title: e.target.value }))} placeholder="Beats on the Beltline" className={inputCls} />
+              <input type="text" value={newEvent.title} onChange={(e) => setNewEvent((p) => ({ ...p, title: e.target.value }))} placeholder="Beats on the Block" className={inputCls} />
             </div>
             <div>
               <label className="block text-xs text-gray-400 mb-1">Event Date *</label>

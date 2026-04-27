@@ -11,7 +11,7 @@ jest.mock('next/image', () => ({
 const BASE_EVENT: Event = {
   id: 'ev-1',
   entity: 'EVENT',
-  title: 'Beats on the Beltline',
+  title: 'Beats on the Block',
   date: '2026-06-15',
   startTime: '18:00',
   endTime: '22:00',
@@ -25,7 +25,7 @@ const BASE_EVENT: Event = {
 
 it('renders the event flyer image with event title as alt', () => {
   render(<EventFlyerCard event={BASE_EVENT} />)
-  const img = screen.getByAltText('Beats on the Beltline')
+  const img = screen.getByAltText('Beats on the Block')
   expect(img).toBeInTheDocument()
   expect(img).toHaveAttribute('src', 'https://example.com/flyer.jpg')
 })
@@ -33,7 +33,7 @@ it('renders the event flyer image with event title as alt', () => {
 it('calls onClick when the card is clicked', () => {
   const onClick = jest.fn()
   render(<EventFlyerCard event={BASE_EVENT} onClick={onClick} />)
-  fireEvent.click(screen.getByAltText('Beats on the Beltline').closest('div')!)
+  fireEvent.click(screen.getByAltText('Beats on the Block').closest('div')!)
   expect(onClick).toHaveBeenCalledTimes(1)
 })
 

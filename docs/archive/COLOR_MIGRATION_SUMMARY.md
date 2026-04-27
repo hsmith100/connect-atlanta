@@ -2,7 +2,7 @@
 
 ## Date: December 11, 2025
 
-Major brand direction change: from Beats on the Beltline-focused to Connect-focused branding.
+Major brand direction change: from Beats on the Block-focused to Connect-focused branding.
 
 ---
 
@@ -11,13 +11,13 @@ Major brand direction change: from Beats on the Beltline-focused to Connect-focu
 ### 1. **Brand Strategy Shift**
 
 #### Before:
-- Site branded around Beats on the Beltline
+- Site branded around Beats on the Block
 - Purple/pink/rainbow color scheme
 - Festival-first approach
 
 #### After:
 - Site branded around **Connect** (parent organization)
-- **Beats on the Beltline is a product/offering of Connect**
+- **Beats on the Block is a product/offering of Connect**
 - Gold + warm neutrals color scheme
 - Professional, sophisticated approach
 - Festival imagery provides the vibrant colors
@@ -177,7 +177,7 @@ brand-bg-dark        → #2C2C2C (charcoal)
 ### 4. **Brand Hierarchy**
 ```
 Connect (Parent Brand - Gold & Professional)
-  └── Beats on the Beltline (Product - Vibrant Imagery)
+  └── Beats on the Block (Product - Vibrant Imagery)
   └── Future Events/Products (Same Gold Brand)
 ```
 
@@ -197,7 +197,7 @@ Connect (Parent Brand - Gold & Professional)
 
 ### Content Updates Needed:
 1. Update homepage to emphasize Connect brand
-2. Beats on the Beltline becomes "featured event/product"
+2. Beats on the Block becomes "featured event/product"
 3. Consider "Our Events" section vs single event focus
 4. Add Connect brand messaging
 5. Update copy to reflect parent brand
@@ -226,7 +226,7 @@ Connect (Parent Brand - Gold & Professional)
 ### Brand Focus
 | Aspect | Before | After |
 |--------|--------|-------|
-| **Primary Brand** | Beats on the Beltline | Connect |
+| **Primary Brand** | Beats on the Block | Connect |
 | **Color Source** | Site background/design | Event imagery |
 | **Aesthetic** | Colorful, energetic | Clean, sophisticated |
 | **Target Feel** | Festival-focused | Professional org with exciting events |
@@ -242,10 +242,10 @@ The rebrand is successful when:
 - [ ] Festival imagery provides the vibrant color
 - [ ] All text is highly readable (high contrast)
 - [ ] Warm neutrals create sophisticated feel
-- [ ] Beats on the Beltline is clearly a Connect product
+- [ ] Beats on the Block is clearly a Connect product
 - [ ] Brand is scalable for future Connect events
 
 ---
 
-**Design Philosophy**: Connect is the premium parent brand (represented by gold and professional design), while Beats on the Beltline and future events are exciting products/offerings that provide natural vibrancy through their imagery. The website should be clean, sophisticated, and let the festival content shine.
+**Design Philosophy**: Connect is the premium parent brand (represented by gold and professional design), while Beats on the Block and future events are exciting products/offerings that provide natural vibrancy through their imagery. The website should be clean, sophisticated, and let the festival content shine.
 

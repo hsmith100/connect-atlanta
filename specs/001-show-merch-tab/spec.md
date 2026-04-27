@@ -17,7 +17,7 @@
 
 ### User Story 1 - Find Merch from Navigation (Priority: P1)
 
-A visitor on any page of the Connect Atlanta site wants to browse and buy official Beats on the Beltline merchandise. They look for a "Merch" link in the site navigation, click it, and are taken to a page that directs them to the current store.
+A visitor on any page of the Connect Atlanta site wants to browse and buy official Beats on the Block merchandise. They look for a "Merch" link in the site navigation, click it, and are taken to a page that directs them to the current store.
 
 **Why this priority**: The navigation tab is the primary entry point. Without it, the merch page is unreachable for most visitors. Restoring it immediately enables merch discovery and sales.
 
@@ -33,7 +33,7 @@ A visitor on any page of the Connect Atlanta site wants to browse and buy offici
 
 ### User Story 2 - Browse and Buy Current Merch (Priority: P1)
 
-A visitor lands on the `/merch` page and sees a product card grid showing current Beats on the Beltline merchandise — with images, names, and prices. They click a card and are taken directly to that product's page on Bonfire to complete the purchase.
+A visitor lands on the `/merch` page and sees a product card grid showing current Beats on the Block merchandise — with images, names, and prices. They click a card and are taken directly to that product's page on Bonfire to complete the purchase.
 
 **Why this priority**: Displaying stale Fourthwall links was the original reason the tab was hidden. The product grid gives visitors a reason to engage before leaving the site and drives higher conversion than a generic CTA alone.
 

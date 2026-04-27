@@ -27,7 +27,7 @@ exports[`matches snapshot 1`] = `
           <summary
             class="flex cursor-pointer list-none items-center justify-between px-4 py-4 text-xl font-bold text-brand-header"
           >
-            How can I perform at Beats on the Beltline?
+            How can I perform at Beats on the Block?
             <span
               class="ml-4 text-brand-primary transition-transform duration-200 group-open:rotate-45"
             >

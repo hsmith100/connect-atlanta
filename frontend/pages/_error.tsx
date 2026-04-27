@@ -12,7 +12,7 @@ export default function Error({ statusCode }: ErrorProps) {
   return (
     <>
       <SEO
-        title={`${statusCode ?? 'Error'} | Beats on the Beltline`}
+        title={`${statusCode ?? 'Error'} | Beats on the Block`}
         description="Something went wrong."
       />
       <Header />

@@ -1,6 +1,6 @@
 # Custom Fonts Directory
 
-This directory contains custom font files for the Beats on the Beltline website.
+This directory contains custom font files for the Beats on the Block website.
 
 ## 📁 Directory Structure
 

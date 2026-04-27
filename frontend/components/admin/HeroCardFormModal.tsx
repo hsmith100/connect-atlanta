@@ -67,7 +67,7 @@ export function HeroCardFormModal({
             type="text"
             value={form.title}
             onChange={(e) => onChange({ title: e.target.value })}
-            placeholder="Beats on the Beltline"
+            placeholder="Beats on the Block"
             className={inputCls}
           />
         </div>

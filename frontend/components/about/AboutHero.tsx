@@ -14,13 +14,13 @@ export default function AboutHero() {
         <div className="max-w-4xl mx-auto">
           <div className="prose prose-lg max-w-none">
             <p className="text-xl text-brand-header leading-relaxed mb-6">
-              Beats on the Beltline is Atlanta's premier free one day music festival, bringing together thousands of people to celebrate community, culture, and creativity.
+              Beats on the Block is Atlanta's premier free one day music festival, bringing together thousands of people to celebrate community, culture, and creativity.
             </p>
             <p className="text-xl text-brand-header leading-relaxed mb-6">
               Set along the iconic Beltline, the southeast's heaviest foot traffic area, the event features high energy DJ performances across multiple stages, a curated lineup of local food vendors, bars, and interactive brand activations that create an unforgettable experience.
             </p>
             <p className="text-xl text-brand-header leading-relaxed">
-              Beyond the music, Beats on the Beltline is a platform for local businesses, artists, and creators to connect with a vibrant and growing audience. Approaching 10,000 attendees per event, CONNECT events provide a space that amplifies talent and gives brands a powerful way to show up in the heart of Atlanta.
+              Beyond the music, Beats on the Block is a platform for local businesses, artists, and creators to connect with a vibrant and growing audience. Approaching 10,000 attendees per event, CONNECT events provide a space that amplifies talent and gives brands a powerful way to show up in the heart of Atlanta.
             </p>
           </div>
         </div>
