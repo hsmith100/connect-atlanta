@@ -209,7 +209,7 @@ import Image from 'next/image'
 ```javascript
 <Image 
   src="/images/events/april-2024.png"
-  alt="Beats on the Beltline - April 2024"
+  alt="Beats on the Block - April 2024"
   width={1080}
   height={1080}
   className="rounded-xl"

@@ -191,7 +191,7 @@
         filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.3));
     }
 
-    /* Individual word gradients for BEATS ON THE BELTLINE */
+    /* Individual word gradients for BEATS ON THE BLOCK */
     .title-beats {
         background: linear-gradient(135deg, #FEB95F 0%, #F81889 50%, #8C52FF 100%);
         -webkit-background-clip: text;

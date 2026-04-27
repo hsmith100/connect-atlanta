@@ -1,4 +1,4 @@
-# Beats on the Beltline — Current Architecture
+# Beats on the Block — Current Architecture
 
 > This document describes the **existing** infrastructure as it was built. For the migration plan to modernize this stack, see `MIGRATION_PLAN.md`.
 >

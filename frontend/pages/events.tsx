@@ -138,8 +138,8 @@ export default function Events() {
     return (
         <>
             <SEO
-                title="Events | Beats on the Beltline"
-                description="Explore upcoming and past events from Beats on the Beltline. Join us for Atlanta's premier free outdoor electronic music experience."
+                title="Events | Beats on the Block"
+                description="Explore upcoming and past events from Beats on the Block. Join us for Atlanta's premier free outdoor electronic music experience."
                 canonicalUrl="https://yourfestival.com/events"
             />
 

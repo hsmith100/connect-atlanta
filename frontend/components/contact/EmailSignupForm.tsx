@@ -118,7 +118,7 @@ export default function EmailSignupForm() {
                 disabled={submitting} className="checkbox checkbox-primary mt-1" />
               <label htmlFor="signup-marketing-consent"
                 className="text-brand-header/80 text-sm leading-relaxed cursor-pointer">
-                I agree to receive marketing communications, event updates, and exclusive content from Beats on the Beltline. You can unsubscribe at any time.
+                I agree to receive marketing communications, event updates, and exclusive content from Beats on the Block. You can unsubscribe at any time.
               </label>
             </div>
 

@@ -41,7 +41,7 @@ This document summarizes all changes made based on client feedback from `docs/PR
 #### Content Updates
 1. **Event Gallery Card** (line 288): Added period to "Check out our vibe."
 2. **The Community Card** (line 382): Updated description to:
-   > "Local food vendors, artists, and brands come together to create an immersive festival experience. Beats on the Beltline is a celebration of Atlanta's creative spirit."
+   > "Local food vendors, artists, and brands come together to create an immersive festival experience. Beats on the Block is a celebration of Atlanta's creative spirit."
 3. **Let's Connect Section** (line 519): Updated text to:
    > "Stay updated on upcoming events, lineup announcements, giveaways, and exclusive content."
 

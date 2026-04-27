@@ -31,7 +31,7 @@ Google Analytics 4 (GA4) has been integrated into the Connect Events website to 
 3. Click **Admin** (gear icon in bottom left)
 4. Under "Property" column, click **Create Property**
 5. Fill in:
-   - **Property name**: Connect Events - Beats on the Beltline
+   - **Property name**: Connect Events - Beats on the Block
    - **Reporting time zone**: (GMT-05:00) Eastern Time
    - **Currency**: USD - US Dollar
 6. Click **Next**

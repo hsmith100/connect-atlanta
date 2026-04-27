@@ -292,7 +292,7 @@ Successfully created a comprehensive Join Us page with:
 - ✅ Responsive layouts
 - ✅ No compilation or linting errors
 
-The page provides a professional, user-friendly way for artists and vendors to apply to participate in Beats on the Beltline, with clear value propositions and comprehensive form fields to collect necessary information.
+The page provides a professional, user-friendly way for artists and vendors to apply to participate in Beats on the Block, with clear value propositions and comprehensive form fields to collect necessary information.
 
 Forms are ready for backend integration when needed.
 

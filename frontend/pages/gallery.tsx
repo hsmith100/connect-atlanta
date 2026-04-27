@@ -41,8 +41,8 @@ export default function Gallery() {
   return (
     <>
       <SEO
-        title="Event Gallery | Beats on the Beltline"
-        description="Check out our vibe! Browse photos from Beats on the Beltline events."
+        title="Event Gallery | Beats on the Block"
+        description="Check out our vibe! Browse photos from Beats on the Block events."
         canonicalUrl="https://yourfestival.com/gallery"
       />
 

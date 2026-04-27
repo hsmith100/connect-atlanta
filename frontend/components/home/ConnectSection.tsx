@@ -72,7 +72,7 @@ export default function ConnectSection() {
 
         <div className="max-w-3xl mx-auto space-y-6 mb-12">
           <p className="text-xl leading-relaxed text-brand-header">
-            Be part of Atlanta's most vibrant music community. Whether you're a DJ, artist, vendor, or music lover, there's a place for you at Beats on the Beltline.
+            Be part of Atlanta's most vibrant music community. Whether you're a DJ, artist, vendor, or music lover, there's a place for you at Beats on the Block.
           </p>
           <p className="text-lg leading-relaxed text-brand-header/70">
             Stay updated on upcoming events, lineup announcements, giveaways, and exclusive content.
@@ -153,7 +153,7 @@ export default function ConnectSection() {
                 className="checkbox checkbox-primary mt-1"
               />
               <label htmlFor="marketing-consent" className="text-brand-header/80 text-sm leading-relaxed cursor-pointer">
-                I agree to receive marketing communications, event updates, and exclusive content from Beats on the Beltline. You can unsubscribe at any time.
+                I agree to receive marketing communications, event updates, and exclusive content from Beats on the Block. You can unsubscribe at any time.
               </label>
             </div>
 

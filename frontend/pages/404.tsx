@@ -7,7 +7,7 @@ export default function NotFound() {
   return (
     <>
       <SEO
-        title="404 | Beats on the Beltline"
+        title="404 | Beats on the Block"
         description="Page not found."
       />
       <Header />

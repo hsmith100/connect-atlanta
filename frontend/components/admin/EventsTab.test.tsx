@@ -26,7 +26,7 @@ const adminKey = 'test-key';
 const sampleEvent: Event = {
   id: 'ev-1',
   entity: 'EVENT',
-  title: 'Beats on the Beltline',
+  title: 'Beats on the Block',
   date: '2026-06-15',
   startTime: '18:00',
   endTime: '22:00',
@@ -82,7 +82,7 @@ describe('form validation', () => {
     const saveBtn = screen.getByRole('button', { name: /create event/i });
     expect(saveBtn).toBeDisabled();
 
-    await userEvent.type(screen.getByPlaceholderText(/beats on the beltline/i), 'My Event');
+    await userEvent.type(screen.getByPlaceholderText(/beats on the block/i), 'My Event');
     expect(saveBtn).toBeDisabled(); // still missing date
 
     fireEvent.change(screen.getAllByDisplayValue('')[0], { target: { value: '2026-06-15' } });
@@ -111,7 +111,7 @@ describe('edit mode', () => {
     // Click the pencil / edit button
     await userEvent.click(screen.getByTitle('Edit event'));
 
-    expect(screen.getByDisplayValue('Beats on the Beltline')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('Beats on the Block')).toBeInTheDocument();
     expect(screen.getByDisplayValue('2026-06-15')).toBeInTheDocument();
   });
 

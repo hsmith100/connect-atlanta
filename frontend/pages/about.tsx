@@ -9,8 +9,8 @@ export default function About() {
   return (
     <>
       <SEO
-        title="About Us | Beats on the Beltline"
-        description="Learn about Atlanta's premier free outdoor electronic music experience. Discover our mission, vision, and the story behind Beats on the Beltline."
+        title="About Us | Beats on the Block"
+        description="Learn about Atlanta's premier free outdoor electronic music experience. Discover our mission, vision, and the story behind Beats on the Block."
         canonicalUrl="https://yourfestival.com/about"
       />
 

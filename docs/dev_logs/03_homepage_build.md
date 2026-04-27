@@ -1,15 +1,15 @@
-# Dev Log 03: Homepage Build - Beats on the Beltline
+# Dev Log 03: Homepage Build - Beats on the Block
 
 **Date:** November 6, 2025  
 **Developer:** Jason (with AI assistance)  
-**Project:** Connect - Beats on the Beltline Website  
+**Project:** Connect - Beats on the Block Website  
 **Status:** ✅ Complete
 
 ---
 
 ## 🎯 Objective
 
-Build the complete homepage for the Beats on the Beltline festival website based on a provided wireframe, implementing all sections with the custom design system and brand colors while maintaining responsive, accessible, and SEO-optimized code.
+Build the complete homepage for the Beats on the Block festival website based on a provided wireframe, implementing all sections with the custom design system and brand colors while maintaining responsive, accessible, and SEO-optimized code.
 
 ---
 
@@ -221,7 +221,7 @@ className="bg-brand-header/95 backdrop-blur-sm fixed w-full top-0 z-50"
 - Square aspect ratio placeholder (gradient background)
 - "FREE" badge (secondary color, positioned top-right)
 - Large month text in center (primary color, 30% opacity)
-- Event title: "Beats on the Beltline"
+- Event title: "Beats on the Block"
 - Description placeholder
 - "Learn More" outline button
 
@@ -360,9 +360,9 @@ className="bg-brand-header/95 backdrop-blur-sm fixed w-full top-0 z-50"
 
 ```javascript
 <SEO 
-  title="Beats on the Beltline | Atlanta's Premier Free Outdoor Electronic Music Experience"
+  title="Beats on the Block | Atlanta's Premier Free Outdoor Electronic Music Experience"
   description="Atlanta's premier free outdoor electronic music festival. Join 5,000-10,000 attendees for world-class DJs, local vendors, and community vibes along the BeltLine."
-  keywords="beats on the beltline, atlanta music festival, beltline, electronic music, free festival, atlanta edm, house music, techno"
+  keywords="beats on the block, atlanta music festival, beltline, electronic music, free festival, atlanta edm, house music, techno"
   canonicalUrl="http://localhost:3000"
 />
 ```
@@ -725,7 +725,7 @@ docker-compose logs frontend | grep -i "error"
 **Check:** View page source for meta tags
 
 **Verified Present:**
-- Title tag: "Beats on the Beltline | Atlanta's Premier..."
+- Title tag: "Beats on the Block | Atlanta's Premier..."
 - Meta description
 - Keywords
 - Canonical URL
@@ -883,7 +883,7 @@ className="bg-brand-header/95 backdrop-blur-sm"
 ```javascript
 <Image
   src="/images/events/april-2024.jpg"
-  alt="Beats on the Beltline April 2024"
+  alt="Beats on the Block April 2024"
   width={1080}
   height={1080}
   className="rounded-xl"
@@ -1162,7 +1162,7 @@ className="bg-brand-header/95 backdrop-blur-sm"
 
 ## 🎯 Conclusion
 
-The Beats on the Beltline homepage is now fully structured and styled, matching the provided wireframe while leveraging the custom design system and brand colors. All 8 major sections are implemented with responsive design, accessibility considerations, and SEO optimization.
+The Beats on the Block homepage is now fully structured and styled, matching the provided wireframe while leveraging the custom design system and brand colors. All 8 major sections are implemented with responsive design, accessibility considerations, and SEO optimization.
 
 The homepage successfully captures the festival's vibrant, energetic aesthetic through animated gradients, bold typography, and thoughtful use of brand colors (purple, cyan, pink, peach). The component-based architecture ensures maintainability and scalability as the site grows.
 

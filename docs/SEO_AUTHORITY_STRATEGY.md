@@ -1,8 +1,8 @@
-# SEO Authority Strategy: Becoming THE Source for "Beats on the Beltline"
+# SEO Authority Strategy: Becoming THE Source for "Beats on the Block"
 
 ## Current Status
-- ✅ Site ranks for "connectevents beats on the beltline"
-- ⏳ Need to rank #1 for "beats on the beltline" (shorter, more common search)
+- ✅ Site ranks for "connectevents beats on the block"
+- ⏳ Need to rank #1 for "beats on the block" (shorter, more common search)
 - ⏳ Need to rank for related terms: "atlanta beltline music festival", "free edm atlanta", etc.
 
 ## Timeline to Become THE Authority
@@ -30,7 +30,7 @@
 
 ### Phase 3: Brand Authority (Weeks 4-8)
 **Expected: By mid-March 2026**
-- Rank #1 for "Beats on the Beltline"
+- Rank #1 for "Beats on the Block"
 - Rank in top 3 for "Atlanta BeltLine events"
 - Google Knowledge Panel consideration begins
 - Site appears in "People also search for"
@@ -57,11 +57,11 @@
 ## How Google Determines "Official" Authority
 
 ### 1. Entity Recognition (Most Important!)
-Google needs to understand that **Connect Events IS Beats on the Beltline**
+Google needs to understand that **Connect Events IS Beats on the Block**
 
 **Current signals you're sending:**
 - ✅ Structured data with Organization schema
-- ✅ EventSeries schema for Beats on the Beltline
+- ✅ EventSeries schema for Beats on the Block
 - ✅ Consistent branding (logo, name)
 - ✅ Domain matches brand
 
@@ -95,7 +95,7 @@ Google needs to understand that **Connect Events IS Beats on the Beltline**
 - [ ] DJ/artist social media posts
 
 ### 3. Brand Signals
-**Mentions of "Beats on the Beltline" across the web, even without links**
+**Mentions of "Beats on the Block" across the web, even without links**
 
 Google tracks:
 - Social media posts mentioning your event
@@ -105,7 +105,7 @@ Google tracks:
 - YouTube videos about your events
 
 **Action items:**
-- Ask DJs to tag/mention "Beats on the Beltline" in posts
+- Ask DJs to tag/mention "Beats on the Block" in posts
 - Encourage attendees to share with event name
 - Get local influencers to mention the event
 - Submit press releases to local media
@@ -139,7 +139,7 @@ Good signals:
 **Format to use everywhere:**
 ```
 Connect Events
-Beats on the Beltline
+Beats on the Block
 [Physical address if applicable]
 [Business phone]
 https://connectevents.co
@@ -157,7 +157,7 @@ info@connectevents.co
    - Business name: Connect Events
    - Category: Event Planner, Festival, Concert Hall
    - Website: https://connectevents.co
-   - Description: Mention "Beats on the Beltline"
+   - Description: Mention "Beats on the Block"
    - Photos from your events
    - Upcoming event dates
 4. Verify the business
@@ -200,7 +200,7 @@ info@connectevents.co
 - Meetup.com
 
 **Include in each listing:**
-- Event name: "Beats on the Beltline"
+- Event name: "Beats on the Block"
 - Link: https://connectevents.co
 - Description mentioning it's the official event site
 
@@ -209,7 +209,7 @@ info@connectevents.co
 
 **Create a press release for your next event:**
 ```
-Title: "Connect Events Announces [Month] 2026 Beats on the Beltline Festival"
+Title: "Connect Events Announces [Month] 2026 Beats on the Block Festival"
 Subtitle: "Free outdoor EDM festival returns to Atlanta BeltLine with 30+ DJs"
 ```
 
@@ -232,7 +232,7 @@ Subtitle: "Free outdoor EDM festival returns to Atlanta BeltLine with 30+ DJs"
 **Strategy:**
 - Every DJ who performs → Ask them to post and link to your site
 - Create shareable content (event recaps, DJ spotlights)
-- Use consistent hashtags: #BeatsontheBeltline #ConnectEvents
+- Use consistent hashtags: #BeatsontheBlock #ConnectEvents
 - Tag Atlanta BeltLine in posts
 - Collaborate with local EDM pages for shoutouts
 
@@ -240,11 +240,11 @@ Subtitle: "Free outdoor EDM festival returns to Atlanta BeltLine with 30+ DJs"
 **Impact: Medium | Effort: 2 hours**
 
 **Claim profiles on:**
-- [ ] Instagram: @beatsonthebeltline (if available)
-- [ ] Facebook: /beatsonthebeltline
-- [ ] Twitter/X: @beatsbeltline
-- [ ] TikTok: @beatsonthebeltline
-- [ ] YouTube: Beats on the Beltline
+- [ ] Instagram: @beatsontheblock (if available)
+- [ ] Facebook: /beatsontheblock
+- [ ] Twitter/X: @beatsontheblock
+- [ ] TikTok: @beatsontheblock
+- [ ] YouTube: Beats on the Block
 - [ ] LinkedIn: Connect Events company page
 - [ ] Bandsintown: Connect Events organizer
 - [ ] Resident Advisor: Connect Events promoter
@@ -277,7 +277,7 @@ Submit to top 10 local event calendars
 - ⏳ Awaiting brand signals
 
 ### Week 4-6 (Late February - Early March)
-- 🎯 Rank #1 for "Beats on the Beltline" (if you do the above)
+- 🎯 Rank #1 for "Beats on the Block" (if you do the above)
 - 🎯 Appear in local event searches
 - 🎯 Google Business Profile verified and live
 
@@ -289,7 +289,7 @@ Submit to top 10 local event calendars
 
 ### Month 3-6 (April - June)
 - 🎯 Knowledge Panel live
-- 🎯 Dominate all "Beats on the Beltline" searches
+- 🎯 Dominate all "Beats on the Block" searches
 - 🎯 Appear in "Things to do in Atlanta" searches
 - 🎯 Site authority score improves
 
@@ -298,17 +298,17 @@ Submit to top 10 local event calendars
 ### Weekly Checks:
 1. Google Search Console:
    - Check "Performance" tab for keyword rankings
-   - Monitor impressions for "Beats on the Beltline"
+   - Monitor impressions for "Beats on the Block"
    - Track average position
 
 2. Manual Search Tests:
-   - Search "Beats on the Beltline" (logged out, incognito)
+   - Search "Beats on the Block" (logged out, incognito)
    - Search "Atlanta BeltLine music festival"
    - Search "free EDM Atlanta"
    - Check position weekly
 
 3. Brand Monitoring:
-   - Google Alerts for "Beats on the Beltline"
+   - Google Alerts for "Beats on the Block"
    - Track mentions across social media
    - Monitor backlinks (use free tools like Ubersuggest)
 
@@ -346,7 +346,7 @@ This single link will:
 ## Bottom Line
 
 **Realistic Timeline:**
-- **4-6 weeks** to rank #1 for "Beats on the Beltline" (if you execute above strategies)
+- **4-6 weeks** to rank #1 for "Beats on the Block" (if you execute above strategies)
 - **8-12 weeks** to become THE authority with Knowledge Panel and category rankings
 - **6 months** for full SEO maturity and dominance
 

@@ -34,8 +34,8 @@ export default function JoinUs() {
   return (
     <>
       <SEO
-        title="Join Us | Beats on the Beltline"
-        description="Join Beats on the Beltline as a volunteer, vendor, or DJ. Be part of Atlanta's premier free outdoor electronic music experience."
+        title="Join Us | Beats on the Block"
+        description="Join Beats on the Block as a volunteer, vendor, or DJ. Be part of Atlanta's premier free outdoor electronic music experience."
         canonicalUrl="https://yourfestival.com/join"
       />
 
@@ -51,10 +51,7 @@ export default function JoinUs() {
               </h1>
               <div className="text-center mb-2">
                 <p className="text-2xl md:text-3xl text-brand-text font-bold">
-                  Be a part of the next BOTB on
-                </p>
-                <p className="text-2xl md:text-3xl text-brand-text font-bold mt-1">
-                  April 25, 2026 · 2pm at Historic Old Fourth Ward Skatepark Field
+                  Be a part of the next Beats on the Block
                 </p>
               </div>
             </div>

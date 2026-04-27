@@ -2,7 +2,7 @@
   {
     "id": "april-2026",
     "entity": "EVENT",
-    "title": "Beats on the Beltline",
+    "title": "Beats on the Block",
     "date": "2026-04-25",
     "startTime": "14:00",
     "endTime": "22:00",
@@ -12,7 +12,7 @@
   {
     "id": "april-2025",
     "entity": "EVENT",
-    "title": "Beats on the Beltline - April 2025",
+    "title": "Beats on the Block - April 2025",
     "date": "2025-04-05",
     "location": "Atlanta Beltline",
     "description": "Kicking off Season 2 with a bang",
@@ -23,7 +23,7 @@
   {
     "id": "may-2025",
     "entity": "EVENT",
-    "title": "Beats on the Beltline - May 2025",
+    "title": "Beats on the Block - May 2025",
     "date": "2025-05-24",
     "location": "Atlanta Beltline",
     "description": "Spring vibes continue with an extra episode",
@@ -34,7 +34,7 @@
   {
     "id": "may-2025-afterparty",
     "entity": "EVENT",
-    "title": "Beats on the Beltline - May 2025 Afterparty",
+    "title": "Beats on the Block - May 2025 Afterparty",
     "date": "2025-05-24",
     "location": "Atlanta",
     "description": "Keep the party going after the Beltline",
@@ -43,7 +43,7 @@
   {
     "id": "july-2025",
     "entity": "EVENT",
-    "title": "Beats on the Beltline - July 2025",
+    "title": "Beats on the Block - July 2025",
     "date": "2025-07-12",
     "location": "Atlanta Beltline",
     "description": "Summer vibes and amazing music on the Beltline",
@@ -54,7 +54,7 @@
   {
     "id": "july-2025-afterparty",
     "entity": "EVENT",
-    "title": "Beats on the Beltline - July 2025 Afterparty",
+    "title": "Beats on the Block - July 2025 Afterparty",
     "date": "2025-07-12",
     "location": "Atlanta",
     "description": "Keep the energy going after the Beltline",
@@ -63,7 +63,7 @@
   {
     "id": "september-2025",
     "entity": "EVENT",
-    "title": "Beats on the Beltline - September 2025",
+    "title": "Beats on the Block - September 2025",
     "date": "2025-09-06",
     "location": "Atlanta Beltline",
     "description": "The biggest episode yet with incredible energy and performances",
@@ -74,7 +74,7 @@
   {
     "id": "september-2025-afterparty-1",
     "entity": "EVENT",
-    "title": "Beats on the Beltline - September 2025 Afterparty",
+    "title": "Beats on the Block - September 2025 Afterparty",
     "date": "2025-09-06",
     "location": "Atlanta",
     "description": "The night continues",
@@ -83,7 +83,7 @@
   {
     "id": "september-2025-afterparty-2",
     "entity": "EVENT",
-    "title": "Beats on the Beltline - September 2025 Afterparty 2",
+    "title": "Beats on the Block - September 2025 Afterparty 2",
     "date": "2025-09-06",
     "location": "Atlanta",
     "description": "Keep dancing",

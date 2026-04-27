@@ -68,7 +68,7 @@ export default function ExperienceSection() {
             <div className="p-8">
               <h3 className="text-2xl font-bold text-brand-header mb-4">The Community</h3>
               <p className="text-brand-header/80 leading-relaxed">
-                Local food vendors, artists, and brands come together to create an immersive festival experience. Beats on the Beltline is a celebration of Atlanta's creative spirit.
+                Local food vendors, artists, and brands come together to create an immersive festival experience. Beats on the Block is a celebration of Atlanta's creative spirit.
               </p>
             </div>
           </div>

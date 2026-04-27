@@ -135,7 +135,7 @@ export default function HeroSection({
             />
           </div>
           <h1 className="font-slogan text-3xl md:text-4xl lg:text-5xl text-brand-text tracking-wider uppercase mb-4">
-            Home of Beats on the Beltline
+            Home of Beats on the Block
           </h1>
         </div>
 

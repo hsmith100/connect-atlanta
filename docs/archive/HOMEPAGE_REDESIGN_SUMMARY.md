@@ -11,7 +11,7 @@ This document summarizes the major homepage redesign and site-wide color updates
 ### 1. **New Hero Section with Card Layout**
 
 #### Removed:
-- Large "BEATS ON THE BELTLINE" title text
+- Large "BEATS ON THE BLOCK" title text
 - Video player with embedded YouTube video
 - Background image with colorful overlays
 - Single CTA button
@@ -19,10 +19,10 @@ This document summarizes the major homepage redesign and site-wide color updates
 #### Added:
 **Hero Cards Component** - 3 prominent cards in a responsive grid:
 
-1. **Beats on the Beltline Card (Featured - 2 columns wide)**
+1. **Beats on the Block Card (Featured - 2 columns wide)**
    - Image background (DSC06906.jpg)
    - Headphones icon
-   - Title: "Beats on the Beltline"
+   - Title: "Beats on the Block"
    - Description: "Come see our main event of the year that is totally free"
    - CTA Button: "Free Sign Up" (opens signup modal)
    - Hover effect: Image scales up
@@ -167,7 +167,7 @@ This document summarizes the major homepage redesign and site-wide color updates
 ## 🎯 NEXT STEPS
 
 ### Optional Enhancements:
-1. **Video on Hover**: Add video loop functionality to Beats on the Beltline card
+1. **Video on Hover**: Add video loop functionality to Beats on the Block card
 2. **Real Images**: Replace placeholder merch image with actual product photos
 3. **Event Photos**: Add actual event photos to Join Us card background
 4. **Gallery**: Add image gallery/slideshow to Upcoming Events section (if requested)

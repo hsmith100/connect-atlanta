@@ -5,7 +5,7 @@ Can we remove these banners from all pages so the background is like the above p
 Screen Shot 2026-01-20 at 1.38.59 PM.png
 Event Gallery card - add period to end of sentence
 pictures to add to gallery attached and at bottom of email
-The Community card - change description to "Local food vendors, artists, and brands come together to create an immersive festival experience. Beats on the Beltline is a celebration of Atlanta's creative spirit."
+The Community card - change description to "Local food vendors, artists, and brands come together to create an immersive festival experience. Beats on the Block is a celebration of Atlanta's creative spirit."
 Past Events 
 Change September flyer picture to the one attached
 Can the full flyers be shown and not cropped?

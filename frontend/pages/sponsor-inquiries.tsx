@@ -14,8 +14,8 @@ export default function SponsorInquiries() {
   return (
     <>
       <SEO
-        title="Sponsor Inquiries | Beats on the Beltline"
-        description="Interested in sponsoring Beats on the Beltline 2026? Partner with Atlanta's premier free outdoor electronic music festival reaching 5,000-10,000 attendees."
+        title="Sponsor Inquiries | Beats on the Block"
+        description="Interested in sponsoring Beats on the Block 2026? Partner with Atlanta's premier free outdoor electronic music festival reaching 5,000-10,000 attendees."
         canonicalUrl="https://connectevents.co/sponsor-inquiries"
       />
 

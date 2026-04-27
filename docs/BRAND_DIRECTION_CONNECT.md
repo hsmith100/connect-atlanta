@@ -3,8 +3,8 @@
 ## Brand Strategy Shift
 
 **Key Points:**
-- Connect is the primary brand (not Beats on the Beltline)
-- Beats on the Beltline is Connect's main product/offering
+- Connect is the primary brand (not Beats on the Block)
+- Beats on the Block is Connect's main product/offering
 - Website represents Connect's overall brand identity
 - Festival imagery provides vibrant colors naturally
 - Site should be professional, clean, with gold accents
@@ -254,7 +254,7 @@ Logo: White version
    - Connect logo prominent
    - Professional, sophisticated
 
-2. **Beats on the Beltline** (Featured Product)
+2. **Beats on the Block** (Featured Product)
    - Section on homepage
    - Dedicated page/gallery
    - Vibrant event imagery

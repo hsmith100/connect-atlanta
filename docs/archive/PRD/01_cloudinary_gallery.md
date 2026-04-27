@@ -1,6 +1,6 @@
 # PRD: Cloudinary Gallery Integration
 
-**Project:** Beats on the Beltline - Dynamic Event Gallery System  
+**Project:** Beats on the Block - Dynamic Event Gallery System  
 **Date:** November 11, 2025  
 **Status:** Planning  
 **Priority:** High  

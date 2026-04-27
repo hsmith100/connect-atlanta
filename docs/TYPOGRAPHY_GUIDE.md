@@ -122,7 +122,7 @@ Search and replace across all pages:
 ### ✅ Correct Usage
 ```jsx
 <h1 className="font-title text-5xl font-black uppercase">
-  Beats on the Beltline
+  Beats on the Block
 </h1>
 ```
 
@@ -130,7 +130,7 @@ Search and replace across all pages:
 ```jsx
 <!-- Don't use festival font on web -->
 <h1 className="font-festival text-5xl font-black uppercase">
-  Beats on the Beltline
+  Beats on the Block
 </h1>
 ```
 

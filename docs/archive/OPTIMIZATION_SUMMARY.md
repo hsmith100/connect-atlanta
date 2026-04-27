@@ -158,7 +158,7 @@
 **Schemas Created:**
 1. **Organization Schema** - Business information
 2. **Website Schema** - Site-wide data
-3. **Event Series Schema** - Beats on the Beltline series
+3. **Event Series Schema** - Beats on the Block series
 4. **Local Business Schema** - Atlanta location
 5. **FAQ Schema** - Common questions
 6. **Event Schema** (dynamic) - Individual events

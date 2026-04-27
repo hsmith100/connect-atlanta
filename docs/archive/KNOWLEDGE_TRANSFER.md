@@ -1,4 +1,4 @@
-# Beats on the Beltline — Knowledge Transfer Checklist
+# Beats on the Block — Knowledge Transfer Checklist
 
 > This document is intended to guide a handoff session with the previous developer.
 > Each item includes what is needed, why it matters, and what is lost if it cannot be recovered.

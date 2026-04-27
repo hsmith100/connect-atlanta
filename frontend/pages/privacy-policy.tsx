@@ -33,7 +33,7 @@ export default function PrivacyPolicy() {
               
               <h2 className="text-2xl font-bold text-brand-header mt-8 mb-4">1. Introduction</h2>
               <p className="text-brand-text mb-4">
-                Connect Events, Inc. ("we," "our," or "us") operates the website connectevents.co and produces the Beats on the Beltline event series. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or attend our events.
+                Connect Events, Inc. ("we," "our," or "us") operates the website connectevents.co and produces the Beats on the Block event series. This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our website or attend our events.
               </p>
               <p className="text-brand-text mb-4">
                 Please read this privacy policy carefully. If you do not agree with the terms of this privacy policy, please do not access the site.
