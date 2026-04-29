@@ -53,6 +53,34 @@ export class DnsStack extends cdk.Stack {
       values: ['v=spf1 include:_spf.google.com ~all'],
     });
 
+    // SendGrid email authentication for PeerPop marketing campaigns.
+    // These records allow receiving mail servers to verify that emails sent through
+    // PeerPop/SendGrid on behalf of connectevents.co are legitimate.
+    new route53.CnameRecord(this, 'SendGridEmailTracking', {
+      zone: this.hostedZone,
+      recordName: 'em335',
+      domainName: 'u40615086.wl087.sendgrid.net',
+    });
+
+    new route53.CnameRecord(this, 'SendGridDkimKey1', {
+      zone: this.hostedZone,
+      recordName: 's1._domainkey',
+      domainName: 's1.domainkey.u40615086.wl087.sendgrid.net',
+    });
+
+    new route53.CnameRecord(this, 'SendGridDkimKey2', {
+      zone: this.hostedZone,
+      recordName: 's2._domainkey',
+      domainName: 's2.domainkey.u40615086.wl087.sendgrid.net',
+    });
+
+    // DMARC monitoring policy — p=none means monitor only, no mail is blocked.
+    new route53.TxtRecord(this, 'DmarcRecord', {
+      zone: this.hostedZone,
+      recordName: '_dmarc',
+      values: ['v=DMARC1; p=none;'],
+    });
+
     new cdk.CfnOutput(this, 'HostedZoneId', {
       value: this.hostedZone.hostedZoneId,
       description: 'Route53 Hosted Zone ID',
