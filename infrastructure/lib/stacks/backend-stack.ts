@@ -84,6 +84,7 @@ export class BackendStack extends cdk.Stack {
       architecture: lambda.Architecture.ARM_64,
       memorySize: 256,
       timeout: cdk.Duration.seconds(15),
+      depsLockFilePath: path.join(__dirname, '../../../lambda/package-lock.json'),
       environment: {
         EVENTS_TABLE: dynamoStack.eventsTable.tableName,
       },
@@ -99,6 +100,7 @@ export class BackendStack extends cdk.Stack {
       architecture: lambda.Architecture.ARM_64,
       memorySize: 256,
       timeout: cdk.Duration.seconds(30),
+      depsLockFilePath: path.join(__dirname, '../../../lambda/package-lock.json'),
       environment: {
         EMAIL_SIGNUPS_TABLE: dynamoStack.emailSignupsTable.tableName,
         ARTIST_APPLICATIONS_TABLE: dynamoStack.artistApplicationsTable.tableName,
@@ -130,6 +132,7 @@ export class BackendStack extends cdk.Stack {
       architecture: lambda.Architecture.ARM_64,
       memorySize: 256,
       timeout: cdk.Duration.seconds(30),
+      depsLockFilePath: path.join(__dirname, '../../../lambda/package-lock.json'),
       environment: {
         PHOTOS_TABLE: dynamoStack.photosTable.tableName,
         EVENTS_TABLE: dynamoStack.eventsTable.tableName,
