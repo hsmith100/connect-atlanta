@@ -5,6 +5,12 @@
 **Status**: Draft  
 **Input**: User description: "Add SendGrid email authentication DNS records to AWS Route53 for connectevents.co to fix email marketing campaigns going to spam via PeerPop"
 
+## Clarifications
+
+### Session 2026-04-30
+
+- Q: How should US2 be reframed given that `rua=` (aggregate report delivery) is not being added to the DMARC record? → A: Reframe US2 as "Establish Email Policy Baseline" — DMARC signals a policy exists and aids authentication alignment; aggregate monitoring reports are explicitly out of scope for this deployment.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Marketing Emails Land in Inbox (Priority: P1)
@@ -23,18 +29,18 @@ The Connect Atlanta team sends an email marketing campaign through PeerPop to su
 
 ---
 
-### User Story 2 - Domain Reputation Monitoring via DMARC (Priority: P2)
+### User Story 2 - Establish Email Policy Baseline via DMARC (Priority: P2)
 
-With a DMARC record in place (policy: none/monitor), email providers send aggregate reports about who is sending mail as connectevents.co. The team gains visibility into their domain's sending reputation without immediately blocking legitimate mail.
+With a DMARC record in place (`p=none`), email receivers recognise that connectevents.co has a declared email policy and factor it into DKIM/SPF alignment scoring. The `p=none` policy is the safe baseline — it establishes the domain's policy presence without blocking any mail. Aggregate report delivery (`rua=`) is explicitly out of scope for this deployment.
 
-**Why this priority**: Monitoring mode (p=none) is the safe starting point — it collects data without risking legitimate email delivery. Once the team has confidence in the results, the policy can be tightened.
+**Why this priority**: A DMARC record strengthens the overall authentication posture established by the CNAME records — receivers treat a domain with a declared policy more favourably than one with none.
 
 **Independent Test**: Can be verified independently by confirming the DMARC TXT record resolves correctly at `_dmarc.connectevents.co` using a DNS lookup tool.
 
 **Acceptance Scenarios**:
 
 1. **Given** the DMARC record is live, **When** a DNS lookup is performed for `_dmarc.connectevents.co`, **Then** the record returns `v=DMARC1; p=none;`
-2. **Given** DMARC monitoring is active, **When** email providers process mail from connectevents.co, **Then** they can enforce and report against the DMARC policy
+2. **Given** the DMARC record is live, **When** email providers process mail from connectevents.co, **Then** they recognise a valid DMARC policy for the domain and apply DKIM/SPF alignment scoring accordingly
 
 ---
 
@@ -50,7 +56,7 @@ With a DMARC record in place (policy: none/monitor), email providers send aggreg
 
 - **FR-001**: The connectevents.co DNS configuration MUST include a CNAME record that maps the SendGrid subdomain (`em335`) to SendGrid's email link tracking domain
 - **FR-002**: The connectevents.co DNS configuration MUST include two DKIM CNAME records (`s1._domainkey` and `s2._domainkey`) that point to SendGrid's DKIM signing infrastructure, enabling cryptographic email authentication
-- **FR-003**: The connectevents.co DNS configuration MUST include a DMARC TXT record at `_dmarc.connectevents.co` with a monitoring policy (`p=none`) to establish domain-level email policy
+- **FR-003**: The connectevents.co DNS configuration MUST include a DMARC TXT record at `_dmarc.connectevents.co` with value `v=DMARC1; p=none;` to establish a domain-level email policy baseline; aggregate report delivery (`rua=`) is out of scope
 - **FR-004**: All four DNS records MUST be managed within the same infrastructure-as-code system that controls all other connectevents.co DNS records (AWS Route53), so they are version-controlled and reproducible
 - **FR-005**: After the records are live, PeerPop MUST confirm that domain authentication is verified before email campaigns are sent
 
@@ -73,5 +79,5 @@ With a DMARC record in place (policy: none/monitor), email providers send aggreg
 
 - The connectevents.co Route53 hosted zone does not currently have a `_dmarc` TXT record; if one exists it will need to be reviewed before adding
 - PeerPop uses SendGrid as its underlying email delivery infrastructure; the record values provided by the partner are correct and current
-- The initial DMARC policy of `p=none` (monitor only) is intentional — this is standard practice for first deployment and does not block any mail
+- The initial DMARC policy of `p=none` is intentional — it establishes a policy baseline without blocking any mail; aggregate report delivery (`rua=`) is not configured and is out of scope for this deployment
 - Transactional mail sent via SES (form notification emails to info@connectevents.co) uses SES-managed authentication and is unaffected by these SendGrid-specific records
