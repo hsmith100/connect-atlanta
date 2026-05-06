@@ -46,6 +46,22 @@ export class FrontendStack extends cdk.Stack {
       protocolPolicy: cloudfront.OriginProtocolPolicy.HTTPS_ONLY,
     });
 
+    // ── Shared CloudFront config — reused across both distributions ──────────
+    const apiAdditionalBehavior: Record<string, cloudfront.BehaviorOptions> = {
+      '/api/*': {
+        origin: apiOrigin,
+        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
+        allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
+        originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
+      },
+    };
+
+    const spaErrorResponses: cloudfront.ErrorResponse[] = [
+      { httpStatus: 403, responseHttpStatus: 200, responsePagePath: '/index.html', ttl: cdk.Duration.seconds(0) },
+      { httpStatus: 404, responseHttpStatus: 200, responsePagePath: '/index.html', ttl: cdk.Duration.seconds(0) },
+    ];
+
     // ── CloudFront Function — rewrite extensionless paths to .html ───────────
     // Next.js static export generates /admin.html, /gallery.html, etc.
     // Without this, /admin hits S3, gets a 403 (no such key), and falls back
@@ -114,20 +130,9 @@ function handler(event) {
           eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
         }],
       },
-      additionalBehaviors: {
-        '/api/*': {
-          origin: apiOrigin,
-          viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-          cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
-          allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
-          originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
-        },
-      },
+      additionalBehaviors: apiAdditionalBehavior,
       defaultRootObject: 'index.html',
-      errorResponses: [
-        { httpStatus: 403, responseHttpStatus: 200, responsePagePath: '/index.html', ttl: cdk.Duration.seconds(0) },
-        { httpStatus: 404, responseHttpStatus: 200, responsePagePath: '/index.html', ttl: cdk.Duration.seconds(0) },
-      ],
+      errorResponses: spaErrorResponses,
       // Prod only — custom domain + ACM cert
       ...(isProd && dnsStack ? {
         certificate: dnsStack.certificate,
@@ -176,20 +181,9 @@ function handler(event) {
             eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
           }],
         },
-        additionalBehaviors: {
-          '/api/*': {
-            origin: apiOrigin,
-            viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-            cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
-            allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
-            originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
-          },
-        },
+        additionalBehaviors: apiAdditionalBehavior,
         defaultRootObject: 'index.html',
-        errorResponses: [
-          { httpStatus: 403, responseHttpStatus: 200, responsePagePath: '/index.html', ttl: cdk.Duration.seconds(0) },
-          { httpStatus: 404, responseHttpStatus: 200, responsePagePath: '/index.html', ttl: cdk.Duration.seconds(0) },
-        ],
+        errorResponses: spaErrorResponses,
         certificate: dnsStack.beatsontheblockfestCertificate,
         domainNames: ['beatsontheblockfest.com', 'www.beatsontheblockfest.com'],
       });
