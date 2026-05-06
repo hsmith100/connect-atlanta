@@ -65,14 +65,52 @@ function handler(event) {
       `),
     });
 
-    // ── CloudFront distribution ───────────────────────────────────────────────
+    // ── CloudFront Function — redirect connectevents.co → beatsontheblockfest.com
+    // Applied to the connectevents.co distribution in prod only. Fires at edge
+    // before the origin is consulted, so S3 and API Gateway are never hit.
+    const redirectFunction = new cloudfront.Function(this, 'RedirectFunction', {
+      runtime: cloudfront.FunctionRuntime.JS_2_0,
+      code: cloudfront.FunctionCode.fromInline(`
+function handler(event) {
+  var request = event.request;
+  var uri = request.uri;
+  var qs = request.querystring;
+  var queryString = '';
+  if (qs) {
+    var parts = [];
+    var keys = Object.keys(qs);
+    for (var i = 0; i < keys.length; i++) {
+      var key = keys[i];
+      var param = qs[key];
+      if (param.multiValue) {
+        for (var j = 0; j < param.multiValue.length; j++) {
+          parts.push(key + '=' + param.multiValue[j].value);
+        }
+      } else {
+        parts.push(key + '=' + param.value);
+      }
+    }
+    if (parts.length > 0) queryString = '?' + parts.join('&');
+  }
+  return {
+    statusCode: 301,
+    statusDescription: 'Moved Permanently',
+    headers: { location: { value: 'https://beatsontheblockfest.com' + uri + queryString } },
+  };
+}
+      `),
+    });
+
+    // ── CloudFront distribution (connectevents.co) ────────────────────────────
+    // In prod: serves only 301 redirects to beatsontheblockfest.com.
+    // In staging/dev: continues to serve the site normally.
     const distribution = new cloudfront.Distribution(this, 'CDN', {
       defaultBehavior: {
         origin: s3Origin,
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
         functionAssociations: [{
-          function: rewriteFunction,
+          function: isProd ? redirectFunction : rewriteFunction,
           eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
         }],
       },
@@ -123,6 +161,74 @@ function handler(event) {
         zone: dnsStack.hostedZone,
         recordName: 'www',
         target: cfTarget,
+      });
+
+      // ── CloudFront distribution (beatsontheblockfest.com) ──────────────────
+      // Serves the full site on the new primary domain, backed by the same S3
+      // bucket and API Gateway origin as the connectevents.co distribution.
+      const beatsDistribution = new cloudfront.Distribution(this, 'BeatsCDN', {
+        defaultBehavior: {
+          origin: s3Origin,
+          viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+          cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+          functionAssociations: [{
+            function: rewriteFunction,
+            eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
+          }],
+        },
+        additionalBehaviors: {
+          '/api/*': {
+            origin: apiOrigin,
+            viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+            cachePolicy: cloudfront.CachePolicy.CACHING_DISABLED,
+            allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
+            originRequestPolicy: cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
+          },
+        },
+        defaultRootObject: 'index.html',
+        errorResponses: [
+          { httpStatus: 403, responseHttpStatus: 200, responsePagePath: '/index.html', ttl: cdk.Duration.seconds(0) },
+          { httpStatus: 404, responseHttpStatus: 200, responsePagePath: '/index.html', ttl: cdk.Duration.seconds(0) },
+        ],
+        certificate: dnsStack.beatsontheblockfestCertificate,
+        domainNames: ['beatsontheblockfest.com', 'www.beatsontheblockfest.com'],
+      });
+
+      // ── Route53 records for beatsontheblockfest.com ────────────────────────
+      const beatsCfTarget = route53.RecordTarget.fromAlias(
+        new route53Targets.CloudFrontTarget(beatsDistribution),
+      );
+
+      new route53.ARecord(this, 'BeatsApexARecord', {
+        zone: dnsStack.beatsontheblockfestHostedZone,
+        target: beatsCfTarget,
+      });
+
+      new route53.ARecord(this, 'BeatsWwwARecord', {
+        zone: dnsStack.beatsontheblockfestHostedZone,
+        recordName: 'www',
+        target: beatsCfTarget,
+      });
+
+      new route53.AaaaRecord(this, 'BeatsApexAaaaRecord', {
+        zone: dnsStack.beatsontheblockfestHostedZone,
+        target: beatsCfTarget,
+      });
+
+      new route53.AaaaRecord(this, 'BeatsWwwAaaaRecord', {
+        zone: dnsStack.beatsontheblockfestHostedZone,
+        recordName: 'www',
+        target: beatsCfTarget,
+      });
+
+      new cdk.CfnOutput(this, 'BeatsCloudFrontDistributionId', {
+        value: beatsDistribution.distributionId,
+        description: 'BeatsCDN distribution ID — invalidate after deploy',
+      });
+
+      new cdk.CfnOutput(this, 'BeatsCloudFrontUrl', {
+        value: `https://${beatsDistribution.distributionDomainName}`,
+        description: 'BeatsCDN CloudFront URL — test before accepting',
       });
     }
 

@@ -6,6 +6,8 @@ import { Construct } from 'constructs';
 export class DnsStack extends cdk.Stack {
   public readonly hostedZone: route53.HostedZone;
   public readonly certificate: acm.Certificate;
+  public readonly beatsontheblockfestHostedZone: route53.HostedZone;
+  public readonly beatsontheblockfestCertificate: acm.Certificate;
 
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
@@ -81,6 +83,22 @@ export class DnsStack extends cdk.Stack {
       values: ['v=DMARC1; p=none;'],
     });
 
+    // Route53 hosted zone for beatsontheblockfest.com (rebrand primary domain).
+    // After deploying, update Namecheap nameservers for beatsontheblockfest.com
+    // to the Route53 NS values in the BeatsNameServers output below.
+    this.beatsontheblockfestHostedZone = new route53.HostedZone(this, 'BeatsHostedZone', {
+      zoneName: 'beatsontheblockfest.com',
+    });
+
+    // ACM certificate for beatsontheblockfest.com — covers apex and www.
+    // Must live in us-east-1 for CloudFront. CDK auto-creates the DNS validation
+    // CNAME in the hosted zone above; cert validates once Namecheap NS are updated.
+    this.beatsontheblockfestCertificate = new acm.Certificate(this, 'BeatsCertificate', {
+      domainName: 'beatsontheblockfest.com',
+      subjectAlternativeNames: ['www.beatsontheblockfest.com'],
+      validation: acm.CertificateValidation.fromDns(this.beatsontheblockfestHostedZone),
+    });
+
     new cdk.CfnOutput(this, 'HostedZoneId', {
       value: this.hostedZone.hostedZoneId,
       description: 'Route53 Hosted Zone ID',
@@ -94,6 +112,21 @@ export class DnsStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'CertificateArn', {
       value: this.certificate.certificateArn,
       description: 'ACM Certificate ARN — used by CloudFront in FrontendStack',
+    });
+
+    new cdk.CfnOutput(this, 'BeatsHostedZoneId', {
+      value: this.beatsontheblockfestHostedZone.hostedZoneId,
+      description: 'Route53 Hosted Zone ID for beatsontheblockfest.com',
+    });
+
+    new cdk.CfnOutput(this, 'BeatsNameServers', {
+      value: cdk.Fn.join(', ', this.beatsontheblockfestHostedZone.hostedZoneNameServers!),
+      description: 'Set these as Namecheap custom nameservers for beatsontheblockfest.com',
+    });
+
+    new cdk.CfnOutput(this, 'BeatsCertificateArn', {
+      value: this.beatsontheblockfestCertificate.certificateArn,
+      description: 'ACM Certificate ARN for beatsontheblockfest.com — used by BeatsCDN in FrontendStack',
     });
   }
 }
