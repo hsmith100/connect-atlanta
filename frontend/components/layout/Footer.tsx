@@ -9,8 +9,7 @@ export default function Footer() {
           <img
             src="/images/BOTB_Black.png"
             alt="botb logo"
-            width="150"
-            height="50"
+            className="h-24 w-auto"
           />
 
           {/* Social Media Links */}
