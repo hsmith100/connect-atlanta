@@ -215,7 +215,7 @@ jobs:
   rollback-production:
     name: Auto-Rollback Production
     needs: [deploy-production, post-deploy-smoke]
-    if: always() && needs.post-deploy-smoke.result == 'failure' && needs.deploy-production.result == 'success'
+    if: needs.post-deploy-smoke.result == 'failure' && needs.deploy-production.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       id-token: write
