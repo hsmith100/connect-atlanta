@@ -119,7 +119,11 @@ jobs:
             --stack-name ConnectStagingFrontendStack \
             --query 'Stacks[0].Outputs[?OutputKey==`CloudFrontDistributionId`].OutputValue' \
             --output text)
-          aws cloudfront create-invalidation --distribution-id $DIST_ID --paths "/*"
+          INVALIDATION_ID=$(aws cloudfront create-invalidation \
+            --distribution-id $DIST_ID --paths "/*" \
+            --query 'Invalidation.Id' --output text)
+          aws cloudfront wait invalidation-completed \
+            --distribution-id $DIST_ID --id $INVALIDATION_ID
 
   # ── Stage 4: Regression tests against staging ───────────────────────────────
   # Production deploy is blocked if this job fails.
@@ -187,7 +191,11 @@ jobs:
             --stack-name ConnectFrontendStack \
             --query 'Stacks[0].Outputs[?OutputKey==`CloudFrontDistributionId`].OutputValue' \
             --output text)
-          aws cloudfront create-invalidation --distribution-id $DIST_ID --paths "/*"
+          INVALIDATION_ID=$(aws cloudfront create-invalidation \
+            --distribution-id $DIST_ID --paths "/*" \
+            --query 'Invalidation.Id' --output text)
+          aws cloudfront wait invalidation-completed \
+            --distribution-id $DIST_ID --id $INVALIDATION_ID
 
   # ── Stage 6: Post-deploy smoke tests against production ─────────────────────
 
