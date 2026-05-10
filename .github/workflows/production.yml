@@ -191,7 +191,11 @@ jobs:
             --stack-name ConnectFrontendStack \
             --query 'Stacks[0].Outputs[?OutputKey==`CloudFrontDistributionId`].OutputValue' \
             --output text)
-          for DIST in $DIST_ID EUZPTGEND12MA; do
+          BEATS_DIST_ID=$(aws cloudformation describe-stacks \
+            --stack-name ConnectFrontendStack \
+            --query 'Stacks[0].Outputs[?OutputKey==`BeatsCloudFrontDistributionId`].OutputValue' \
+            --output text)
+          for DIST in $DIST_ID $BEATS_DIST_ID; do
             INVALIDATION_ID=$(aws cloudfront create-invalidation \
               --distribution-id $DIST --paths "/*" \
               --query 'Invalidation.Id' --output text)
@@ -284,7 +288,11 @@ jobs:
             --stack-name ConnectFrontendStack \
             --query 'Stacks[0].Outputs[?OutputKey==`CloudFrontDistributionId`].OutputValue' \
             --output text)
-          for DIST in $DIST_ID EUZPTGEND12MA; do
+          BEATS_DIST_ID=$(aws cloudformation describe-stacks \
+            --stack-name ConnectFrontendStack \
+            --query 'Stacks[0].Outputs[?OutputKey==`BeatsCloudFrontDistributionId`].OutputValue' \
+            --output text)
+          for DIST in $DIST_ID $BEATS_DIST_ID; do
             INVALIDATION_ID=$(aws cloudfront create-invalidation \
               --distribution-id $DIST --paths "/*" \
               --query 'Invalidation.Id' --output text)
