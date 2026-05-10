@@ -9,7 +9,7 @@
 ```
 /public/images/
   ├── ConnectBig-White.svg (3.0MB)
-  ├── ConnectLogoBIG-Black.svg (4.5MB)
+  ├── BOTB_White.svg (4.5MB)
   ├── /events/
   │   ├── april-2024.png (1.8MB)
   │   ├── july-2024.png (1.6MB)
@@ -41,7 +41,7 @@
 - **Format:** SVG
 
 ### Connect Logo - Black Version
-- **File:** `/images/ConnectLogoBIG-Black.svg`
+- **File:** `/images/BOTB_White.svg`
 - **Size:** 4.5MB
 - **Use:** Light backgrounds (content sections)
 - **Format:** SVG

@@ -125,18 +125,15 @@ export default function HeroSection({
       <div className="section-container relative z-10 w-full">
 
         {/* Hero Logo & Title - Desktop Only */}
-        <div className="text-center mb-12 md:mb-16 hidden md:block">
-          <div className="relative inline-block mx-auto mb-6">
+        <div className="text-center mb-12 hidden md:block">
+          <div className="relative inline-block mx-auto">
             <div className="absolute inset-0 bg-gradient-radial from-yellow-200/40 via-yellow-100/20 to-transparent blur-3xl scale-110"></div>
             <img
-              src="/images/ConnectLogoBIG-Black.svg"
-              alt="Connect"
-              className="relative w-auto h-48 mx-auto"
+              src="/images/BOTB_White.png"
+              alt="Beats on the Block logo"
+              className="relative w-auto h-72 mx-auto"
             />
           </div>
-          <h1 className="font-slogan text-3xl md:text-4xl lg:text-5xl text-brand-text tracking-wider uppercase mb-4">
-            Home of Beats on the Block
-          </h1>
         </div>
 
         {/* Dynamic content: upcoming event OR hero cards */}

@@ -689,10 +689,10 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 
 ```jsx
 // Changed from Next.js Image:
-<Image src="/images/ConnectLogoBIG-Black.svg" width={400} height={114} />
+<Image src="/images/BOTB_White.svg" width={400} height={114} />
 
 // To standard img:
-<img src="/images/ConnectLogoBIG-Black.svg" width="400" height="114" loading="lazy" />
+<img src="/images/BOTB_White.svg" width="400" height="114" loading="lazy" />
 ```
 
 ### Issue 11: API Proxy Not Working (Browser CORS)

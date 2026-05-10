@@ -61,15 +61,12 @@ export default function Header() {
             onClick={closeMobileMenu}
           >
             <img
-              src="/images/ConnectLogoBIG-Black.svg"
-              alt="Connect"
+              src="/images/BOTB_Black.png"
+              alt="botb logo"
               width="400"
               height="114"
               className="hover:opacity-80 transition-opacity duration-300 h-16 w-auto md:h-12"
             />
-            <span className="font-slogan text-sm text-brand-text tracking-wider uppercase mt-2 md:hidden">
-              Home of Beats on the Block
-            </span>
           </Link>
 
           {/* Desktop Navigation */}

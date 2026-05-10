@@ -72,7 +72,7 @@ export default function Home() {
           onOpenModal={() => setIsModalOpen(true)}
         />
         <ConnectModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
-        <ExperienceSection />
+        {/* <ExperienceSection /> */}
         <PastEventsSection events={pastEvents} loading={eventsLoading} />
         <SponsorsSection />
         <ConnectSection />

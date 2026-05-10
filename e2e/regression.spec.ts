@@ -143,3 +143,78 @@ test.describe('DJ application form', () => {
     await expect(page.getByRole('button', { name: /submit dj application/i })).toBeEnabled();
   });
 });
+
+// ── Form validation ───────────────────────────────────────────────────────────
+
+test.describe('contact form validation', () => {
+  test('does not submit when required fields are empty', async ({ page }) => {
+    await page.goto('/contact');
+    await page.getByRole('button', { name: /send message/i }).click();
+    // HTML5 required validation blocks submission — form stays visible, no success message
+    await expect(page.getByPlaceholder('Your name')).toBeVisible();
+    await expect(page.getByText(/message sent/i)).not.toBeVisible();
+  });
+});
+
+test.describe('DJ application form validation', () => {
+  test('does not submit when required fields are empty', async ({ page }) => {
+    await page.goto('/join');
+    await page.getByRole('button', { name: /submit dj application/i }).click();
+    await expect(page.getByPlaceholder('your@email.com')).toBeVisible();
+    await expect(page.getByText(/application submitted/i)).not.toBeVisible();
+  });
+});
+
+// ── Home page — hero logo ─────────────────────────────────────────────────────
+
+test.describe('home page logo', () => {
+  test('hero logo is visible on desktop', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/');
+    await expect(page.locator('img[alt="Beats on the Block logo"]')).toBeVisible();
+  });
+});
+
+// ── Footer ────────────────────────────────────────────────────────────────────
+
+test.describe('footer', () => {
+  test('renders logo, copyright, and social links on home page', async ({ page }) => {
+    await page.goto('/');
+    const footer = page.locator('footer');
+    await expect(footer.locator('img[alt="botb logo"]')).toBeVisible();
+    await expect(footer.getByText(/Copyright 2025 Connect Events/)).toBeVisible();
+    await expect(footer.getByLabel('Instagram')).toBeVisible();
+    await expect(footer.getByLabel('Facebook')).toBeVisible();
+    await expect(footer.getByLabel('YouTube')).toBeVisible();
+    await expect(footer.getByLabel('TikTok')).toBeVisible();
+  });
+});
+
+// ── Merch page ────────────────────────────────────────────────────────────────
+
+test.describe('merch page', () => {
+  test('shop button links to external store', async ({ page }) => {
+    await page.goto('/merch');
+    const shopButton = page.getByRole('link', { name: /shop all on bonfire/i });
+    await expect(shopButton).toBeVisible();
+    await expect(shopButton).toHaveAttribute('href', expect.stringContaining('bonfire.com'));
+  });
+});
+
+// ── Admin page ────────────────────────────────────────────────────────────────
+
+test.describe('admin page', () => {
+  test('shows auth gate when not authenticated', async ({ page }) => {
+    await page.goto('/admin');
+    await expect(page.getByText('Admin Login')).toBeVisible();
+    await expect(page.getByPlaceholder('Admin key')).toBeVisible();
+    await expect(page.getByRole('button', { name: /sign in/i })).toBeVisible();
+  });
+
+  test('sign in button is disabled until a key is entered', async ({ page }) => {
+    await page.goto('/admin');
+    await expect(page.getByRole('button', { name: /sign in/i })).toBeDisabled();
+    await page.getByPlaceholder('Admin key').fill('any-key');
+    await expect(page.getByRole('button', { name: /sign in/i })).toBeEnabled();
+  });
+});

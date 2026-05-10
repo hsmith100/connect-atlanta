@@ -28,7 +28,7 @@ export default function ExperienceSection() {
             on the
           </span>
           <span className="block font-festival text-6xl md:text-8xl lg:text-9xl font-black uppercase bg-gradient-to-r from-brand-pink via-brand-peach to-brand-primary bg-clip-text text-transparent">
-            Beltline
+            Block
           </span>
         </h1>
 

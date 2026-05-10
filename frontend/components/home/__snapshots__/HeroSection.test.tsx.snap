@@ -9,25 +9,20 @@ exports[`matches snapshot while events loading 1`] = `
       class="section-container relative z-10 w-full"
     >
       <div
-        class="text-center mb-12 md:mb-16 hidden md:block"
+        class="text-center mb-12 hidden md:block"
       >
         <div
-          class="relative inline-block mx-auto mb-6"
+          class="relative inline-block mx-auto"
         >
           <div
             class="absolute inset-0 bg-gradient-radial from-yellow-200/40 via-yellow-100/20 to-transparent blur-3xl scale-110"
           />
           <img
-            alt="Connect"
-            class="relative w-auto h-48 mx-auto"
-            src="/images/ConnectLogoBIG-Black.svg"
+            alt="Beats on the Block logo"
+            class="relative w-auto h-72 mx-auto"
+            src="/images/BOTB_White.png"
           />
         </div>
-        <h1
-          class="font-slogan text-3xl md:text-4xl lg:text-5xl text-brand-text tracking-wider uppercase mb-4"
-        >
-          Home of Beats on the Block
-        </h1>
       </div>
       <div
         class="flex justify-center items-center py-12"
@@ -64,25 +59,20 @@ exports[`matches snapshot with hero cards and no events 1`] = `
       class="section-container relative z-10 w-full"
     >
       <div
-        class="text-center mb-12 md:mb-16 hidden md:block"
+        class="text-center mb-12 hidden md:block"
       >
         <div
-          class="relative inline-block mx-auto mb-6"
+          class="relative inline-block mx-auto"
         >
           <div
             class="absolute inset-0 bg-gradient-radial from-yellow-200/40 via-yellow-100/20 to-transparent blur-3xl scale-110"
           />
           <img
-            alt="Connect"
-            class="relative w-auto h-48 mx-auto"
-            src="/images/ConnectLogoBIG-Black.svg"
+            alt="Beats on the Block logo"
+            class="relative w-auto h-72 mx-auto"
+            src="/images/BOTB_White.png"
           />
         </div>
-        <h1
-          class="font-slogan text-3xl md:text-4xl lg:text-5xl text-brand-text tracking-wider uppercase mb-4"
-        >
-          Home of Beats on the Block
-        </h1>
       </div>
       <div
         class="flex flex-col md:flex-row md:justify-center gap-4 max-w-7xl mx-auto "
@@ -126,25 +116,20 @@ exports[`matches snapshot with no cards and no events 1`] = `
       class="section-container relative z-10 w-full"
     >
       <div
-        class="text-center mb-12 md:mb-16 hidden md:block"
+        class="text-center mb-12 hidden md:block"
       >
         <div
-          class="relative inline-block mx-auto mb-6"
+          class="relative inline-block mx-auto"
         >
           <div
             class="absolute inset-0 bg-gradient-radial from-yellow-200/40 via-yellow-100/20 to-transparent blur-3xl scale-110"
           />
           <img
-            alt="Connect"
-            class="relative w-auto h-48 mx-auto"
-            src="/images/ConnectLogoBIG-Black.svg"
+            alt="Beats on the Block logo"
+            class="relative w-auto h-72 mx-auto"
+            src="/images/BOTB_White.png"
           />
         </div>
-        <h1
-          class="font-slogan text-3xl md:text-4xl lg:text-5xl text-brand-text tracking-wider uppercase mb-4"
-        >
-          Home of Beats on the Block
-        </h1>
       </div>
       <div
         class="max-w-3xl mx-auto text-center py-8"
@@ -208,25 +193,20 @@ exports[`matches snapshot with upcoming event 1`] = `
       class="section-container relative z-10 w-full"
     >
       <div
-        class="text-center mb-12 md:mb-16 hidden md:block"
+        class="text-center mb-12 hidden md:block"
       >
         <div
-          class="relative inline-block mx-auto mb-6"
+          class="relative inline-block mx-auto"
         >
           <div
             class="absolute inset-0 bg-gradient-radial from-yellow-200/40 via-yellow-100/20 to-transparent blur-3xl scale-110"
           />
           <img
-            alt="Connect"
-            class="relative w-auto h-48 mx-auto"
-            src="/images/ConnectLogoBIG-Black.svg"
+            alt="Beats on the Block logo"
+            class="relative w-auto h-72 mx-auto"
+            src="/images/BOTB_White.png"
           />
         </div>
-        <h1
-          class="font-slogan text-3xl md:text-4xl lg:text-5xl text-brand-text tracking-wider uppercase mb-4"
-        >
-          Home of Beats on the Block
-        </h1>
       </div>
       <div
         class="max-w-5xl mx-auto"
@@ -254,25 +234,20 @@ exports[`matches snapshot with upcoming event and hero cards 1`] = `
       class="section-container relative z-10 w-full"
     >
       <div
-        class="text-center mb-12 md:mb-16 hidden md:block"
+        class="text-center mb-12 hidden md:block"
       >
         <div
-          class="relative inline-block mx-auto mb-6"
+          class="relative inline-block mx-auto"
         >
           <div
             class="absolute inset-0 bg-gradient-radial from-yellow-200/40 via-yellow-100/20 to-transparent blur-3xl scale-110"
           />
           <img
-            alt="Connect"
-            class="relative w-auto h-48 mx-auto"
-            src="/images/ConnectLogoBIG-Black.svg"
+            alt="Beats on the Block logo"
+            class="relative w-auto h-72 mx-auto"
+            src="/images/BOTB_White.png"
           />
         </div>
-        <h1
-          class="font-slogan text-3xl md:text-4xl lg:text-5xl text-brand-text tracking-wider uppercase mb-4"
-        >
-          Home of Beats on the Block
-        </h1>
       </div>
       <div
         class="max-w-5xl mx-auto"
