@@ -38,7 +38,7 @@ Integrate all real image assets (logos, event flyers, sponsor logos, photos) int
 ```
 /public/images/
   ├── ConnectBig-White.svg
-  ├── ConnectLogoBIG-Black.svg
+  ├── BOTB_White.svg
   ├── /events/
   │   ├── april-2024.png
   │   ├── july-2024.png
@@ -480,7 +480,7 @@ className="hover:border-brand-accent hover:shadow-lg transition-all"
 
 **Problem:** 
 - `ConnectBig-White.svg` = 3.0MB
-- `ConnectLogoBIG-Black.svg` = 4.5MB
+- `BOTB_White.svg` = 4.5MB
 
 **Typical SVG Size:** 10-100KB
 
@@ -496,7 +496,7 @@ npm install -g svgo
 
 # Optimize logos
 svgo images/ConnectBig-White.svg -o images/ConnectBig-White-optimized.svg
-svgo images/ConnectLogoBIG-Black.svg -o images/ConnectLogoBIG-Black-optimized.svg
+svgo images/BOTB_White.svg -o images/ConnectLogoBIG-Black-optimized.svg
 ```
 
 **Expected Result:** 70-90% size reduction

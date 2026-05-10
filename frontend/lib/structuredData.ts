@@ -9,7 +9,7 @@ export const organizationSchema = {
   "name": "Connect Events",
   "legalName": "Connect Events, Inc.",
   "url": "https://connectevents.co",
-  "logo": "https://connectevents.co/images/ConnectLogoBIG-Black.svg",
+  "logo": "https://connectevents.co/images/BOTB_White.png",
   "description": "Atlanta's premier FREE outdoor electronic music festival producer. We create unforgettable daytime experiences on the Atlanta BeltLine through our Beats on the Block event series.",
   "address": {
     "@type": "PostalAddress",
@@ -155,7 +155,7 @@ export const websiteSchema = {
     "name": "Connect Events, Inc.",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://connectevents.co/images/ConnectLogoBIG-Black.svg"
+      "url": "https://connectevents.co/images/BOTB_White.png"
     }
   },
   "potentialAction": {
@@ -174,7 +174,7 @@ export const localBusinessSchema = {
   "@type": "LocalBusiness",
   "@id": "https://connectevents.co/#business",
   "name": "Connect Events",
-  "image": "https://connectevents.co/images/ConnectLogoBIG-Black.svg",
+  "image": "https://connectevents.co/images/BOTB_White.png",
   "url": "https://connectevents.co",
   "telephone": "",
   "email": "info@connectevents.co",

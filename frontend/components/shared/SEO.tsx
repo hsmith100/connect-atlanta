@@ -16,7 +16,7 @@ export default function SEO({
   title = 'Connect Events - Beats on the Block | Atlanta EDM Festival',
   description = 'Atlanta\'s premier FREE outdoor electronic music experience. Join us for Beats on the Block featuring top DJs, amazing vibes, and unforgettable daytime parties on the Atlanta BeltLine.',
   keywords = 'atlanta events, beats on the block, edm atlanta, electronic music festival, atlanta beltline, free concerts atlanta, outdoor music atlanta, atlanta edm, house music atlanta, techno atlanta',
-  ogImage = '/images/ConnectLogoBIG-Black.svg',
+  ogImage = '/images/BOTB_White.png',
   ogType = 'website',
   twitterCard = 'summary_large_image',
   canonicalUrl,

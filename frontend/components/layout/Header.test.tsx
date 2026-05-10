@@ -25,7 +25,7 @@ describe('desktop nav', () => {
 
   it('renders the logo image', () => {
     render(<Header />)
-    expect(screen.getByAltText('Connect')).toBeInTheDocument()
+    expect(screen.getByAltText('botb logo')).toBeInTheDocument()
   })
 })
 

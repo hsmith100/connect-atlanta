@@ -9,7 +9,9 @@ jest.mock('next/link', () => ({
 
 it('renders the logo image', () => {
   render(<Footer />)
-  expect(screen.getByAltText('Connect')).toBeInTheDocument()
+  const logo = screen.getByAltText('botb logo')
+  expect(logo).toBeInTheDocument()
+  expect(logo).toHaveAttribute('src', '/images/BOTB_Black.png')
 })
 
 it('renders all social media links', () => {
