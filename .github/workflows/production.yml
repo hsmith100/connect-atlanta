@@ -191,11 +191,13 @@ jobs:
             --stack-name ConnectFrontendStack \
             --query 'Stacks[0].Outputs[?OutputKey==`CloudFrontDistributionId`].OutputValue' \
             --output text)
-          INVALIDATION_ID=$(aws cloudfront create-invalidation \
-            --distribution-id $DIST_ID --paths "/*" \
-            --query 'Invalidation.Id' --output text)
-          aws cloudfront wait invalidation-completed \
-            --distribution-id $DIST_ID --id $INVALIDATION_ID
+          for DIST in $DIST_ID EUZPTGEND12MA; do
+            INVALIDATION_ID=$(aws cloudfront create-invalidation \
+              --distribution-id $DIST --paths "/*" \
+              --query 'Invalidation.Id' --output text)
+            aws cloudfront wait invalidation-completed \
+              --distribution-id $DIST --id $INVALIDATION_ID
+          done
 
   # ── Stage 6: Post-deploy smoke tests against production ─────────────────────
 
@@ -213,7 +215,7 @@ jobs:
   rollback-production:
     name: Auto-Rollback Production
     needs: [deploy-production, post-deploy-smoke]
-    if: needs.post-deploy-smoke.result == 'failure' && needs.deploy-production.result == 'success'
+    if: always() && needs.post-deploy-smoke.result == 'failure' && needs.deploy-production.result == 'success'
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -282,4 +284,10 @@ jobs:
             --stack-name ConnectFrontendStack \
             --query 'Stacks[0].Outputs[?OutputKey==`CloudFrontDistributionId`].OutputValue' \
             --output text)
-          aws cloudfront create-invalidation --distribution-id $DIST_ID --paths "/*"
+          for DIST in $DIST_ID EUZPTGEND12MA; do
+            INVALIDATION_ID=$(aws cloudfront create-invalidation \
+              --distribution-id $DIST --paths "/*" \
+              --query 'Invalidation.Id' --output text)
+            aws cloudfront wait invalidation-completed \
+              --distribution-id $DIST --id $INVALIDATION_ID
+          done
