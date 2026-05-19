@@ -35,7 +35,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.2.3",
     "autoprefixer": "^10.5.0",
-    "daisyui": "^5.4.5",
+    "daisyui": "^5.5.20",
     "eslint": "^9.0.0",
     "eslint-config-next": "^16.2.6",
     "jest": "^30.4.2",
