@@ -34,7 +34,7 @@ export class BackendStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: BackendStackProps) {
     super(scope, id, props);
 
-    const { dynamoStack, contactEmail = 'info@connectevents.co', alertEmail = 'productions.connectatlanta@gmail.com', ephemeral = false } = props;
+    const { dynamoStack, contactEmail = 'info@beatsontheblockfest.com', alertEmail = 'productions.connectatlanta@gmail.com', ephemeral = false } = props;
     const lambdaDir = path.join(__dirname, '../../../lambda/src/handlers');
 
     // ── Media S3 Bucket ───────────────────────────────────────────────────────
@@ -107,7 +107,7 @@ export class BackendStack extends cdk.Stack {
         SPONSOR_INQUIRIES_TABLE: dynamoStack.sponsorInquiriesTable.tableName,
         // Email addresses — not secrets, just config
         CONTACT_EMAIL: contactEmail,
-        FROM_EMAIL: 'noreply@connectevents.co',
+        FROM_EMAIL: 'noreply@beatsontheblockfest.com',
         // Admin key — shared secret between frontend and forms Lambda
         ADMIN_SECRET_ARN: adminKeySecret.secretArn,
       },
@@ -118,7 +118,7 @@ export class BackendStack extends cdk.Stack {
     dynamoStack.sponsorInquiriesTable.grantReadWriteData(formsLambda);
     adminKeySecret.grantRead(formsLambda);
 
-    // SES send permission — domain verification happens in Phase 5 cutover
+    // SES send permission — beatsontheblockfest.com and connectevents.co both verified in ConnectDnsStack
     formsLambda.addToRolePolicy(new iam.PolicyStatement({
       actions: ['ses:SendEmail', 'ses:SendRawEmail'],
       resources: ['*'],
@@ -164,7 +164,7 @@ export class BackendStack extends cdk.Stack {
         ],
         allowOrigins: ephemeral
           ? ['*']
-          : ['https://connectevents.co', 'https://www.connectevents.co'],
+          : ['https://beatsontheblockfest.com', 'https://www.beatsontheblockfest.com', 'https://connectevents.co', 'https://www.connectevents.co'],
       },
     });
 
