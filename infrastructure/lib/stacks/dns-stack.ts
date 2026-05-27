@@ -102,18 +102,19 @@ export class DnsStack extends cdk.Stack {
 
     // ── beatsontheblockfest.com email authentication ──────────────────────────
     // SES domain identity — allows Lambda to send from noreply@beatsontheblockfest.com.
-    // EasyDKIM generates 3 CNAME records; we add them to Route53 below so SES can verify
-    // the domain automatically once DNS propagates.
-    const beatsSesIdentity = new ses.EmailIdentity(this, 'BeatsSesDomainIdentity', {
-      identity: ses.Identity.domain('beatsontheblockfest.com'),
-    });
+    // Using Identity.publicHostedZone() so CDK auto-creates the 3 DKIM CNAME records
+    // in Route53 with correct relative record names (avoids doubled-domain-name issue
+    // that occurs when using dkimRecords[n].name as a CnameRecord recordName directly).
+    const beatsPublicZone = route53.PublicHostedZone.fromPublicHostedZoneAttributes(
+      this, 'BeatsPublicZoneRef',
+      {
+        hostedZoneId: this.beatsontheblockfestHostedZone.hostedZoneId,
+        zoneName: 'beatsontheblockfest.com',
+      },
+    );
 
-    beatsSesIdentity.dkimRecords.forEach((record, idx) => {
-      new route53.CnameRecord(this, `SesBeatsSesDkimRecord${idx}`, {
-        zone: this.beatsontheblockfestHostedZone,
-        recordName: record.name,
-        domainName: record.value,
-      });
+    new ses.EmailIdentity(this, 'BeatsSesDomainIdentity', {
+      identity: ses.Identity.publicHostedZone(beatsPublicZone),
     });
 
     // Google Workspace DKIM for info@ and updates@ — split at 255 chars per RFC 4408.
