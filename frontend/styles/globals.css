@@ -12,8 +12,8 @@
 /* DaisyUI "connect" theme — applied via data-theme="connect" in _document.tsx */
 [data-theme="connect"] {
   color-scheme: light;
-  --color-primary: #FCBC3A;
-  --color-primary-content: #1A1A1A;
+  --color-primary: #EA4E9A;
+  --color-primary-content: #FFFFFF;
   --color-secondary: #C99620;
   --color-secondary-content: #FFFFFF;
   --color-accent: #40BCB7;
@@ -91,7 +91,7 @@
 
     /* Festival-specific button styles */
     .btn-festival {
-        @apply bg-brand-primary text-brand-header px-6 py-3 rounded-lg font-semibold hover:bg-brand-primary-dark transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+        @apply bg-brand-pink text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-pink-dark transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
     }
 
     .btn-festival-outline {
