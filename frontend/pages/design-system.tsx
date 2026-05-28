@@ -14,7 +14,7 @@ export default function DesignSystem() {
         <header className="bg-brand-header text-white py-8">
           <div className="section-container">
             <h1 className="text-4xl md:text-5xl font-bold gradient-text mb-2">
-              Festival Design System
+              Beats on the Block Design System
             </h1>
             <p className="text-brand-accent text-lg">
               Brand colors, components, and design tokens
@@ -29,61 +29,61 @@ export default function DesignSystem() {
             <h2 className="text-3xl font-bold text-brand-pink mb-6">Color Palette</h2>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Header Color */}
-              <div className="card-festival">
-                <div className="bg-brand-header h-24 rounded-lg mb-4"></div>
-                <h3 className="font-semibold text-brand-header">Header</h3>
-                <p className="text-sm text-gray-600">#291058</p>
-                <code className="text-xs bg-gray-100 px-2 py-1 rounded mt-2 inline-block">
-                  bg-brand-header
-                </code>
-              </div>
-
-              {/* Primary */}
+              {/* Sunkiss Yellow */}
               <div className="card-festival">
                 <div className="bg-brand-primary h-24 rounded-lg mb-4"></div>
-                <h3 className="font-semibold text-brand-header">Primary (Buttons)</h3>
-                <p className="text-sm text-gray-600">#8C52FF</p>
+                <h3 className="font-semibold text-brand-header">Sunkiss Yellow</h3>
+                <p className="text-sm text-gray-600">#FCBC3A</p>
                 <code className="text-xs bg-gray-100 px-2 py-1 rounded mt-2 inline-block">
                   bg-brand-primary
                 </code>
               </div>
 
-              {/* Cyan Accent */}
-              <div className="card-festival">
-                <div className="bg-brand-accent h-24 rounded-lg mb-4"></div>
-                <h3 className="font-semibold text-brand-header">Cyan Accent</h3>
-                <p className="text-sm text-gray-600">#5CE1E6</p>
-                <code className="text-xs bg-gray-100 px-2 py-1 rounded mt-2 inline-block">
-                  bg-brand-accent
-                </code>
-              </div>
-
-              {/* Pink Accent */}
+              {/* Pulse Pink */}
               <div className="card-festival">
                 <div className="bg-brand-pink h-24 rounded-lg mb-4"></div>
-                <h3 className="font-semibold text-brand-header">Pink (Titles)</h3>
-                <p className="text-sm text-gray-600">#F81889</p>
+                <h3 className="font-semibold text-brand-header">Pulse Pink</h3>
+                <p className="text-sm text-gray-600">#EA4E9A</p>
                 <code className="text-xs bg-gray-100 px-2 py-1 rounded mt-2 inline-block">
                   bg-brand-pink
                 </code>
               </div>
 
-              {/* Peach Accent */}
+              {/* Open Sky Aqua */}
               <div className="card-festival">
-                <div className="bg-brand-peach h-24 rounded-lg mb-4"></div>
-                <h3 className="font-semibold text-brand-header">Peach Accent</h3>
-                <p className="text-sm text-gray-600">#FEB95F</p>
+                <div className="bg-brand-accent h-24 rounded-lg mb-4"></div>
+                <h3 className="font-semibold text-brand-header">Open Sky Aqua</h3>
+                <p className="text-sm text-gray-600">#40BCB7</p>
                 <code className="text-xs bg-gray-100 px-2 py-1 rounded mt-2 inline-block">
-                  bg-brand-peach
+                  bg-brand-accent
                 </code>
               </div>
 
-              {/* Background */}
+              {/* Valley Green */}
               <div className="card-festival">
-                <div className="bg-brand-bg h-24 rounded-lg mb-4 border-2 border-gray-200"></div>
-                <h3 className="font-semibold text-brand-header">Main Background</h3>
-                <p className="text-sm text-gray-600">#F6F7FB</p>
+                <div className="bg-brand-green h-24 rounded-lg mb-4"></div>
+                <h3 className="font-semibold text-brand-header">Valley Green</h3>
+                <p className="text-sm text-gray-600">#3AAA45</p>
+                <code className="text-xs bg-gray-100 px-2 py-1 rounded mt-2 inline-block">
+                  bg-brand-green
+                </code>
+              </div>
+
+              {/* Relaxed Tan */}
+              <div className="card-festival">
+                <div className="bg-brand-peach h-24 rounded-lg mb-4 border border-gray-200"></div>
+                <h3 className="font-semibold text-brand-header">Relaxed Tan</h3>
+                <p className="text-sm text-gray-600">#FEEAD6</p>
+                <code className="text-xs bg-gray-100 px-2 py-1 rounded mt-2 inline-block">
+                  bg-brand-peach / bg-brand-bg-sand
+                </code>
+              </div>
+
+              {/* Off White */}
+              <div className="card-festival">
+                <div className="bg-brand-bg h-24 rounded-lg mb-4 border border-gray-200"></div>
+                <h3 className="font-semibold text-brand-header">Off White</h3>
+                <p className="text-sm text-gray-600">#FAF5F0</p>
                 <code className="text-xs bg-gray-100 px-2 py-1 rounded mt-2 inline-block">
                   bg-brand-bg
                 </code>
@@ -249,14 +249,14 @@ export default function DesignSystem() {
               <div className="card-festival">
                 <h3 className="text-xl font-semibold text-brand-header mb-4">Glow Effects</h3>
                 <div className="space-y-4">
-                  <div className="bg-brand-accent p-4 rounded-lg glow text-brand-header font-semibold">
-                    Cyan Glow
+                  <div className="bg-brand-accent p-4 rounded-lg glow text-white font-semibold">
+                    Aqua Glow
                   </div>
                   <div className="bg-brand-pink p-4 rounded-lg glow-pink text-white font-semibold">
                     Pink Glow
                   </div>
-                  <div className="bg-brand-primary p-4 rounded-lg glow-purple text-white font-semibold">
-                    Purple Glow
+                  <div className="bg-brand-primary p-4 rounded-lg glow-gold text-brand-header font-semibold">
+                    Gold Glow
                   </div>
                 </div>
               </div>
@@ -303,7 +303,7 @@ export default function DesignSystem() {
         {/* Footer */}
         <footer className="bg-brand-header text-white py-8 mt-16">
           <div className="section-container text-center">
-            <p className="text-brand-accent">Design System v1.0 | Music Festival 2025</p>
+            <p className="text-brand-accent">Design System v2.0 | Beats on the Block</p>
           </div>
         </footer>
       </div>
