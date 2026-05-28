@@ -41,7 +41,7 @@ export default function MerchInfo() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {PILLARS.map(({ label, description, icon }) => (
             <div key={label} className="text-center">
-              <div className="mb-4 text-brand-primary flex justify-center">{icon}</div>
+              <div className="mb-4 text-brand-pink flex justify-center">{icon}</div>
               <h3 className="text-xl font-bold text-brand-header mb-2">{label}</h3>
               <p className="text-brand-header/70">{description}</p>
             </div>

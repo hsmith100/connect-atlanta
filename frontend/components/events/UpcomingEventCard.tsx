@@ -24,7 +24,7 @@ export default function UpcomingEventCard({ event }: UpcomingEventCardProps) {
                         />
                     ) : (
                         <div className="w-full aspect-[4/5] rounded-2xl bg-brand-primary/10 flex items-center justify-center">
-                            <Calendar size={80} className="text-brand-primary/30" strokeWidth={1.5} />
+                            <Calendar size={80} className="text-brand-pink/30" strokeWidth={1.5} />
                         </div>
                     )}
                 </div>
@@ -37,13 +37,13 @@ export default function UpcomingEventCard({ event }: UpcomingEventCardProps) {
 
                     <div className="space-y-4 mb-8">
                         <div className="flex items-start gap-4 text-brand-text">
-                            <Calendar size={28} className="text-brand-primary mt-1 flex-shrink-0" strokeWidth={2} />
+                            <Calendar size={28} className="text-brand-pink mt-1 flex-shrink-0" strokeWidth={2} />
                             <p className="text-2xl font-bold text-brand-header">{formatEventDate(event.date)}</p>
                         </div>
 
                         {event.startTime && (
                             <div className="flex items-start gap-4 text-brand-text">
-                                <Clock size={28} className="text-brand-primary mt-1 flex-shrink-0" strokeWidth={2} />
+                                <Clock size={28} className="text-brand-pink mt-1 flex-shrink-0" strokeWidth={2} />
                                 <p className="text-2xl font-bold text-brand-header">
                                     {event.endTime
                                         ? `${formatTime(event.startTime)} – ${formatTime(event.endTime)}`
@@ -54,7 +54,7 @@ export default function UpcomingEventCard({ event }: UpcomingEventCardProps) {
 
                         {event.location && (
                             <div className="flex items-start gap-4 text-brand-text">
-                                <MapPin size={28} className="text-brand-primary mt-1 flex-shrink-0" strokeWidth={2} />
+                                <MapPin size={28} className="text-brand-pink mt-1 flex-shrink-0" strokeWidth={2} />
                                 <p className="text-2xl font-bold text-brand-header">{event.location}</p>
                             </div>
                         )}

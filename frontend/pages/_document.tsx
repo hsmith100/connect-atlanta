@@ -5,7 +5,7 @@ export default function Document() {
     <Html lang="en" data-theme="connect">
       <Head>
         {/* Favicon */}
-        <link rel="icon" href="/favicon.ico" sizes="32x32" />
+        <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
         <link rel="icon" href="/favicon-192.png" sizes="192x192" type="image/png" />
         <link rel="apple-touch-icon" href="/favicon-512.png" />
         <link rel="manifest" href="/manifest.json" />

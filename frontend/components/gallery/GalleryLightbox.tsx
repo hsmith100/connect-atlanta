@@ -28,7 +28,7 @@ export default function GalleryLightbox({ photos, selectedIndex, onClose, onNext
     >
       <button
         onClick={(e) => { e.stopPropagation(); onClose() }}
-        className="absolute top-4 right-4 z-[110] text-white hover:text-brand-primary transition-colors bg-black/50 rounded-full p-3 hover:bg-black/70"
+        className="absolute top-4 right-4 z-[110] text-white hover:text-brand-pink transition-colors bg-black/50 rounded-full p-3 hover:bg-black/70"
         aria-label="Close modal"
       >
         <X size={32} />
@@ -37,7 +37,7 @@ export default function GalleryLightbox({ photos, selectedIndex, onClose, onNext
       {photos.length > 1 && (
         <button
           onClick={(e) => { e.stopPropagation(); onPrev() }}
-          className="absolute left-4 z-[110] text-white hover:text-brand-primary transition-colors bg-black/50 rounded-full p-3 hover:bg-black/70"
+          className="absolute left-4 z-[110] text-white hover:text-brand-pink transition-colors bg-black/50 rounded-full p-3 hover:bg-black/70"
           aria-label="Previous image"
         >
           <ChevronLeft size={32} />
@@ -61,7 +61,7 @@ export default function GalleryLightbox({ photos, selectedIndex, onClose, onNext
       {photos.length > 1 && (
         <button
           onClick={(e) => { e.stopPropagation(); onNext() }}
-          className="absolute right-4 z-[110] text-white hover:text-brand-primary transition-colors bg-black/50 rounded-full p-3 hover:bg-black/70"
+          className="absolute right-4 z-[110] text-white hover:text-brand-pink transition-colors bg-black/50 rounded-full p-3 hover:bg-black/70"
           aria-label="Next image"
         >
           <ChevronRight size={32} />

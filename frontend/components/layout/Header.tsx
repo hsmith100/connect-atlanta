@@ -61,10 +61,10 @@ export default function Header() {
             onClick={closeMobileMenu}
           >
             <img
-              src="/images/BOTB_Black.png"
-              alt="botb logo"
-              width="400"
-              height="114"
+              src="/images/Logo/BOTB_Pulse-Pink_RGB_Icon.png"
+              alt="Beats on the Block"
+              width="64"
+              height="64"
               className="hover:opacity-80 transition-opacity duration-300 h-16 w-auto md:h-12"
             />
           </Link>
@@ -73,43 +73,43 @@ export default function Header() {
           <div className="hidden md:flex items-center space-x-8 ml-auto">
             <Link
               href="/"
-              className="text-gray-800 hover:text-brand-primary transition-colors font-medium"
+              className="text-gray-800 hover:text-brand-pink transition-colors font-medium"
             >
               Home
             </Link>
             <Link
               href="/about"
-              className="text-gray-800 hover:text-brand-primary transition-colors font-medium"
+              className="text-gray-800 hover:text-brand-pink transition-colors font-medium"
             >
               About
             </Link>
             <Link
               href="/events"
-              className="text-gray-800 hover:text-brand-primary transition-colors font-medium"
+              className="text-gray-800 hover:text-brand-pink transition-colors font-medium"
             >
               Events
             </Link>
             <Link
               href="/gallery"
-              className="text-gray-800 hover:text-brand-primary transition-colors font-medium"
+              className="text-gray-800 hover:text-brand-pink transition-colors font-medium"
             >
               Gallery
             </Link>
             <Link
               href="/join"
-              className="text-gray-800 hover:text-brand-primary transition-colors font-medium"
+              className="text-gray-800 hover:text-brand-pink transition-colors font-medium"
             >
               Join Us
             </Link>
             <Link
               href="/merch"
-              className="text-gray-800 hover:text-brand-primary transition-colors font-medium"
+              className="text-gray-800 hover:text-brand-pink transition-colors font-medium"
             >
               Merch
             </Link>
             <Link
               href="/contact"
-              className="text-gray-800 hover:text-brand-primary transition-colors font-medium"
+              className="text-gray-800 hover:text-brand-pink transition-colors font-medium"
             >
               Contact
             </Link>
@@ -141,49 +141,49 @@ export default function Header() {
             <Link
               href="/"
               onClick={closeMobileMenu}
-              className="block text-gray-800 hover:text-brand-primary transition-colors font-medium py-2 px-4 rounded-lg hover:bg-gray-100"
+              className="block text-gray-800 hover:text-brand-pink transition-colors font-medium py-2 px-4 rounded-lg hover:bg-gray-100"
             >
               Home
             </Link>
             <Link
               href="/about"
               onClick={closeMobileMenu}
-              className="block text-gray-800 hover:text-brand-primary transition-colors font-medium py-2 px-4 rounded-lg hover:bg-gray-100"
+              className="block text-gray-800 hover:text-brand-pink transition-colors font-medium py-2 px-4 rounded-lg hover:bg-gray-100"
             >
               About
             </Link>
             <Link
               href="/events"
               onClick={closeMobileMenu}
-              className="block text-gray-800 hover:text-brand-primary transition-colors font-medium py-2 px-4 rounded-lg hover:bg-gray-100"
+              className="block text-gray-800 hover:text-brand-pink transition-colors font-medium py-2 px-4 rounded-lg hover:bg-gray-100"
             >
               Events
             </Link>
             <Link
               href="/gallery"
               onClick={closeMobileMenu}
-              className="block text-gray-800 hover:text-brand-primary transition-colors font-medium py-2 px-4 rounded-lg hover:bg-gray-100"
+              className="block text-gray-800 hover:text-brand-pink transition-colors font-medium py-2 px-4 rounded-lg hover:bg-gray-100"
             >
               Gallery
             </Link>
             <Link
               href="/join"
               onClick={closeMobileMenu}
-              className="block text-gray-800 hover:text-brand-primary transition-colors font-medium py-2 px-4 rounded-lg hover:bg-gray-100"
+              className="block text-gray-800 hover:text-brand-pink transition-colors font-medium py-2 px-4 rounded-lg hover:bg-gray-100"
             >
               Join Us
             </Link>
             <Link
               href="/merch"
               onClick={closeMobileMenu}
-              className="block text-gray-800 hover:text-brand-primary transition-colors font-medium py-2 px-4 rounded-lg hover:bg-gray-100"
+              className="block text-gray-800 hover:text-brand-pink transition-colors font-medium py-2 px-4 rounded-lg hover:bg-gray-100"
             >
               Merch
             </Link>
             <Link
               href="/contact"
               onClick={closeMobileMenu}
-              className="block text-gray-800 hover:text-brand-primary transition-colors font-medium py-2 px-4 rounded-lg hover:bg-gray-100"
+              className="block text-gray-800 hover:text-brand-pink transition-colors font-medium py-2 px-4 rounded-lg hover:bg-gray-100"
             >
               Contact
             </Link>

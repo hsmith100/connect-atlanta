@@ -49,7 +49,7 @@ export default function WhatWeBring() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {PILLARS.map(({ icon: Icon, title, items }) => (
             <div key={title} className="card-bg-white border-2 border-brand-primary/20 p-8 rounded-2xl shadow-md hover:border-brand-primary transition-all hover:shadow-lg">
-              <div className="mb-4 text-brand-primary">
+              <div className="mb-4 text-brand-pink">
                 <Icon size={40} strokeWidth={1.5} />
               </div>
               <h3 className="text-2xl font-bold text-brand-header mb-3">{title}</h3>

@@ -49,7 +49,7 @@ export function HeroCardVisual({ card, onEdit, onDelete, deleting }: HeroCardVis
               {onEdit && (
                 <button
                   onClick={onEdit}
-                  className="p-1.5 rounded-lg bg-black/60 text-white hover:text-brand-primary hover:bg-black/80 transition-colors"
+                  className="p-1.5 rounded-lg bg-black/60 text-white hover:text-brand-pink hover:bg-black/80 transition-colors"
                   title="Edit card"
                 >
                   <Pencil size={14} />

@@ -6,7 +6,7 @@ export default function VendorSection() {
     <div id="application-form" className="py-12 md:py-20">
       <div className="section-container max-w-4xl">
         <div className="text-center mb-12">
-          <div className="mb-6 text-brand-primary flex justify-center">
+          <div className="mb-6 text-brand-pink flex justify-center">
             <Store size={64} strokeWidth={1.5} />
           </div>
           <h2 className="font-title text-4xl md:text-6xl font-black mb-6 text-brand-header uppercase">

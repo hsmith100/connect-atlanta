@@ -44,7 +44,7 @@ export default function FlyerModal({ events, selectedIndex, onClose, onPrev, onN
             {/* Close Button */}
             <button
                 onClick={onClose}
-                className="absolute top-4 right-4 z-[110] text-white hover:text-brand-primary transition-colors bg-black/50 rounded-full p-3 hover:bg-black/70"
+                className="absolute top-4 right-4 z-[110] text-white hover:text-brand-pink transition-colors bg-black/50 rounded-full p-3 hover:bg-black/70"
                 aria-label="Close"
             >
                 <X size={32} />
@@ -54,7 +54,7 @@ export default function FlyerModal({ events, selectedIndex, onClose, onPrev, onN
             {events.length > 1 && (
                 <button
                     onClick={(e) => { e.stopPropagation(); onPrev() }}
-                    className="absolute left-4 z-[110] text-white hover:text-brand-primary transition-colors bg-black/50 rounded-full p-3 hover:bg-black/70"
+                    className="absolute left-4 z-[110] text-white hover:text-brand-pink transition-colors bg-black/50 rounded-full p-3 hover:bg-black/70"
                     aria-label="Previous flyer"
                 >
                     <ChevronLeft size={32} />
@@ -84,7 +84,7 @@ export default function FlyerModal({ events, selectedIndex, onClose, onPrev, onN
             {events.length > 1 && (
                 <button
                     onClick={(e) => { e.stopPropagation(); onNext() }}
-                    className="absolute right-4 z-[110] text-white hover:text-brand-primary transition-colors bg-black/50 rounded-full p-3 hover:bg-black/70"
+                    className="absolute right-4 z-[110] text-white hover:text-brand-pink transition-colors bg-black/50 rounded-full p-3 hover:bg-black/70"
                     aria-label="Next flyer"
                 >
                     <ChevronRight size={32} />

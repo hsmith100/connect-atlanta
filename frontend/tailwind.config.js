@@ -28,6 +28,7 @@ module.exports = {
           // Brand Accent Colors
           accent: '#40BCB7',      // Open Sky Aqua
           pink: '#EA4E9A',        // Pulse Pink
+          'pink-dark': '#C83A82', // Pulse Pink (hover)
           peach: '#F7AF7F',       // Vibin' Peach
           tan: '#FEEAD6',         // Relaxed Tan
           green: '#3AAA45',       // Valley Green

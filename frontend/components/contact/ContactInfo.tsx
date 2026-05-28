@@ -12,18 +12,18 @@ export default function ContactInfo() {
 
       <div className="space-y-6">
         <div className="card-bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border-2 border-brand-primary/20">
-          <div className="mb-3 text-brand-primary">
+          <div className="mb-3 text-brand-pink">
             <Mail size={32} strokeWidth={1.5} />
           </div>
           <h3 className="text-xl font-bold text-brand-header mb-2">Email</h3>
           <a href="mailto:info@connectevents.co"
-            className="text-brand-primary hover:text-brand-header transition-colors text-lg">
+            className="text-brand-pink hover:text-brand-header transition-colors text-lg">
             info@connectevents.co
           </a>
         </div>
 
         <div className="card-bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border-2 border-brand-primary/20">
-          <div className="mb-3 text-brand-primary">
+          <div className="mb-3 text-brand-pink">
             <MapPin size={32} strokeWidth={1.5} />
           </div>
           <h3 className="text-xl font-bold text-brand-header mb-2">Location</h3>

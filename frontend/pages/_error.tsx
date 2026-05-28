@@ -18,7 +18,7 @@ export default function Error({ statusCode }: ErrorProps) {
       <Header />
       <main className="pt-28 md:pt-[3.5rem] min-h-screen bg-brand-bg flex items-center justify-center">
         <div className="text-center px-4">
-          <p className="font-horizon text-8xl font-black text-brand-primary mb-4">
+          <p className="font-horizon text-8xl font-black text-brand-pink mb-4">
             {statusCode ?? 'Error'}
           </p>
           <p className="text-2xl text-brand-header mb-8">

@@ -130,7 +130,7 @@ export default function ConnectModal({ isOpen, onClose }: ConnectModalProps) {
                 {/* Close Button */}
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 text-brand-header hover:text-brand-primary transition-colors z-10"
+                    className="absolute top-4 right-4 text-brand-header hover:text-brand-pink transition-colors z-10"
                     aria-label="Close modal"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" className="w-8 h-8 stroke-current">
@@ -140,7 +140,7 @@ export default function ConnectModal({ isOpen, onClose }: ConnectModalProps) {
 
                 {/* Modal Body */}
                 <div className="p-8 md:p-12">
-                    <h2 className="font-title text-4xl md:text-5xl font-black text-brand-primary mb-4 uppercase text-center flex flex-col md:flex-row items-center justify-center gap-3 md:gap-4">
+                    <h2 className="font-title text-4xl md:text-5xl font-black text-brand-pink mb-4 uppercase text-center flex flex-col md:flex-row items-center justify-center gap-3 md:gap-4">
                         <span>Let's</span>
                         <img
                             src="/images/Justconnect.png"

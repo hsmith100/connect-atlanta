@@ -13,7 +13,7 @@ exports[`matches snapshot 1`] = `
         class="text-center mb-12"
       >
         <div
-          class="mb-6 text-brand-primary flex justify-center"
+          class="mb-6 text-brand-pink flex justify-center"
         >
           <svg
             aria-hidden="true"

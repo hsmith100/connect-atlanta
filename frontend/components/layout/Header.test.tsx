@@ -25,7 +25,7 @@ describe('desktop nav', () => {
 
   it('renders the logo image', () => {
     render(<Header />)
-    expect(screen.getByAltText('botb logo')).toBeInTheDocument()
+    expect(screen.getByAltText('Beats on the Block')).toBeInTheDocument()
   })
 })
 
