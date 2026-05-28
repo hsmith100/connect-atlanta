@@ -19,9 +19,9 @@ module.exports = {
           'text-light': '#6B6B6B',
 
           // Background Colors
-          bg: '#FAF5F0',          // Off White
+          bg: '#FEEAD6',          // Relaxed Tan (page base)
           'bg-cream': '#FAF5F0',  // Off White
-          'bg-sand': '#FEEAD6',   // Relaxed Tan
+          'bg-sand': '#F7AF7F',   // Vibin' Peach (warmer sand)
           'bg-taupe': '#F0E8DC',  // Relaxed Tan mid
           'bg-dark': '#2C2C2C',
 
@@ -29,7 +29,7 @@ module.exports = {
           accent: '#40BCB7',      // Open Sky Aqua
           pink: '#EA4E9A',        // Pulse Pink
           'pink-dark': '#C83A82', // Pulse Pink (hover)
-          peach: '#FEEAD6',       // Relaxed Tan
+          peach: '#F7AF7F',       // Vibin' Peach
           tan: '#FEEAD6',         // Relaxed Tan
           green: '#3AAA45',       // Valley Green
 

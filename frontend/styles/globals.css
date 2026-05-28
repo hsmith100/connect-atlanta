@@ -175,9 +175,9 @@
         @apply bg-gradient-to-b from-brand-bg via-brand-bg-taupe to-brand-primary;
     }
 
-    /* Off White to Sunkiss Yellow gradient for hero sections */
+    /* Relaxed Tan to Sunkiss Yellow gradient for hero sections */
     .hero-gradient-gold {
-        background: linear-gradient(to bottom, #FAF5F0 0%, #FCBC3A 100%);
+        background: linear-gradient(to bottom, #FEEAD6 0%, #FCBC3A 100%);
     }
 
     /* White background for cards */
