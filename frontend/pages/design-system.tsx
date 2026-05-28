@@ -69,23 +69,23 @@ export default function DesignSystem() {
                 </code>
               </div>
 
-              {/* Relaxed Tan */}
+              {/* Vibin' Peach */}
               <div className="card-festival">
-                <div className="bg-brand-peach h-24 rounded-lg mb-4 border border-gray-200"></div>
-                <h3 className="font-semibold text-brand-header">Relaxed Tan</h3>
-                <p className="text-sm text-gray-600">#FEEAD6</p>
+                <div className="bg-brand-peach h-24 rounded-lg mb-4"></div>
+                <h3 className="font-semibold text-brand-header">Vibin&apos; Peach</h3>
+                <p className="text-sm text-gray-600">#F7AF7F</p>
                 <code className="text-xs bg-gray-100 px-2 py-1 rounded mt-2 inline-block">
-                  bg-brand-peach / bg-brand-bg-sand
+                  bg-brand-peach
                 </code>
               </div>
 
-              {/* Off White */}
+              {/* Relaxed Tan */}
               <div className="card-festival">
                 <div className="bg-brand-bg h-24 rounded-lg mb-4 border border-gray-200"></div>
-                <h3 className="font-semibold text-brand-header">Off White</h3>
-                <p className="text-sm text-gray-600">#FAF5F0</p>
+                <h3 className="font-semibold text-brand-header">Relaxed Tan</h3>
+                <p className="text-sm text-gray-600">#FEEAD6</p>
                 <code className="text-xs bg-gray-100 px-2 py-1 rounded mt-2 inline-block">
-                  bg-brand-bg
+                  bg-brand-bg / bg-brand-tan
                 </code>
               </div>
             </div>

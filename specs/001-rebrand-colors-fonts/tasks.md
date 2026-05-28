@@ -110,7 +110,7 @@
 
 - [x] T017 [P] Update `frontend/pages/design-system.tsx` — replace all hardcoded legacy color hex display values (e.g., `#8C52FF`, `#5CE1E6`, `#F81889`, `#FEB95F`) shown in the color swatch grid with the new brand hex values (`#EA4E9A`, `#40BCB7`, `#FCBC3A`, `#3AAA45`, `#FEEAD6`, `#FAF5F0`) and update swatch names to match new brand naming (Pulse Pink, Open Sky Aqua, Sunkiss Yellow, Valley Green, Relaxed Tan, Off White)
 - [x] T018 [P] Run `npm run build` in `frontend/` — resolve any TypeScript errors, PostCSS/Tailwind warnings, or missing font file 404s that surface during the static export build
-- [x] T019 WCAG AA contrast verified. Results: body text on Off White 16.07:1 ✅; Pulse Pink headings on Off White 3.20:1 ✅ (large text threshold 3:1); dark text on Sunkiss Yellow 10.27:1 ✅; dark text on Relaxed Tan 14.88:1 ✅. Fixed: `.btn-festival` changed from white text to dark text on yellow (was 1.69:1, now 10.27:1).
+- [x] T019 WCAG AA contrast verified. Results: body text on Off White 16.07:1 ✅; Pulse Pink headings on Off White 3.20:1 ✅ (large text threshold 3:1); dark text on Sunkiss Yellow 10.27:1 ✅; dark text on Relaxed Tan 14.88:1 ✅. `.btn-festival` and `--color-primary-content` use dark text (#1A1A1A) on Sunkiss Yellow — 10.27:1 ✅. White text on yellow (1.69:1) was tested and rejected per /speckit.analyze finding C1.
 
 ---
 

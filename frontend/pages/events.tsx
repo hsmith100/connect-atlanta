@@ -151,7 +151,7 @@ export default function Events() {
                     <div className="section-container relative z-10">
                         {/* Hero Title & Subtitle */}
                         <div className="text-center mb-12">
-                            <h1 className="font-horizon text-5xl md:text-7xl lg:text-8xl font-black mb-8 uppercase bg-gradient-to-r from-brand-pink via-brand-peach to-brand-primary bg-clip-text text-transparent">
+                            <h1 className="font-horizon text-5xl md:text-7xl lg:text-8xl font-black mb-8 uppercase bg-gradient-to-r from-brand-pink to-brand-primary bg-clip-text text-transparent">
                                 Events
                             </h1>
                         </div>

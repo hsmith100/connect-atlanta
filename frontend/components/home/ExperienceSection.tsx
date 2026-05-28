@@ -27,7 +27,7 @@ export default function ExperienceSection() {
           <span className="block font-title text-3xl md:text-4xl lg:text-5xl font-semibold text-brand-text/70 my-2">
             on the
           </span>
-          <span className="block font-festival text-6xl md:text-8xl lg:text-9xl font-black uppercase bg-gradient-to-r from-brand-pink via-brand-peach to-brand-primary bg-clip-text text-transparent">
+          <span className="block font-festival text-6xl md:text-8xl lg:text-9xl font-black uppercase bg-gradient-to-r from-brand-pink to-brand-primary bg-clip-text text-transparent">
             Block
           </span>
         </h1>

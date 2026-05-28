@@ -46,7 +46,7 @@ export default function JoinUs() {
           {/* Hero */}
           <div className="py-8">
             <div className="section-container relative z-10">
-              <h1 className="font-horizon text-5xl md:text-7xl lg:text-8xl font-black text-center mb-8 uppercase bg-gradient-to-r from-brand-pink via-brand-peach to-brand-primary bg-clip-text text-transparent">
+              <h1 className="font-horizon text-5xl md:text-7xl lg:text-8xl font-black text-center mb-8 uppercase bg-gradient-to-r from-brand-pink to-brand-primary bg-clip-text text-transparent">
                 Join Us
               </h1>
               <div className="text-center mb-2">
