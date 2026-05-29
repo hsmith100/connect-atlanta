@@ -2,7 +2,7 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import SecretLineup from './secret-lineup'
 
-const mockSEO = jest.fn(() => null)
+const mockSEO = jest.fn((_props: Record<string, unknown>) => null)
 
 jest.mock('next/link', () => ({
   __esModule: true,
