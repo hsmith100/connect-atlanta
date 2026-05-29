@@ -30,7 +30,7 @@ export default function SecretLineup() {
                 <img
                   src="/images/Sponsor Logos 2026/2.png"
                   alt="Presented by Advanced Health Solutions"
-                  className="mx-auto max-w-xl w-full -my-16"
+                  className="mx-auto max-w-[200px] md:max-w-xs my-6"
                 />
               </div>
 
