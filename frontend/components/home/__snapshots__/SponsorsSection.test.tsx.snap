@@ -14,17 +14,26 @@ exports[`matches snapshot 1`] = `
         Sponsors
       </h2>
       <div
+        class="flex justify-center mb-8"
+      >
+        <img
+          alt="Advanced Health Solutions — Presenting Sponsor"
+          class="max-w-[140px] md:max-w-[160px] h-auto"
+          src="/images/Sponsor%20Logos%202026/2.png"
+        />
+      </div>
+      <div
         class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 items-center max-w-3xl mx-auto"
       >
         <div
           class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
         >
           <img
-            alt="Coke Zero"
+            alt="Sponsor 3"
             class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/sponsors/coke-zero.svg"
+            src="/images/Sponsor%20Logos%202026/3.png"
             width="100"
           />
         </div>
@@ -32,11 +41,11 @@ exports[`matches snapshot 1`] = `
           class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
         >
           <img
-            alt="Deep Eddy"
+            alt="Sponsor 4"
             class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/sponsors/deep-eddy.svg"
+            src="/images/Sponsor%20Logos%202026/4.png"
             width="100"
           />
         </div>
@@ -44,11 +53,11 @@ exports[`matches snapshot 1`] = `
           class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
         >
           <img
-            alt="Lunazul"
+            alt="Sponsor 5"
             class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/sponsors/lunazul.svg"
+            src="/images/Sponsor%20Logos%202026/5.png"
             width="100"
           />
         </div>
@@ -56,11 +65,11 @@ exports[`matches snapshot 1`] = `
           class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
         >
           <img
-            alt="EVDY"
+            alt="Sponsor 6"
             class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/sponsors/evdy.svg"
+            src="/images/Sponsor%20Logos%202026/6.png"
             width="100"
           />
         </div>
@@ -68,23 +77,11 @@ exports[`matches snapshot 1`] = `
           class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
         >
           <img
-            alt="Simply Pop"
-            class="object-contain max-w-[60px] max-h-[35px] h-auto opacity-100 transition-opacity"
-            height="80"
-            loading="lazy"
-            src="/images/sponsors/simply-pop.svg"
-            width="100"
-          />
-        </div>
-        <div
-          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
-        >
-          <img
-            alt="Nine Dot"
+            alt="Sponsor 7"
             class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/sponsors/nine-dot.svg"
+            src="/images/Sponsor%20Logos%202026/7.png"
             width="100"
           />
         </div>
@@ -92,11 +89,11 @@ exports[`matches snapshot 1`] = `
           class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
         >
           <img
-            alt="Amiqo"
-            class="object-contain max-w-[60px] max-h-[35px] h-auto opacity-100 transition-opacity"
+            alt="Sponsor 8"
+            class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/sponsors/amiqo.svg"
+            src="/images/Sponsor%20Logos%202026/8.png"
             width="100"
           />
         </div>
@@ -104,11 +101,11 @@ exports[`matches snapshot 1`] = `
           class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
         >
           <img
-            alt="4Ever Young"
-            class="object-contain max-w-[60px] max-h-[35px] h-auto opacity-100 transition-opacity"
+            alt="Sponsor 9"
+            class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/sponsors/4ever-young.svg"
+            src="/images/Sponsor%20Logos%202026/9.png"
             width="100"
           />
         </div>
@@ -116,11 +113,71 @@ exports[`matches snapshot 1`] = `
           class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
         >
           <img
-            alt="Sub Riot"
-            class="object-contain max-w-[80px] max-h-[65px] h-auto opacity-100 transition-opacity"
+            alt="Sponsor 10"
+            class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/sponsors/sub-riot.svg"
+            src="/images/Sponsor%20Logos%202026/10.png"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="Sponsor 11"
+            class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/Sponsor%20Logos%202026/11.png"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="Sponsor 12"
+            class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/Sponsor%20Logos%202026/12.png"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="Sponsor 13"
+            class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/Sponsor%20Logos%202026/13.png"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="Sponsor 14"
+            class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/Sponsor%20Logos%202026/14.png"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="Sponsor 15"
+            class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/Sponsor%20Logos%202026/15.png"
             width="100"
           />
         </div>

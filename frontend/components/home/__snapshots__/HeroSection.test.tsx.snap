@@ -9,7 +9,16 @@ exports[`matches snapshot while events loading 1`] = `
       class="section-container relative z-10 w-full"
     >
       <div
-        class="text-center mb-12 hidden md:block"
+        class="text-center mb-4"
+      >
+        <img
+          alt="Presented by Advanced Health Solutions"
+          class="block mx-auto max-w-[120px] md:max-w-[150px]"
+          src="/images/Sponsor%20Logos%202026/2.png"
+        />
+      </div>
+      <div
+        class="text-center mb-8 hidden md:block"
       >
         <div
           class="relative inline-block mx-auto"
@@ -59,7 +68,16 @@ exports[`matches snapshot with hero cards and no events 1`] = `
       class="section-container relative z-10 w-full"
     >
       <div
-        class="text-center mb-12 hidden md:block"
+        class="text-center mb-4"
+      >
+        <img
+          alt="Presented by Advanced Health Solutions"
+          class="block mx-auto max-w-[120px] md:max-w-[150px]"
+          src="/images/Sponsor%20Logos%202026/2.png"
+        />
+      </div>
+      <div
+        class="text-center mb-8 hidden md:block"
       >
         <div
           class="relative inline-block mx-auto"
@@ -116,7 +134,16 @@ exports[`matches snapshot with no cards and no events 1`] = `
       class="section-container relative z-10 w-full"
     >
       <div
-        class="text-center mb-12 hidden md:block"
+        class="text-center mb-4"
+      >
+        <img
+          alt="Presented by Advanced Health Solutions"
+          class="block mx-auto max-w-[120px] md:max-w-[150px]"
+          src="/images/Sponsor%20Logos%202026/2.png"
+        />
+      </div>
+      <div
+        class="text-center mb-8 hidden md:block"
       >
         <div
           class="relative inline-block mx-auto"
@@ -193,7 +220,16 @@ exports[`matches snapshot with upcoming event 1`] = `
       class="section-container relative z-10 w-full"
     >
       <div
-        class="text-center mb-12 hidden md:block"
+        class="text-center mb-4"
+      >
+        <img
+          alt="Presented by Advanced Health Solutions"
+          class="block mx-auto max-w-[120px] md:max-w-[150px]"
+          src="/images/Sponsor%20Logos%202026/2.png"
+        />
+      </div>
+      <div
+        class="text-center mb-8 hidden md:block"
       >
         <div
           class="relative inline-block mx-auto"
@@ -234,7 +270,16 @@ exports[`matches snapshot with upcoming event and hero cards 1`] = `
       class="section-container relative z-10 w-full"
     >
       <div
-        class="text-center mb-12 hidden md:block"
+        class="text-center mb-4"
+      >
+        <img
+          alt="Presented by Advanced Health Solutions"
+          class="block mx-auto max-w-[120px] md:max-w-[150px]"
+          src="/images/Sponsor%20Logos%202026/2.png"
+        />
+      </div>
+      <div
+        class="text-center mb-8 hidden md:block"
       >
         <div
           class="relative inline-block mx-auto"
