@@ -201,6 +201,47 @@ test.describe('merch page', () => {
   });
 });
 
+// ── Secret lineup page ────────────────────────────────────────────────────────
+
+test.describe('secret lineup page', () => {
+  test('AHS logo is visible', async ({ page }) => {
+    await page.goto('/secret-lineup');
+    await expect(page.getByAltText('Presented by Advanced Health Solutions')).toBeVisible();
+  });
+
+  test('sponsor blurb content is present', async ({ page }) => {
+    await page.goto('/secret-lineup');
+    await expect(page.getByText(/thrilled to partner with Advanced Health Solutions/i)).toBeVisible();
+    await expect(page.getByText(/zero out of pocket costs/i)).toBeVisible();
+  });
+
+  test('AHS link points to ahsdoctors.com and opens in a new tab', async ({ page }) => {
+    await page.goto('/secret-lineup');
+    const link = page.getByRole('link', { name: /visit advanced health solutions/i });
+    await expect(link).toBeVisible();
+    await expect(link).toHaveAttribute('href', 'https://ahsdoctors.com');
+    await expect(link).toHaveAttribute('target', '_blank');
+    await expect(link).toHaveAttribute('rel', /noopener/);
+  });
+
+  test('lineup image is visible', async ({ page }) => {
+    await page.goto('/secret-lineup');
+    await expect(page.getByAltText(/official beats on the block.*performer lineup/i)).toBeVisible();
+  });
+
+  test('page is tagged noindex', async ({ page }) => {
+    await page.goto('/secret-lineup');
+    const robots = await page.locator('meta[name="robots"]').getAttribute('content');
+    expect(robots).toContain('noindex');
+  });
+
+  test('/secret-lineup does not appear in site navigation', async ({ page }) => {
+    await page.goto('/');
+    const navLinks = page.locator('header a[href*="secret-lineup"]');
+    await expect(navLinks).toHaveCount(0);
+  });
+});
+
 // ── Admin page ────────────────────────────────────────────────────────────────
 
 test.describe('admin page', () => {
