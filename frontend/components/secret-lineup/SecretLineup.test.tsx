@@ -1,6 +1,6 @@
 import React from 'react'
 import { render, screen } from '@testing-library/react'
-import SecretLineup from './secret-lineup'
+import SecretLineup from '../../pages/secret-lineup'
 
 const mockSEO = jest.fn((_props: Record<string, unknown>) => null)
 
@@ -9,9 +9,9 @@ jest.mock('next/link', () => ({
   default: ({ href, children, onClick, ...rest }: any) => <a href={href} onClick={onClick} {...rest}>{children}</a>,
 }))
 
-jest.mock('../components/layout/Header', () => ({ __esModule: true, default: () => <header data-testid="header" /> }))
-jest.mock('../components/layout/Footer', () => ({ __esModule: true, default: () => <footer data-testid="footer" /> }))
-jest.mock('../components/shared/SEO', () => ({
+jest.mock('../layout/Header', () => ({ __esModule: true, default: () => <header data-testid="header" /> }))
+jest.mock('../layout/Footer', () => ({ __esModule: true, default: () => <footer data-testid="footer" /> }))
+jest.mock('../shared/SEO', () => ({
   __esModule: true,
   default: (props: any) => { mockSEO(props); return null },
 }))
