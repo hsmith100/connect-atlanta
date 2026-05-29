@@ -124,8 +124,17 @@ export default function HeroSection({
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-8 hero-gradient-gold">
       <div className="section-container relative z-10 w-full">
 
+        {/* Presented By AHS - All screen sizes */}
+        <div className="text-center mb-4">
+          <img
+            src="/images/Sponsor%20Logos%202026/2.png"
+            alt="Presented by Advanced Health Solutions"
+            className="block mx-auto max-w-[120px] md:max-w-[150px]"
+          />
+        </div>
+
         {/* Hero Logo & Title - Desktop Only */}
-        <div className="text-center mb-12 hidden md:block">
+        <div className="text-center mb-8 hidden md:block">
           <div className="relative inline-block mx-auto">
             <div className="absolute inset-0 bg-gradient-radial from-yellow-200/40 via-yellow-100/20 to-transparent blur-3xl scale-110"></div>
             <img

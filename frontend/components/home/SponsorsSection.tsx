@@ -1,17 +1,18 @@
-const SPONSORS = [
-  { name: 'Coke Zero', logo: '/images/sponsors/coke-zero.svg' },
-  { name: 'Deep Eddy', logo: '/images/sponsors/deep-eddy.svg' },
-  { name: 'Lunazul', logo: '/images/sponsors/lunazul.svg' },
-  { name: 'EVDY', logo: '/images/sponsors/evdy.svg' },
-  { name: 'Simply Pop', logo: '/images/sponsors/simply-pop.svg' },
-  { name: 'Nine Dot', logo: '/images/sponsors/nine-dot.svg' },
-  { name: 'Amiqo', logo: '/images/sponsors/amiqo.svg' },
-  { name: '4Ever Young', logo: '/images/sponsors/4ever-young.svg' },
-  { name: 'Sub Riot', logo: '/images/sponsors/sub-riot.svg' },
+const SPONSORS_2026 = [
+  { name: 'Sponsor 3',  logo: '/images/Sponsor%20Logos%202026/3.png'  },
+  { name: 'Sponsor 4',  logo: '/images/Sponsor%20Logos%202026/4.png'  },
+  { name: 'Sponsor 5',  logo: '/images/Sponsor%20Logos%202026/5.png'  },
+  { name: 'Sponsor 6',  logo: '/images/Sponsor%20Logos%202026/6.png'  },
+  { name: 'Sponsor 7',  logo: '/images/Sponsor%20Logos%202026/7.png'  },
+  { name: 'Sponsor 8',  logo: '/images/Sponsor%20Logos%202026/8.png'  },
+  { name: 'Sponsor 9',  logo: '/images/Sponsor%20Logos%202026/9.png'  },
+  { name: 'Sponsor 10', logo: '/images/Sponsor%20Logos%202026/10.png' },
+  { name: 'Sponsor 11', logo: '/images/Sponsor%20Logos%202026/11.png' },
+  { name: 'Sponsor 12', logo: '/images/Sponsor%20Logos%202026/12.png' },
+  { name: 'Sponsor 13', logo: '/images/Sponsor%20Logos%202026/13.png' },
+  { name: 'Sponsor 14', logo: '/images/Sponsor%20Logos%202026/14.png' },
+  { name: 'Sponsor 15', logo: '/images/Sponsor%20Logos%202026/15.png' },
 ]
-
-const SMALLER_HEIGHT = new Set(['Simply Pop', 'Amiqo', '4Ever Young'])
-const LARGER_HEIGHT = new Set(['Sub Riot'])
 
 export default function SponsorsSection() {
   return (
@@ -21,23 +22,28 @@ export default function SponsorsSection() {
           Sponsors
         </h2>
 
+        {/* Presenting sponsor — featured above the grid */}
+        <div className="flex justify-center mb-8">
+          <img
+            src="/images/Sponsor%20Logos%202026/2.png"
+            alt="Advanced Health Solutions — Presenting Sponsor"
+            className="max-w-[140px] md:max-w-[160px] h-auto"
+          />
+        </div>
+
         <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 items-center max-w-3xl mx-auto">
-          {SPONSORS.map((sponsor, idx) => {
-            const heightClass = SMALLER_HEIGHT.has(sponsor.name) ? 'max-h-[35px]' : LARGER_HEIGHT.has(sponsor.name) ? 'max-h-[65px]' : 'max-h-[50px]'
-            const widthClass = LARGER_HEIGHT.has(sponsor.name) ? 'max-w-[80px]' : 'max-w-[60px]'
-            return (
-              <div key={idx} className="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1">
-                <img
-                  src={sponsor.logo}
-                  alt={sponsor.name}
-                  width="100"
-                  height="80"
-                  className={`object-contain ${widthClass} ${heightClass} h-auto opacity-100 transition-opacity`}
-                  loading="lazy"
-                />
-              </div>
-            )
-          })}
+          {SPONSORS_2026.map((sponsor, idx) => (
+            <div key={idx} className="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1">
+              <img
+                src={sponsor.logo}
+                alt={sponsor.name}
+                width="100"
+                height="80"
+                className="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
+                loading="lazy"
+              />
+            </div>
+          ))}
         </div>
       </div>
     </section>
