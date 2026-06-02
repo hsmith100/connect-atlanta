@@ -21,6 +21,7 @@ pip-delete-this-directory.txt
 frontend/.next/
 frontend/out/
 frontend/build/
+frontend/next-env.d.ts
 .next/
 out/
 
