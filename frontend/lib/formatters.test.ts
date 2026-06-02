@@ -1,4 +1,47 @@
-import { formatTime, formatEventDate } from './formatters';
+import { formatTime, formatEventDate, getDefaultActiveId } from './formatters';
+import type { Event } from '@shared/types/events';
+
+function makeEvent(id: string, date: string, startTime?: string): Event {
+  return { id, date, ...(startTime ? { startTime } : {}) } as Event
+}
+
+describe('getDefaultActiveId', () => {
+  it('returns null for an empty array', () => {
+    expect(getDefaultActiveId([])).toBeNull()
+  })
+
+  it('returns the only event id for a single event', () => {
+    expect(getDefaultActiveId([makeEvent('a', '2099-06-01')])).toBe('a')
+  })
+
+  it('returns the earliest upcoming event when the array is already sorted', () => {
+    const events = [makeEvent('a', '2099-06-01'), makeEvent('b', '2099-09-01')]
+    expect(getDefaultActiveId(events)).toBe('a')
+  })
+
+  it('returns the earliest upcoming event even when the array is in reverse chronological order', () => {
+    // Regression: DynamoDB returns events in insertion order. If the later-dated event
+    // was added first it appears at index 0 — the active tab must still be the earlier one.
+    const events = [makeEvent('b', '2099-09-01'), makeEvent('a', '2099-06-01')]
+    expect(getDefaultActiveId(events)).toBe('a')
+  })
+
+  it('when all events have started, returns the one with the latest start time', () => {
+    const events = [
+      makeEvent('a', '2020-06-01', '10:00'),
+      makeEvent('b', '2020-09-01', '10:00'),
+    ]
+    expect(getDefaultActiveId(events)).toBe('b')
+  })
+
+  it('when all events have started and passed in reverse order, still returns latest start', () => {
+    const events = [
+      makeEvent('b', '2020-09-01', '10:00'),
+      makeEvent('a', '2020-06-01', '10:00'),
+    ]
+    expect(getDefaultActiveId(events)).toBe('b')
+  })
+})
 
 describe('formatTime', () => {
   it('formats afternoon time correctly', () => {
