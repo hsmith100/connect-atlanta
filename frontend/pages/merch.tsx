@@ -19,7 +19,7 @@ export default function Merch() {
         <section className="py-8 md:py-12 relative overflow-hidden hero-gradient-gold">
           <div className="section-container relative z-10">
             <div className="text-center mb-12">
-              <h1 className="font-horizon text-5xl md:text-7xl lg:text-8xl font-black mb-8 uppercase bg-gradient-to-r from-brand-pink to-brand-primary bg-clip-text text-transparent">
+              <h1 className="font-horizon text-5xl md:text-7xl lg:text-8xl font-black mb-8 uppercase text-brand-pink">
                 Merch
               </h1>
             </div>

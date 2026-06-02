@@ -21,13 +21,13 @@ export default function ExperienceSection() {
     <section id="experience" className="pt-4 pb-6 md:pt-6 md:pb-10 bg-brand-bg-cream">
       <div className="section-container">
         <h1 className="text-center mb-4">
-          <span className="block font-festival text-6xl md:text-8xl lg:text-9xl font-black uppercase bg-gradient-to-r from-brand-primary via-brand-accent to-brand-pink bg-clip-text text-transparent">
+          <span className="block font-festival text-6xl md:text-8xl lg:text-9xl font-black uppercase text-brand-pink">
             Beats
           </span>
           <span className="block font-title text-3xl md:text-4xl lg:text-5xl font-semibold text-brand-text/70 my-2">
             on the
           </span>
-          <span className="block font-festival text-6xl md:text-8xl lg:text-9xl font-black uppercase bg-gradient-to-r from-brand-pink to-brand-primary bg-clip-text text-transparent">
+          <span className="block font-festival text-6xl md:text-8xl lg:text-9xl font-black uppercase text-brand-pink">
             Block
           </span>
         </h1>

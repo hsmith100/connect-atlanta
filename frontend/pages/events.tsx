@@ -151,7 +151,7 @@ export default function Events() {
                     <div className="section-container relative z-10">
                         {/* Hero Title & Subtitle */}
                         <div className="text-center mb-12">
-                            <h1 className="font-horizon text-5xl md:text-7xl lg:text-8xl font-black mb-8 uppercase bg-gradient-to-r from-brand-pink to-brand-primary bg-clip-text text-transparent">
+                            <h1 className="font-horizon text-5xl md:text-7xl lg:text-8xl font-black mb-8 uppercase text-brand-pink">
                                 Events
                             </h1>
                         </div>
@@ -248,7 +248,7 @@ export default function Events() {
                 {selectedEvent && (
                     <section id="event-gallery" className="py-12 md:py-20 bg-brand-bg scroll-mt-20">
                         <div className="section-container">
-                            <h2 className="font-title text-4xl md:text-6xl font-black text-center mb-4 gradient-text uppercase">
+                            <h2 className="font-title text-4xl md:text-6xl font-black text-center mb-4 text-brand-pink uppercase">
                                 {pastEvents.find(e => e.id === selectedEvent)?.title} Gallery
                             </h2>
                             <p className="text-xl text-center text-brand-header/80 mb-16 max-w-3xl mx-auto">
