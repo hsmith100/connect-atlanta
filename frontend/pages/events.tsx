@@ -151,7 +151,7 @@ export default function Events() {
                     <div className="section-container relative z-10">
                         {/* Hero Title & Subtitle */}
                         <div className="text-center mb-12">
-                            <h1 className="font-horizon text-5xl md:text-7xl lg:text-8xl font-black mb-8 uppercase bg-gradient-to-r from-brand-pink via-brand-peach to-brand-primary bg-clip-text text-transparent">
+                            <h1 className="font-horizon text-5xl md:text-7xl lg:text-8xl font-black mb-8 uppercase bg-gradient-to-r from-brand-pink to-brand-primary bg-clip-text text-transparent">
                                 Events
                             </h1>
                         </div>
@@ -164,12 +164,12 @@ export default function Events() {
 
                             {loading ? (
                                 <div className="flex justify-center items-center py-20">
-                                    <Loader2 className="animate-spin text-brand-primary" size={48} />
+                                    <Loader2 className="animate-spin text-brand-pink" size={48} />
                                     <span className="ml-4 text-xl text-brand-header">Loading events...</span>
                                 </div>
                             ) : upcomingEvents.length === 0 ? (
                                 <div className="max-w-3xl mx-auto text-center py-8">
-                                    <div className="mb-6 text-brand-primary/40 flex justify-center">
+                                    <div className="mb-6 text-brand-pink/40 flex justify-center">
                                         <Calendar size={80} strokeWidth={1.5} />
                                     </div>
                                     <p className="text-2xl text-brand-header/60 mb-8">
@@ -213,7 +213,7 @@ export default function Events() {
                         {/* Loading State */}
                         {loading && (
                             <div className="flex justify-center items-center py-20">
-                                <Loader2 className="animate-spin text-brand-primary" size={48} />
+                                <Loader2 className="animate-spin text-brand-pink" size={48} />
                                 <span className="ml-4 text-xl text-brand-header">Loading events...</span>
                             </div>
                         )}
@@ -258,7 +258,7 @@ export default function Events() {
                             {/* Gallery Loading State */}
                             {galleryLoading && (
                                 <div className="flex justify-center items-center py-20">
-                                    <Loader2 className="animate-spin text-brand-primary" size={48} />
+                                    <Loader2 className="animate-spin text-brand-pink" size={48} />
                                     <span className="ml-4 text-xl text-brand-header">Loading gallery...</span>
                                 </div>
                             )}
@@ -309,7 +309,7 @@ export default function Events() {
                             {/* Empty State */}
                             {galleryData && !galleryLoading && galleryData.photos.length === 0 && (
                                 <div className="text-center py-12">
-                                    <Music className="mx-auto mb-4 text-brand-primary/40" size={64} />
+                                    <Music className="mx-auto mb-4 text-brand-pink/40" size={64} />
                                     <p className="text-xl text-brand-header/60">
                                         No photos or videos available for this event yet.
                                     </p>
@@ -335,7 +335,7 @@ export default function Events() {
                 {/* CTA Section */}
                 <section className="py-12 md:py-20 bg-brand-bg">
                     <div className="section-container text-center">
-                        <div className="mb-6 text-brand-primary flex justify-center">
+                        <div className="mb-6 text-brand-pink flex justify-center">
                             <Music size={64} strokeWidth={1.5} />
                         </div>
                         <h2 className="font-title text-4xl md:text- font-black mb-6 text-brand-header uppercase">
@@ -366,7 +366,7 @@ export default function Events() {
                     {/* Close Button */}
                     <button
                         onClick={closeImageModal}
-                        className="absolute top-4 right-4 z-[110] text-white hover:text-brand-primary transition-colors bg-black/50 rounded-full p-3 hover:bg-black/70"
+                        className="absolute top-4 right-4 z-[110] text-white hover:text-brand-pink transition-colors bg-black/50 rounded-full p-3 hover:bg-black/70"
                         aria-label="Close modal"
                     >
                         <X size={32} />
@@ -379,7 +379,7 @@ export default function Events() {
                                 e.stopPropagation()
                                 prevImage()
                             }}
-                            className="absolute left-4 z-[110] text-white hover:text-brand-primary transition-colors bg-black/50 rounded-full p-3 hover:bg-black/70"
+                            className="absolute left-4 z-[110] text-white hover:text-brand-pink transition-colors bg-black/50 rounded-full p-3 hover:bg-black/70"
                             aria-label="Previous image"
                         >
                             <ChevronLeft size={32} />
@@ -410,7 +410,7 @@ export default function Events() {
                                 e.stopPropagation()
                                 nextImage()
                             }}
-                            className="absolute right-4 z-[110] text-white hover:text-brand-primary transition-colors bg-black/50 rounded-full p-3 hover:bg-black/70"
+                            className="absolute right-4 z-[110] text-white hover:text-brand-pink transition-colors bg-black/50 rounded-full p-3 hover:bg-black/70"
                             aria-label="Next image"
                         >
                             <ChevronRight size={32} />

@@ -27,11 +27,11 @@ export default function UpcomingEventsSection({ events, loading, onOpenModal }: 
 
         {loading ? (
           <div className="flex justify-center items-center py-12">
-            <Loader2 className="animate-spin text-brand-primary" size={40} />
+            <Loader2 className="animate-spin text-brand-pink" size={40} />
           </div>
         ) : events.length === 0 ? (
           <div className="max-w-3xl mx-auto text-center py-8">
-            <div className="mb-6 text-brand-primary/40 flex justify-center">
+            <div className="mb-6 text-brand-pink/40 flex justify-center">
               <Calendar size={72} strokeWidth={1.5} />
             </div>
             <p className="text-xl text-brand-header/60 mb-6">New events coming soon!</p>

@@ -29,7 +29,7 @@ exports[`matches snapshot 1`] = `
             BOTB 2026 Colorblast Tee
           </h3>
           <p
-            class="text-2xl font-bold text-brand-primary"
+            class="text-2xl font-bold text-brand-pink"
           >
             $35.00
           </p>
@@ -58,7 +58,7 @@ exports[`matches snapshot 1`] = `
             BOTB 2026 Green Tee
           </h3>
           <p
-            class="text-2xl font-bold text-brand-primary"
+            class="text-2xl font-bold text-brand-pink"
           >
             $35.00
           </p>

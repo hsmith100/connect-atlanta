@@ -20,7 +20,7 @@ exports[`matches snapshot 1`] = `
           class="text-center"
         >
           <div
-            class="mb-4 text-brand-primary flex justify-center"
+            class="mb-4 text-brand-pink flex justify-center"
           >
             <svg
               fill="none"
@@ -66,7 +66,7 @@ exports[`matches snapshot 1`] = `
           class="text-center"
         >
           <div
-            class="mb-4 text-brand-primary flex justify-center"
+            class="mb-4 text-brand-pink flex justify-center"
           >
             <svg
               fill="none"
@@ -108,7 +108,7 @@ exports[`matches snapshot 1`] = `
           class="text-center"
         >
           <div
-            class="mb-4 text-brand-primary flex justify-center"
+            class="mb-4 text-brand-pink flex justify-center"
           >
             <svg
               fill="none"

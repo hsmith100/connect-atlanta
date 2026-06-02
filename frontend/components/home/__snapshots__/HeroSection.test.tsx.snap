@@ -38,7 +38,7 @@ exports[`matches snapshot while events loading 1`] = `
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-loader-circle animate-spin text-brand-primary"
+          class="lucide lucide-loader-circle animate-spin text-brand-pink"
           fill="none"
           height="40"
           stroke="currentColor"
@@ -162,7 +162,7 @@ exports[`matches snapshot with no cards and no events 1`] = `
         class="max-w-3xl mx-auto text-center py-8"
       >
         <div
-          class="mb-6 text-brand-primary/40 flex justify-center"
+          class="mb-6 text-brand-pink/40 flex justify-center"
         >
           <svg
             aria-hidden="true"

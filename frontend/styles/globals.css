@@ -12,23 +12,23 @@
 /* DaisyUI "connect" theme — applied via data-theme="connect" in _document.tsx */
 [data-theme="connect"] {
   color-scheme: light;
-  --color-primary: #F7C03E;
-  --color-primary-content: #1A1A1A;
-  --color-secondary: #B8860B;
+  --color-primary: #EA4E9A;
+  --color-primary-content: #FFFFFF;
+  --color-secondary: #C99620;
   --color-secondary-content: #FFFFFF;
-  --color-accent: #18B4DD;
+  --color-accent: #40BCB7;
   --color-accent-content: #FFFFFF;
   --color-neutral: #2C2C2C;
   --color-neutral-content: #FFFFFF;
   --color-base-100: #FFFFFF;
-  --color-base-200: #F9F7F4;
-  --color-base-300: #F2EDE6;
+  --color-base-200: #FAF5F0;
+  --color-base-300: #FEEAD6;
   --color-base-content: #1A1A1A;
-  --color-info: #18B4DD;
+  --color-info: #40BCB7;
   --color-info-content: #FFFFFF;
   --color-success: #36D399;
   --color-success-content: #FFFFFF;
-  --color-warning: #D99B2A;
+  --color-warning: #C99620;
   --color-warning-content: #1A1A1A;
   --color-error: #DC2626;
   --color-error-content: #FFFFFF;
@@ -36,17 +36,25 @@
 
 /* Custom Fonts */
 @font-face {
-    font-family: 'Aharoni Bold';
-    src: url('/fonts/Aharoni Font/Aharoni Bold V3/Aharoni Bold V3.ttf') format('truetype');
-    font-weight: 700;
+    font-family: 'Anton';
+    src: url('/fonts/Anton/Anton-Regular.ttf') format('truetype');
+    font-weight: 400;
     font-style: normal;
     font-display: swap;
 }
 
 @font-face {
-    font-family: 'Horizon';
-    src: url('/fonts/Horizon Font/horizon.otf') format('opentype');
-    font-weight: normal;
+    font-family: 'Bricolage Grotesque';
+    src: url('/fonts/BricolageGrotesque/BricolageGrotesque-VariableFont_opsz,wdth,wght.ttf') format('truetype');
+    font-weight: 100 900;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Avenir Next';
+    src: url('/fonts/AvenirNext/Avenir Next.ttc') format('truetype');
+    font-weight: 100 900;
     font-style: normal;
     font-display: swap;
 }
@@ -55,6 +63,7 @@
 @layer base {
     body {
         @apply bg-brand-bg text-brand-header;
+        font-family: 'Avenir Next', Avenir, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
 
     h1,
@@ -63,7 +72,7 @@
     h4,
     h5,
     h6 {
-        @apply text-brand-pink font-bold;
+        @apply text-brand-pink font-bold font-title;
     }
 
     /* Smooth scrolling for anchor links */
@@ -82,11 +91,11 @@
 
     /* Festival-specific button styles */
     .btn-festival {
-        @apply bg-brand-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-header transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
+        @apply bg-brand-pink text-white px-6 py-3 rounded-lg font-semibold hover:bg-brand-pink-dark transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5;
     }
 
     .btn-festival-outline {
-        @apply border-2 border-brand-primary text-brand-primary px-6 py-3 rounded-lg font-semibold hover:bg-brand-primary hover:text-white transition-all duration-300;
+        @apply border-2 border-brand-pink text-brand-pink px-6 py-3 rounded-lg font-semibold hover:bg-brand-pink hover:text-white transition-all duration-300;
     }
 
     /* Card styles */
@@ -125,19 +134,15 @@
 
     /* Custom glow effect */
     .glow {
-        box-shadow: 0 0 20px rgba(92, 225, 230, 0.5);
+        box-shadow: 0 0 20px rgba(64, 188, 183, 0.5);
     }
 
     .glow-pink {
-        box-shadow: 0 0 20px rgba(248, 24, 137, 0.5);
-    }
-
-    .glow-purple {
-        box-shadow: 0 0 20px rgba(140, 82, 255, 0.5);
+        box-shadow: 0 0 20px rgba(234, 78, 154, 0.5);
     }
 
     .glow-gold {
-        box-shadow: 0 0 20px rgba(217, 155, 42, 0.6);
+        box-shadow: 0 0 20px rgba(252, 188, 58, 0.6);
     }
 
     /* Text shadow for better readability on images */
@@ -152,9 +157,9 @@
         border: 1px solid rgba(255, 255, 255, 0.2);
     }
 
-    /* Pink to orange gradient for section headers - sunset inspired */
+    /* Pulse Pink to Sunkiss Yellow gradient for section headers */
     .gradient-text-pink {
-        background: linear-gradient(135deg, #F81889 0%, #FF5722 100%);
+        background: linear-gradient(135deg, #EA4E9A 0%, #FCBC3A 100%);
         -webkit-background-clip: text;
         background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -165,14 +170,14 @@
         background-image: radial-gradient(circle, var(--tw-gradient-stops));
     }
 
-    /* Golden gradient for hero backgrounds */
+    /* Relaxed Tan → Sunkiss Yellow gradient for hero backgrounds */
     .hero-bg-gold {
-        @apply bg-gradient-to-b from-amber-200 via-yellow-100 to-orange-100;
+        @apply bg-gradient-to-b from-brand-bg via-brand-bg-taupe to-brand-primary;
     }
 
-    /* Off-white to gold gradient for hero sections */
+    /* Relaxed Tan to Sunkiss Yellow gradient for hero sections */
     .hero-gradient-gold {
-        background: linear-gradient(to bottom, #FFFDF3 0%, #FFD983 100%);
+        background: linear-gradient(to bottom, #FEEAD6 0%, #FCBC3A 100%);
     }
 
     /* White background for cards */
@@ -193,7 +198,7 @@
 
     /* Individual word gradients for BEATS ON THE BLOCK */
     .title-beats {
-        background: linear-gradient(135deg, #FEB95F 0%, #F81889 50%, #8C52FF 100%);
+        background: linear-gradient(135deg, #FCBC3A 0%, #EA4E9A 50%, #40BCB7 100%);
         -webkit-background-clip: text;
         background-clip: text;
     }
@@ -207,8 +212,8 @@
             0 0 20px rgba(255, 255, 255, 0.5);
     }
 
-    .title-beltline {
-        background: linear-gradient(135deg, #F81889 0%, #8C52FF 30%, #5CE1E6 70%, #8C52FF 100%);
+    .title-block {
+        background: linear-gradient(135deg, #EA4E9A 0%, #40BCB7 50%, #3AAA45 100%);
         -webkit-background-clip: text;
         background-clip: text;
     }
@@ -243,11 +248,11 @@
 
     0%,
     100% {
-        box-shadow: 0 0 20px rgba(140, 82, 255, 0.4);
+        box-shadow: 0 0 20px rgba(64, 188, 183, 0.4);
     }
 
     50% {
-        box-shadow: 0 0 40px rgba(140, 82, 255, 0.8);
+        box-shadow: 0 0 40px rgba(64, 188, 183, 0.8);
     }
 }
 
@@ -255,11 +260,11 @@
 
     0%,
     100% {
-        box-shadow: 0 0 20px rgba(217, 155, 42, 0.5);
+        box-shadow: 0 0 20px rgba(252, 188, 58, 0.5);
     }
 
     50% {
-        box-shadow: 0 0 40px rgba(217, 155, 42, 0.9);
+        box-shadow: 0 0 40px rgba(252, 188, 58, 0.9);
     }
 }
 

@@ -32,7 +32,7 @@ export function SubmissionsTab({ adminKey, artists, sponsors, emailSignups }: Pr
             onClick={() => setActiveSubTab(tab.id)}
             className={`px-4 py-3 text-sm font-semibold transition-colors border-b-2 ${
               activeSubTab === tab.id
-                ? 'border-brand-primary text-brand-primary'
+                ? 'border-brand-primary text-brand-pink'
                 : 'border-transparent text-gray-400 hover:text-white'
             }`}
           >

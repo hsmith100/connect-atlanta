@@ -20,7 +20,7 @@ exports[`matches snapshot 1`] = `
         class="card-bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border-2 border-brand-primary/20"
       >
         <div
-          class="mb-3 text-brand-primary"
+          class="mb-3 text-brand-pink"
         >
           <svg
             aria-hidden="true"
@@ -53,7 +53,7 @@ exports[`matches snapshot 1`] = `
           Email
         </h3>
         <a
-          class="text-brand-primary hover:text-brand-header transition-colors text-lg"
+          class="text-brand-pink hover:text-brand-header transition-colors text-lg"
           href="mailto:info@connectevents.co"
         >
           info@connectevents.co
@@ -63,7 +63,7 @@ exports[`matches snapshot 1`] = `
         class="card-bg-white p-6 rounded-2xl shadow-lg hover:shadow-xl transition-shadow border-2 border-brand-primary/20"
       >
         <div
-          class="mb-3 text-brand-primary"
+          class="mb-3 text-brand-pink"
         >
           <svg
             aria-hidden="true"

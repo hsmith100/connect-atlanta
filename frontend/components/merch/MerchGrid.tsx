@@ -37,7 +37,7 @@ export default function MerchGrid() {
             </div>
             <div className="p-6">
               <h3 className="text-lg font-bold text-brand-header mb-3 leading-tight">{item.name}</h3>
-              <p className="text-2xl font-bold text-brand-primary">{item.price}</p>
+              <p className="text-2xl font-bold text-brand-pink">{item.price}</p>
             </div>
           </a>
         ))}

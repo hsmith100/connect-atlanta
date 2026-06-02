@@ -131,7 +131,7 @@ export default function PrivacyPolicy() {
                 <li><strong>Data Portability:</strong> Request a copy of your data in a portable format</li>
               </ul>
               <p className="text-brand-text mb-4">
-                To exercise these rights, please contact us at <a href="mailto:info@connectevents.co" className="text-brand-primary hover:text-brand-secondary">info@connectevents.co</a>.
+                To exercise these rights, please contact us at <a href="mailto:info@connectevents.co" className="text-brand-pink hover:text-brand-secondary">info@connectevents.co</a>.
               </p>
 
               <h2 className="text-2xl font-bold text-brand-header mt-8 mb-4">7. Security</h2>
@@ -169,8 +169,8 @@ export default function PrivacyPolicy() {
                 If you have questions or concerns about this privacy policy or our data practices, please contact us:
               </p>
               <ul className="list-none text-brand-text mb-4 ml-4">
-                <li><strong>Email:</strong> <a href="mailto:info@connectevents.co" className="text-brand-primary hover:text-brand-secondary">info@connectevents.co</a></li>
-                <li><strong>Website:</strong> <a href="https://connectevents.co" className="text-brand-primary hover:text-brand-secondary">connectevents.co</a></li>
+                <li><strong>Email:</strong> <a href="mailto:info@connectevents.co" className="text-brand-pink hover:text-brand-secondary">info@connectevents.co</a></li>
+                <li><strong>Website:</strong> <a href="https://connectevents.co" className="text-brand-pink hover:text-brand-secondary">connectevents.co</a></li>
                 <li><strong>Business Name:</strong> Connect Events, Inc.</li>
                 <li><strong>Location:</strong> Atlanta, Georgia, USA</li>
               </ul>

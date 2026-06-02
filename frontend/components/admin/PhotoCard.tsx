@@ -41,7 +41,7 @@ export function PhotoCard({ photo, selected, onSelect, onToggleVisible, onDragSt
       />
       <button
         onClick={() => onToggleVisible(photo.id, !photo.visible)}
-        className="absolute bottom-1 right-1 bg-black/60 rounded-full p-1 text-white hover:text-brand-primary transition-colors"
+        className="absolute bottom-1 right-1 bg-black/60 rounded-full p-1 text-white hover:text-brand-pink transition-colors"
         title={photo.visible ? 'Hide photo' : 'Show photo'}
       >
         {photo.visible ? <Eye size={16} /> : <EyeOff size={16} />}

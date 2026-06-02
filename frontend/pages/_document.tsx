@@ -5,25 +5,13 @@ export default function Document() {
     <Html lang="en" data-theme="connect">
       <Head>
         {/* Favicon */}
-        <link rel="icon" href="/favicon.ico" sizes="32x32" />
+        <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png" />
         <link rel="icon" href="/favicon-192.png" sizes="192x192" type="image/png" />
         <link rel="apple-touch-icon" href="/favicon-512.png" />
         <link rel="manifest" href="/manifest.json" />
 
-        {/* Google Fonts - Montserrat for titles, Bebas Neue for slogans */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Bebas+Neue&display=swap"
-          rel="stylesheet"
-        />
-
-        {/* Adobe Fonts - Rig Solid Bold Reverse (for reference/collateral only) */}
-        <link rel="preconnect" href="https://use.typekit.net" crossOrigin="anonymous" />
-        <link rel="stylesheet" href="https://use.typekit.net/shx0uwr.css" />
-
-        {/* Theme Color for mobile browsers - Connect Gold */}
-        <meta name="theme-color" content="#D99B2A" />
+        {/* Theme Color for mobile browsers - Sunkiss Yellow */}
+        <meta name="theme-color" content="#FCBC3A" />
 
         {/* Prevent automatic telephone number detection */}
         <meta name="format-detection" content="telephone=no" />

@@ -164,8 +164,8 @@ export default function CookiePolicy() {
                 For more information about cookies, including how to see what cookies have been set and how to manage and delete them, visit:
               </p>
               <ul className="list-disc list-inside text-brand-text mb-4 ml-4">
-                <li><a href="https://www.allaboutcookies.org" target="_blank" rel="noopener noreferrer" className="text-brand-primary hover:text-brand-secondary">allaboutcookies.org</a></li>
-                <li><a href="https://www.youronlinechoices.eu" target="_blank" rel="noopener noreferrer" className="text-brand-primary hover:text-brand-secondary">youronlinechoices.eu</a></li>
+                <li><a href="https://www.allaboutcookies.org" target="_blank" rel="noopener noreferrer" className="text-brand-pink hover:text-brand-secondary">allaboutcookies.org</a></li>
+                <li><a href="https://www.youronlinechoices.eu" target="_blank" rel="noopener noreferrer" className="text-brand-pink hover:text-brand-secondary">youronlinechoices.eu</a></li>
               </ul>
 
               <h2 className="text-2xl font-bold text-brand-header mt-8 mb-4">12. Contact Us</h2>
@@ -173,8 +173,8 @@ export default function CookiePolicy() {
                 If you have questions about our use of cookies or this Cookie Policy, please contact us:
               </p>
               <ul className="list-none text-brand-text mb-4 ml-4">
-                <li><strong>Email:</strong> <a href="mailto:info@connectevents.co" className="text-brand-primary hover:text-brand-secondary">info@connectevents.co</a></li>
-                <li><strong>Website:</strong> <a href="https://connectevents.co" className="text-brand-primary hover:text-brand-secondary">connectevents.co</a></li>
+                <li><strong>Email:</strong> <a href="mailto:info@connectevents.co" className="text-brand-pink hover:text-brand-secondary">info@connectevents.co</a></li>
+                <li><strong>Website:</strong> <a href="https://connectevents.co" className="text-brand-pink hover:text-brand-secondary">connectevents.co</a></li>
               </ul>
 
               <div className="mt-12 p-6 bg-gradient-to-br from-yellow-50 to-amber-50 rounded-lg border-2 border-brand-primary/20">
@@ -182,8 +182,8 @@ export default function CookiePolicy() {
                   <strong>Related Policies:</strong>
                 </p>
                 <ul className="list-disc list-inside text-brand-text ml-4">
-                  <li><a href="/privacy-policy" className="text-brand-primary hover:text-brand-secondary">Privacy Policy</a> - How we handle your personal information</li>
-                  <li><a href="/terms-conditions" className="text-brand-primary hover:text-brand-secondary">Terms & Conditions</a> - Rules for using our website and services</li>
+                  <li><a href="/privacy-policy" className="text-brand-pink hover:text-brand-secondary">Privacy Policy</a> - How we handle your personal information</li>
+                  <li><a href="/terms-conditions" className="text-brand-pink hover:text-brand-secondary">Terms & Conditions</a> - Rules for using our website and services</li>
                 </ul>
               </div>
 

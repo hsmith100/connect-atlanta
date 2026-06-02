@@ -330,7 +330,7 @@ export function EventsTab({ adminKey, events, setEvents }: EventsTabProps) {
                     <div className="flex items-center gap-1 shrink-0">
                       <button
                         onClick={() => handleStartEdit(ev)}
-                        className="p-1.5 rounded-lg text-gray-500 hover:text-brand-primary hover:bg-brand-primary/10 transition-colors"
+                        className="p-1.5 rounded-lg text-gray-500 hover:text-brand-pink hover:bg-brand-primary/10 transition-colors"
                         title="Edit event"
                       >
                         <Pencil size={15} />

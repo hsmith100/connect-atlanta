@@ -209,7 +209,7 @@ export default function TermsConditions() {
 
               <h2 className="text-2xl font-bold text-brand-header mt-8 mb-4">8. Privacy</h2>
               <p className="text-brand-text mb-4">
-                Your use of the Website is also governed by our Privacy Policy. Please review our <a href="/privacy-policy" className="text-brand-primary hover:text-brand-secondary">Privacy Policy</a> to understand how we collect, use, and protect your information.
+                Your use of the Website is also governed by our Privacy Policy. Please review our <a href="/privacy-policy" className="text-brand-pink hover:text-brand-secondary">Privacy Policy</a> to understand how we collect, use, and protect your information.
               </p>
 
               <h2 className="text-2xl font-bold text-brand-header mt-8 mb-4">9. Email Communications</h2>
@@ -256,8 +256,8 @@ export default function TermsConditions() {
                 If you have questions about these Terms, please contact us:
               </p>
               <ul className="list-none text-brand-text mb-4 ml-4">
-                <li><strong>Email:</strong> <a href="mailto:info@connectevents.co" className="text-brand-primary hover:text-brand-secondary">info@connectevents.co</a></li>
-                <li><strong>Website:</strong> <a href="https://connectevents.co" className="text-brand-primary hover:text-brand-secondary">connectevents.co</a></li>
+                <li><strong>Email:</strong> <a href="mailto:info@connectevents.co" className="text-brand-pink hover:text-brand-secondary">info@connectevents.co</a></li>
+                <li><strong>Website:</strong> <a href="https://connectevents.co" className="text-brand-pink hover:text-brand-secondary">connectevents.co</a></li>
                 <li><strong>Business Name:</strong> Connect Events, Inc.</li>
                 <li><strong>Location:</strong> Atlanta, Georgia, USA</li>
               </ul>
@@ -267,8 +267,8 @@ export default function TermsConditions() {
                   <strong>Related Policies:</strong>
                 </p>
                 <ul className="list-disc list-inside text-brand-text ml-4">
-                  <li><a href="/privacy-policy" className="text-brand-primary hover:text-brand-secondary">Privacy Policy</a> - How we handle your personal information</li>
-                  <li><a href="/cookie-policy" className="text-brand-primary hover:text-brand-secondary">Cookie Policy</a> - How we use cookies on our website</li>
+                  <li><a href="/privacy-policy" className="text-brand-pink hover:text-brand-secondary">Privacy Policy</a> - How we handle your personal information</li>
+                  <li><a href="/cookie-policy" className="text-brand-pink hover:text-brand-secondary">Cookie Policy</a> - How we use cookies on our website</li>
                 </ul>
               </div>
 

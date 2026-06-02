@@ -142,7 +142,7 @@ export default function DJApplicationForm() {
     <div id="application-form" className="py-12 md:py-20">
       <div className="section-container max-w-4xl">
         <div className="text-center mb-12">
-          <div className="mb-6 text-brand-primary flex justify-center">
+          <div className="mb-6 text-brand-pink flex justify-center">
             <Music size={64} strokeWidth={1.5} />
           </div>
           <h2 className="font-title text-4xl md:text-6xl font-black mb-6 text-brand-header uppercase">
@@ -373,7 +373,7 @@ export default function DJApplicationForm() {
 
             {/* Additional Information Header */}
             <div className="pt-6 pb-2 border-t-2 border-brand-primary">
-              <h3 className="text-2xl font-bold text-brand-primary uppercase">Additional Information</h3>
+              <h3 className="text-2xl font-bold text-brand-pink uppercase">Additional Information</h3>
             </div>
 
             {/* Rekordbox */}

@@ -42,6 +42,6 @@ it('applies active styles to the active tab only', () => {
   renderBar('vendor')
   const vendorBtn = screen.getByRole('button', { name: /vendor/i })
   const djBtn = screen.getByRole('button', { name: /^dj$/i })
-  expect(vendorBtn.className).toContain('border-brand-primary')
-  expect(djBtn.className).not.toContain('border-brand-primary')
+  expect(vendorBtn.className).toContain('border-brand-pink')
+  expect(djBtn.className).not.toContain('border-brand-pink')
 })

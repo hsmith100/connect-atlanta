@@ -12,7 +12,7 @@ export default function GalleryGrid({ photos, loading, error, onImageClick }: Ga
   if (loading) {
     return (
       <div className="flex justify-center items-center py-20">
-        <Loader2 className="animate-spin text-brand-primary" size={48} />
+        <Loader2 className="animate-spin text-brand-pink" size={48} />
         <span className="ml-4 text-xl text-brand-header">Loading gallery...</span>
       </div>
     )
@@ -32,7 +32,7 @@ export default function GalleryGrid({ photos, loading, error, onImageClick }: Ga
   if (photos.length === 0) {
     return (
       <div className="text-center py-12">
-        <Camera className="mx-auto mb-4 text-brand-primary/40" size={64} />
+        <Camera className="mx-auto mb-4 text-brand-pink/40" size={64} />
         <p className="text-xl text-brand-header/60">No photos available yet.</p>
         <p className="text-brand-header/40 mt-2">Check back soon!</p>
       </div>

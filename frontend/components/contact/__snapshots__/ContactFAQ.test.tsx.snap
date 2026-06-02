@@ -29,7 +29,7 @@ exports[`matches snapshot 1`] = `
           >
             How can I perform at Beats on the Block?
             <span
-              class="ml-4 text-brand-primary transition-transform duration-200 group-open:rotate-45"
+              class="ml-4 text-brand-pink transition-transform duration-200 group-open:rotate-45"
             >
               +
             </span>
@@ -40,7 +40,7 @@ exports[`matches snapshot 1`] = `
             <p>
               Head over to our 
               <a
-                class="text-brand-primary hover:text-brand-header"
+                class="text-brand-pink hover:text-brand-header"
                 href="/join"
               >
                 Join Us page
@@ -57,7 +57,7 @@ exports[`matches snapshot 1`] = `
           >
             How can I become a vendor?
             <span
-              class="ml-4 text-brand-primary transition-transform duration-200 group-open:rotate-45"
+              class="ml-4 text-brand-pink transition-transform duration-200 group-open:rotate-45"
             >
               +
             </span>
@@ -68,7 +68,7 @@ exports[`matches snapshot 1`] = `
             <p>
               Head over to our 
               <a
-                class="text-brand-primary hover:text-brand-header"
+                class="text-brand-pink hover:text-brand-header"
                 href="/join"
               >
                 Join Us page
@@ -85,7 +85,7 @@ exports[`matches snapshot 1`] = `
           >
             Are you available for partnerships?
             <span
-              class="ml-4 text-brand-primary transition-transform duration-200 group-open:rotate-45"
+              class="ml-4 text-brand-pink transition-transform duration-200 group-open:rotate-45"
             >
               +
             </span>
@@ -96,7 +96,7 @@ exports[`matches snapshot 1`] = `
             <p>
               Yes! We are always open to new brand partnerships and sponsorship opportunities. Email us at 
               <a
-                class="text-brand-primary hover:text-brand-header"
+                class="text-brand-pink hover:text-brand-header"
                 href="mailto:info@connectevents.co"
               >
                 info@connectevents.co
@@ -113,7 +113,7 @@ exports[`matches snapshot 1`] = `
           >
             When is the next event?
             <span
-              class="ml-4 text-brand-primary transition-transform duration-200 group-open:rotate-45"
+              class="ml-4 text-brand-pink transition-transform duration-200 group-open:rotate-45"
             >
               +
             </span>
@@ -124,7 +124,7 @@ exports[`matches snapshot 1`] = `
             <p>
               Check out our 
               <a
-                class="text-brand-primary hover:text-brand-header"
+                class="text-brand-pink hover:text-brand-header"
                 href="/events"
               >
                 Events page

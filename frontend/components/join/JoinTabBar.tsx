@@ -26,8 +26,8 @@ export default function JoinTabBar({ activeTab, isHeaderVisible, onTabSelect }: 
               onClick={() => onTabSelect(id)}
               className={`flex items-center gap-1 md:gap-2 px-3 md:px-8 py-4 font-title font-bold text-sm md:text-lg transition-all ${
                 activeTab === id
-                  ? 'text-brand-primary border-b-4 border-brand-primary bg-brand-bg/30'
-                  : 'text-brand-text/60 hover:text-brand-primary hover:bg-brand-bg/20'
+                  ? 'text-brand-pink border-b-4 border-brand-pink bg-brand-bg/30'
+                  : 'text-brand-text/60 hover:text-brand-pink hover:bg-brand-bg/20'
               }`}
             >
               <Icon size={18} className="md:w-5 md:h-5" />
