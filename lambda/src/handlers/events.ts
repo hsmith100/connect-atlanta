@@ -42,12 +42,24 @@ async function getEvent(id: string): Promise<APIGatewayProxyResultV2> {
   return ok(result.Item);
 }
 
+const YOUTUBE_PLAYLIST_ID = 'PLbkf2yT5-y0dvsy8NsvQ7EFY7n2_niejH';
+
+async function getLatestYouTubeVideo(): Promise<APIGatewayProxyResultV2> {
+  const res = await fetch(`https://www.youtube.com/feeds/videos.xml?playlist_id=${YOUTUBE_PLAYLIST_ID}`);
+  if (!res.ok) return errResponse(502, 'Failed to fetch YouTube feed');
+  const xml = await res.text();
+  const match = xml.match(/<yt:videoId>([^<]+)<\/yt:videoId>/);
+  if (!match) return errResponse(404, 'No videos found in playlist');
+  return ok({ videoId: match[1] });
+}
+
 export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> => {
   try {
     const method = event.requestContext.http.method;
     const path = event.rawPath;
 
     if (method === 'GET' && path === '/api/events') return await listEvents();
+    if (method === 'GET' && path === '/api/youtube/latest-video') return await getLatestYouTubeVideo();
 
     const match = path.match(/^\/api\/events\/([^/]+)$/);
     if (method === 'GET' && match) return await getEvent(match[1]);

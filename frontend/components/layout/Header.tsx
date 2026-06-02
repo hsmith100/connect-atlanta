@@ -57,15 +57,20 @@ export default function Header() {
           {/* Logo - Centered on mobile, left on desktop */}
           <Link
             href="/"
-            className="flex-1 flex flex-col items-center md:flex-none group"
+            className="flex-1 flex items-center justify-center gap-3 md:flex-none md:justify-start group"
             onClick={closeMobileMenu}
           >
+            {/* Mobile: Connect logo + BOTB icon side by side */}
+            <img
+              src="/images/ConnectLogoBIG-Black.svg"
+              alt="Beats on the Block"
+              className="hover:opacity-80 transition-opacity duration-300 h-16 w-auto md:h-12"
+            />
+            <span className="md:hidden w-px h-10 bg-gray-400/50" aria-hidden="true" />
             <img
               src="/images/Logo/BOTB_Pulse-Pink_RGB_Icon.png"
-              alt="Beats on the Block"
-              width="64"
-              height="64"
-              className="hover:opacity-80 transition-opacity duration-300 h-16 w-auto md:h-12"
+              alt="Beats on the Block icon"
+              className="md:hidden hover:opacity-80 transition-opacity duration-300 h-16 w-auto"
             />
           </Link>
 

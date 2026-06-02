@@ -4,7 +4,7 @@ import Header from '../components/layout/Header'
 import Footer from '../components/layout/Footer'
 import GalleryGrid from '../components/gallery/GalleryGrid'
 import GalleryLightbox from '../components/gallery/GalleryLightbox'
-import { getGallery } from '../lib/api'
+import { getGallery, getLatestYouTubeVideoId } from '../lib/api'
 import type { Photo } from '@shared/types/photos'
 
 export default function Gallery() {
@@ -12,12 +12,16 @@ export default function Gallery() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
+  const [latestVideoId, setLatestVideoId] = useState<string | null>(null)
 
   useEffect(() => {
     getGallery()
       .then(data => setPhotos(data.photos))
       .catch(() => setError('Could not load gallery. Please try again later.'))
       .finally(() => setLoading(false))
+    getLatestYouTubeVideoId()
+      .then(setLatestVideoId)
+      .catch(() => {/* silently skip if unavailable */})
   }, [])
 
   const openImage = (index: number) => {
@@ -56,6 +60,20 @@ export default function Gallery() {
                 Event Gallery
               </h1>
             </div>
+
+            {latestVideoId && (
+              <div className="max-w-4xl mx-auto mb-16">
+                <div className="relative w-full aspect-video rounded-2xl overflow-hidden shadow-2xl">
+                  <iframe
+                    src={`https://www.youtube.com/embed/${latestVideoId}`}
+                    title="Latest Beats on the Block video"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="absolute inset-0 w-full h-full"
+                  />
+                </div>
+              </div>
+            )}
 
             <GalleryGrid photos={photos} loading={loading} error={error} onImageClick={openImage} />
           </div>

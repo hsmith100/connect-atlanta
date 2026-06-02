@@ -9,7 +9,7 @@ exports[`matches snapshot while events loading 1`] = `
       class="section-container relative z-10 w-full"
     >
       <div
-        class="text-center mb-4"
+        class="hidden md:block text-center mb-4"
       >
         <img
           alt="Presented by Advanced Health Solutions"
@@ -29,7 +29,7 @@ exports[`matches snapshot while events loading 1`] = `
           <img
             alt="Beats on the Block logo"
             class="relative w-auto h-72 mx-auto"
-            src="/images/BOTB_White.png"
+            src="images/Logo/BOTB_Full-Color_CMYK_Logo.png"
           />
         </div>
       </div>
@@ -68,7 +68,7 @@ exports[`matches snapshot with hero cards and no events 1`] = `
       class="section-container relative z-10 w-full"
     >
       <div
-        class="text-center mb-4"
+        class="hidden md:block text-center mb-4"
       >
         <img
           alt="Presented by Advanced Health Solutions"
@@ -88,7 +88,7 @@ exports[`matches snapshot with hero cards and no events 1`] = `
           <img
             alt="Beats on the Block logo"
             class="relative w-auto h-72 mx-auto"
-            src="/images/BOTB_White.png"
+            src="images/Logo/BOTB_Full-Color_CMYK_Logo.png"
           />
         </div>
       </div>
@@ -134,7 +134,7 @@ exports[`matches snapshot with no cards and no events 1`] = `
       class="section-container relative z-10 w-full"
     >
       <div
-        class="text-center mb-4"
+        class="hidden md:block text-center mb-4"
       >
         <img
           alt="Presented by Advanced Health Solutions"
@@ -154,7 +154,7 @@ exports[`matches snapshot with no cards and no events 1`] = `
           <img
             alt="Beats on the Block logo"
             class="relative w-auto h-72 mx-auto"
-            src="/images/BOTB_White.png"
+            src="images/Logo/BOTB_Full-Color_CMYK_Logo.png"
           />
         </div>
       </div>
@@ -220,7 +220,7 @@ exports[`matches snapshot with upcoming event 1`] = `
       class="section-container relative z-10 w-full"
     >
       <div
-        class="text-center mb-4"
+        class="hidden md:block text-center mb-4"
       >
         <img
           alt="Presented by Advanced Health Solutions"
@@ -240,7 +240,7 @@ exports[`matches snapshot with upcoming event 1`] = `
           <img
             alt="Beats on the Block logo"
             class="relative w-auto h-72 mx-auto"
-            src="/images/BOTB_White.png"
+            src="images/Logo/BOTB_Full-Color_CMYK_Logo.png"
           />
         </div>
       </div>
@@ -270,7 +270,7 @@ exports[`matches snapshot with upcoming event and hero cards 1`] = `
       class="section-container relative z-10 w-full"
     >
       <div
-        class="text-center mb-4"
+        class="hidden md:block text-center mb-4"
       >
         <img
           alt="Presented by Advanced Health Solutions"
@@ -290,7 +290,7 @@ exports[`matches snapshot with upcoming event and hero cards 1`] = `
           <img
             alt="Beats on the Block logo"
             class="relative w-auto h-72 mx-auto"
-            src="/images/BOTB_White.png"
+            src="images/Logo/BOTB_Full-Color_CMYK_Logo.png"
           />
         </div>
       </div>

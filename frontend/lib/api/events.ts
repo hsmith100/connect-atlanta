@@ -8,3 +8,8 @@ export async function getEvents(): Promise<Event[]> {
 export async function getEvent(eventId: string): Promise<Event> {
   return fetchAPI<Event>(`/api/events/${eventId}`);
 }
+
+export async function getLatestYouTubeVideoId(): Promise<string> {
+  const data = await fetchAPI<{ videoId: string }>('/api/youtube/latest-video');
+  return data.videoId;
+}

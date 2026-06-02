@@ -18,7 +18,7 @@ export default function SponsorsSection() {
   return (
     <section className="py-6 md:py-10 hero-bg-gold">
       <div className="section-container">
-        <h2 className="font-title text-3xl md:text-4xl font-black text-center mb-6 text-brand-header uppercase">
+        <h2 className="font-title text-5xl md:text-7xl font-black text-center mb-6 text-brand-header uppercase">
           Sponsors
         </h2>
 
@@ -27,7 +27,7 @@ export default function SponsorsSection() {
           <img
             src="/images/Sponsor%20Logos%202026/2.png"
             alt="Advanced Health Solutions — Presenting Sponsor"
-            className="max-w-[140px] md:max-w-[160px] h-auto"
+            className="max-w-[180px] md:max-w-[220px] h-auto"
           />
         </div>
 
@@ -39,7 +39,7 @@ export default function SponsorsSection() {
                 alt={sponsor.name}
                 width="100"
                 height="80"
-                className="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
+                className="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
                 loading="lazy"
               />
             </div>

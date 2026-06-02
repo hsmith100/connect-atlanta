@@ -158,10 +158,6 @@ export default function Events() {
 
                         {/* Upcoming Events Content */}
                         <div>
-                            <h2 className="font-title text-4xl md:text-6xl font-black text-center mb-4 text-brand-header uppercase">
-                                Upcoming Events
-                            </h2>
-
                             {loading ? (
                                 <div className="flex justify-center items-center py-20">
                                     <Loader2 className="animate-spin text-brand-pink" size={48} />

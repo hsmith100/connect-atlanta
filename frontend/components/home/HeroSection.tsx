@@ -124,8 +124,8 @@ export default function HeroSection({
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-8 hero-gradient-gold">
       <div className="section-container relative z-10 w-full">
 
-        {/* Presented By AHS - All screen sizes */}
-        <div className="text-center mb-4">
+        {/* Presented By AHS - Desktop only */}
+        <div className="hidden md:block text-center mb-4">
           <img
             src="/images/Sponsor%20Logos%202026/2.png"
             alt="Presented by Advanced Health Solutions"
@@ -138,7 +138,7 @@ export default function HeroSection({
           <div className="relative inline-block mx-auto">
             <div className="absolute inset-0 bg-gradient-radial from-yellow-200/40 via-yellow-100/20 to-transparent blur-3xl scale-110"></div>
             <img
-              src="/images/BOTB_White.png"
+              src="images/Logo/BOTB_Full-Color_CMYK_Logo.png"
               alt="Beats on the Block logo"
               className="relative w-auto h-72 mx-auto"
             />

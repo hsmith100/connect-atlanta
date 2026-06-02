@@ -3,8 +3,8 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import type { Event } from '@shared/types/events'
 import UpcomingEventsSection from './UpcomingEventsSection'
 
-function makeEvent(id: string, title: string, date = '2099-01-01'): Event {
-  return { id, title, date } as Event
+function makeEvent(id: string, title: string, date = '2099-01-01', startTime?: string): Event {
+  return { id, title, date, ...(startTime ? { startTime } : {}) } as Event
 }
 
 // ── loading state ─────────────────────────────────────────────────────────────
@@ -118,5 +118,21 @@ describe('tab order matches chronological order', () => {
       expect(screen.getByRole('button', { name: 'Spring Beats' })).toHaveAttribute('aria-pressed', 'true')
     )
     expect(screen.getByRole('button', { name: 'Summer Beats' })).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  it('regression: same-date events with different start times — earlier event is the default active', async () => {
+    // Afters (22:00) arrived before Beats on the Block (14:00) from DynamoDB.
+    // index.tsx now sorts by getEventDatetimes so Beats on the Block (14:00) is first.
+    const events = [
+      makeEvent('main', 'Beats on the Block', '2099-06-06', '14:00'),
+      makeEvent('afters', 'Afters', '2099-06-06', '22:00'),
+    ]
+    render(<UpcomingEventsSection events={events} loading={false} onOpenModal={jest.fn()} />)
+    await waitFor(() => {
+      const buttons = screen.getAllByRole('button')
+      expect(buttons[0]).toHaveTextContent('Beats on the Block')
+      expect(buttons[0]).toHaveAttribute('aria-pressed', 'true')
+      expect(buttons[1]).toHaveAttribute('aria-pressed', 'false')
+    })
   })
 })
