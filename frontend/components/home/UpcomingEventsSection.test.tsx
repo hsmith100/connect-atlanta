@@ -72,3 +72,51 @@ describe('multiple events', () => {
     expect(screen.getByRole('button', { name: 'Spring Beats' })).toHaveAttribute('aria-pressed', 'false')
   })
 })
+
+// ── tab order matches chronological order ─────────────────────────────────────
+//
+// The active/default tab should always be the leftmost tab. index.tsx sorts
+// upcoming events ascending by date before passing them here, so the earliest
+// event is always first in the array. These tests lock in that contract.
+
+describe('tab order matches chronological order', () => {
+  it('when events are sorted earliest-first, the leftmost tab is the default active', async () => {
+    const events = [
+      makeEvent('early', 'Spring Beats', '2099-06-01'),
+      makeEvent('late', 'Summer Beats', '2099-09-01'),
+    ]
+    render(<UpcomingEventsSection events={events} loading={false} onOpenModal={jest.fn()} />)
+    await waitFor(() => {
+      const buttons = screen.getAllByRole('button')
+      expect(buttons[0]).toHaveTextContent('Spring Beats')
+      expect(buttons[0]).toHaveAttribute('aria-pressed', 'true')
+      expect(buttons[1]).toHaveAttribute('aria-pressed', 'false')
+    })
+  })
+
+  it('when events are sorted earliest-first, the later event is the rightmost tab', async () => {
+    const events = [
+      makeEvent('early', 'Spring Beats', '2099-06-01'),
+      makeEvent('late', 'Summer Beats', '2099-09-01'),
+    ]
+    render(<UpcomingEventsSection events={events} loading={false} onOpenModal={jest.fn()} />)
+    await waitFor(() => {
+      const buttons = screen.getAllByRole('button')
+      expect(buttons[1]).toHaveTextContent('Summer Beats')
+    })
+  })
+
+  it('regression: if events arrive in reverse order, the earlier event is still the default active', async () => {
+    // Before the fix in index.tsx, DynamoDB insertion order could place the later-dated
+    // event at index 0, making the active tab land on the right instead of the left.
+    const events = [
+      makeEvent('late', 'Summer Beats', '2099-09-01'),
+      makeEvent('early', 'Spring Beats', '2099-06-01'),
+    ]
+    render(<UpcomingEventsSection events={events} loading={false} onOpenModal={jest.fn()} />)
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Spring Beats' })).toHaveAttribute('aria-pressed', 'true')
+    )
+    expect(screen.getByRole('button', { name: 'Summer Beats' })).toHaveAttribute('aria-pressed', 'false')
+  })
+})

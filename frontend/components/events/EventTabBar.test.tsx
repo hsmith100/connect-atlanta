@@ -58,6 +58,31 @@ describe('active state', () => {
   })
 })
 
+// ── tab ordering ──────────────────────────────────────────────────────────────
+
+describe('tab ordering', () => {
+  it('renders tabs in the same left-to-right order as the input array', () => {
+    render(<EventTabBar events={events2} activeEventId="a" onSelect={jest.fn()} />)
+    const buttons = screen.getAllByRole('button')
+    expect(buttons[0]).toHaveTextContent('Spring Beats')
+    expect(buttons[1]).toHaveTextContent('Summer Beats')
+  })
+
+  it('the leftmost tab is active when the first array element is the active id', () => {
+    render(<EventTabBar events={events2} activeEventId="a" onSelect={jest.fn()} />)
+    const buttons = screen.getAllByRole('button')
+    expect(buttons[0]).toHaveAttribute('aria-pressed', 'true')
+    expect(buttons[1]).toHaveAttribute('aria-pressed', 'false')
+  })
+
+  it('the rightmost tab is active when the last array element is the active id', () => {
+    render(<EventTabBar events={events2} activeEventId="b" onSelect={jest.fn()} />)
+    const buttons = screen.getAllByRole('button')
+    expect(buttons[0]).toHaveAttribute('aria-pressed', 'false')
+    expect(buttons[1]).toHaveAttribute('aria-pressed', 'true')
+  })
+})
+
 // ── interaction ───────────────────────────────────────────────────────────────
 
 describe('interaction', () => {

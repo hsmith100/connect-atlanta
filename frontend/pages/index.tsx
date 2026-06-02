@@ -33,7 +33,7 @@ export default function Home() {
       try {
         const events = await getEvents()
         const today = new Date().toISOString().slice(0, 10)
-        setUpcomingEvents(events.filter(e => e.date >= today))
+        setUpcomingEvents(events.filter(e => e.date >= today).sort((a, b) => a.date.localeCompare(b.date)))
         setPastEvents(
           events
             .filter(e => e.date < today)
