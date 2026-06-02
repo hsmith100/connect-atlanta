@@ -57,6 +57,15 @@ test.describe('gallery page', () => {
     // Assumes at least one photo exists in DynamoDB (true for staging and production)
     await expect(page.locator('img[alt^="Gallery photo"]').first()).toBeVisible();
   });
+
+  test('latest YouTube video embed is visible above the photo grid', async ({ page }) => {
+    await page.goto('/gallery');
+    // The embed fetches the latest video ID from the Lambda then renders an iframe
+    const iframe = page.locator('iframe[title="Latest Beats on the Block video"]');
+    await expect(iframe).toBeVisible({ timeout: 10000 });
+    const src = await iframe.getAttribute('src');
+    expect(src).toContain('youtube.com/embed/');
+  });
 });
 
 // ── Events page — API response ────────────────────────────────────────────────
@@ -172,6 +181,38 @@ test.describe('home page logo', () => {
     await page.setViewportSize({ width: 1280, height: 800 });
     await page.goto('/');
     await expect(page.locator('img[alt="Beats on the Block logo"]')).toBeVisible();
+  });
+});
+
+// ── Home page — AHS presenting sponsor ───────────────────────────────────────
+
+test.describe('home page AHS sponsor logo', () => {
+  test('AHS logo is visible in the hero on desktop', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/');
+    await expect(page.locator('img[alt="Presented by Advanced Health Solutions"]').first()).toBeVisible();
+  });
+
+  test('AHS logo is hidden in the hero on mobile', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto('/');
+    await expect(page.locator('img[alt="Presented by Advanced Health Solutions"]').first()).toBeHidden();
+  });
+});
+
+// ── Header — mobile dual logo ─────────────────────────────────────────────────
+
+test.describe('header mobile dual logo', () => {
+  test('BOTB pulse icon is visible alongside the connect logo on mobile', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto('/');
+    await expect(page.locator('img[alt="Beats on the Block icon"]')).toBeVisible();
+  });
+
+  test('BOTB pulse icon is hidden on desktop', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 800 });
+    await page.goto('/');
+    await expect(page.locator('img[alt="Beats on the Block icon"]')).toBeHidden();
   });
 });
 

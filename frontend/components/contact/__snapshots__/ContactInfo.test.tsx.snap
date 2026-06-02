@@ -4,7 +4,7 @@ exports[`matches snapshot 1`] = `
 <div>
   <div>
     <h2
-      class="font-title text-3xl md:text-5xl font-black mb-4 text-brand-header uppercase"
+      class="font-title text-3xl md:text-5xl font-black mb-4 text-brand-header uppercase text-center"
     >
       Get in touch
     </h2>
@@ -54,7 +54,7 @@ exports[`matches snapshot 1`] = `
         </h3>
         <a
           class="text-brand-pink hover:text-brand-header transition-colors text-lg"
-          href="mailto:info@connectevents.co"
+          href="mailto:info@beatsontheblockfest.com"
         >
           info@connectevents.co
         </a>

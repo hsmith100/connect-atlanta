@@ -80,10 +80,7 @@ describe('AHS sponsor section', () => {
     expect(screen.getByText(/zero out of pocket costs/i)).toBeInTheDocument()
   })
 
-  it('renders the closing line', () => {
-    render(<SecretLineup />)
-    expect(screen.getByText(/pretty cool if you ask us/i)).toBeInTheDocument()
-  })
+
 })
 
 // ── ahs link ───────────────────────────────────────────────────────────────────

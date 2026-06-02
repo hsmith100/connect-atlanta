@@ -42,7 +42,7 @@ export default function SecretLineup() {
                   AHS is a premier personal injury and wellness practice dedicated to keeping you moving stress free. If life ever throws an accident your way, their patient first model provides complete medical and legal care with zero out of pocket costs. You pay nothing unless you win your case! Together, we've got your back, on and off the dance floor.
                 </p>
                 <p className="text-xl text-brand-header leading-relaxed mb-8">
-                  Check them out! They are pretty cool if you ask us.
+                  Stop by the Advanced Health Solutions booth next to the bar in the middle of the field, meet the team, enter for giveaways, and score some free merch!
                 </p>
               </div>
 

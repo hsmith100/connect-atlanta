@@ -3,7 +3,7 @@ import { Mail, MapPin } from 'lucide-react'
 export default function ContactInfo() {
   return (
     <div>
-      <h2 className="font-title text-3xl md:text-5xl font-black mb-4 text-brand-header uppercase">
+      <h2 className="font-title text-3xl md:text-5xl font-black mb-4 text-brand-header uppercase text-center">
         Get in touch
       </h2>
       <p className="text-lg text-brand-header/80 mb-8">
@@ -16,7 +16,7 @@ export default function ContactInfo() {
             <Mail size={32} strokeWidth={1.5} />
           </div>
           <h3 className="text-xl font-bold text-brand-header mb-2">Email</h3>
-          <a href="mailto:info@connectevents.co"
+          <a href="mailto:info@beatsontheblockfest.com"
             className="text-brand-pink hover:text-brand-header transition-colors text-lg">
             info@connectevents.co
           </a>

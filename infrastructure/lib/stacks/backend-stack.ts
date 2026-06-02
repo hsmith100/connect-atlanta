@@ -174,6 +174,7 @@ export class BackendStack extends cdk.Stack {
 
     api.addRoutes({ path: '/api/events', methods: [apigateway.HttpMethod.GET], integration: eventsIntegration });
     api.addRoutes({ path: '/api/events/{id}', methods: [apigateway.HttpMethod.GET], integration: eventsIntegration });
+    api.addRoutes({ path: '/api/youtube/latest-video', methods: [apigateway.HttpMethod.GET], integration: eventsIntegration });
     api.addRoutes({ path: '/api/forms/{proxy+}', methods: [apigateway.HttpMethod.POST], integration: formsIntegration });
     api.addRoutes({ path: '/api/admin/submissions/artists', methods: [apigateway.HttpMethod.GET], integration: formsIntegration });
     api.addRoutes({ path: '/api/admin/submissions/sponsors', methods: [apigateway.HttpMethod.GET], integration: formsIntegration });

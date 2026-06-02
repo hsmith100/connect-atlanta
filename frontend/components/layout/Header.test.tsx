@@ -64,3 +64,24 @@ describe('mobile menu', () => {
     expect(screen.getAllByText('Home')).toHaveLength(1)
   })
 })
+
+// ── mobile dual logo ───────────────────────────────────────────────────────────
+
+describe('mobile dual logo', () => {
+  it('renders the BOTB pulse icon alongside the connect logo', () => {
+    render(<Header />)
+    expect(screen.getByAltText('Beats on the Block icon')).toBeInTheDocument()
+  })
+
+  it('BOTB icon has md:hidden so it is only shown on mobile', () => {
+    render(<Header />)
+    const icon = screen.getByAltText('Beats on the Block icon')
+    expect(icon.className).toContain('md:hidden')
+  })
+
+  it('renders a divider element between the two logos', () => {
+    const { container } = render(<Header />)
+    const divider = container.querySelector('span.md\\:hidden.w-px')
+    expect(divider).toBeInTheDocument()
+  })
+})

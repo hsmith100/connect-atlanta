@@ -9,7 +9,7 @@ exports[`matches snapshot 1`] = `
       class="section-container"
     >
       <h2
-        class="font-title text-3xl md:text-4xl font-black text-center mb-6 text-brand-header uppercase"
+        class="font-title text-5xl md:text-7xl font-black text-center mb-6 text-brand-header uppercase"
       >
         Sponsors
       </h2>
@@ -18,7 +18,7 @@ exports[`matches snapshot 1`] = `
       >
         <img
           alt="Advanced Health Solutions — Presenting Sponsor"
-          class="max-w-[140px] md:max-w-[160px] h-auto"
+          class="max-w-[180px] md:max-w-[220px] h-auto"
           src="/images/Sponsor%20Logos%202026/2.png"
         />
       </div>
@@ -30,7 +30,7 @@ exports[`matches snapshot 1`] = `
         >
           <img
             alt="Sponsor 3"
-            class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
+            class="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
             src="/images/Sponsor%20Logos%202026/3.png"
@@ -42,7 +42,7 @@ exports[`matches snapshot 1`] = `
         >
           <img
             alt="Sponsor 4"
-            class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
+            class="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
             src="/images/Sponsor%20Logos%202026/4.png"
@@ -54,7 +54,7 @@ exports[`matches snapshot 1`] = `
         >
           <img
             alt="Sponsor 5"
-            class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
+            class="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
             src="/images/Sponsor%20Logos%202026/5.png"
@@ -66,7 +66,7 @@ exports[`matches snapshot 1`] = `
         >
           <img
             alt="Sponsor 6"
-            class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
+            class="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
             src="/images/Sponsor%20Logos%202026/6.png"
@@ -78,7 +78,7 @@ exports[`matches snapshot 1`] = `
         >
           <img
             alt="Sponsor 7"
-            class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
+            class="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
             src="/images/Sponsor%20Logos%202026/7.png"
@@ -90,7 +90,7 @@ exports[`matches snapshot 1`] = `
         >
           <img
             alt="Sponsor 8"
-            class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
+            class="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
             src="/images/Sponsor%20Logos%202026/8.png"
@@ -102,7 +102,7 @@ exports[`matches snapshot 1`] = `
         >
           <img
             alt="Sponsor 9"
-            class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
+            class="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
             src="/images/Sponsor%20Logos%202026/9.png"
@@ -114,7 +114,7 @@ exports[`matches snapshot 1`] = `
         >
           <img
             alt="Sponsor 10"
-            class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
+            class="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
             src="/images/Sponsor%20Logos%202026/10.png"
@@ -126,7 +126,7 @@ exports[`matches snapshot 1`] = `
         >
           <img
             alt="Sponsor 11"
-            class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
+            class="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
             src="/images/Sponsor%20Logos%202026/11.png"
@@ -138,7 +138,7 @@ exports[`matches snapshot 1`] = `
         >
           <img
             alt="Sponsor 12"
-            class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
+            class="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
             src="/images/Sponsor%20Logos%202026/12.png"
@@ -150,7 +150,7 @@ exports[`matches snapshot 1`] = `
         >
           <img
             alt="Sponsor 13"
-            class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
+            class="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
             src="/images/Sponsor%20Logos%202026/13.png"
@@ -162,7 +162,7 @@ exports[`matches snapshot 1`] = `
         >
           <img
             alt="Sponsor 14"
-            class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
+            class="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
             src="/images/Sponsor%20Logos%202026/14.png"
@@ -174,7 +174,7 @@ exports[`matches snapshot 1`] = `
         >
           <img
             alt="Sponsor 15"
-            class="object-contain max-w-[60px] max-h-[50px] h-auto opacity-100 transition-opacity"
+            class="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
             src="/images/Sponsor%20Logos%202026/15.png"

@@ -26,20 +26,20 @@ describe('getDefaultActiveId', () => {
     expect(getDefaultActiveId(events)).toBe('a')
   })
 
-  it('when all events have started, returns the one with the latest start time', () => {
+  it('when all events have started, returns the one with the earliest start time', () => {
     const events = [
       makeEvent('a', '2020-06-01', '10:00'),
       makeEvent('b', '2020-09-01', '10:00'),
     ]
-    expect(getDefaultActiveId(events)).toBe('b')
+    expect(getDefaultActiveId(events)).toBe('a')
   })
 
-  it('when all events have started and passed in reverse order, still returns latest start', () => {
+  it('when all events have started and passed in reverse order, still returns earliest start', () => {
     const events = [
       makeEvent('b', '2020-09-01', '10:00'),
       makeEvent('a', '2020-06-01', '10:00'),
     ]
-    expect(getDefaultActiveId(events)).toBe('b')
+    expect(getDefaultActiveId(events)).toBe('a')
   })
 })
 

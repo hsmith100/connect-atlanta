@@ -102,3 +102,48 @@ describe('error handling', () => {
     jest.restoreAllMocks();
   });
 });
+
+// ── GET /api/youtube/latest-video ─────────────────────────────────────────────
+
+describe('GET /api/youtube/latest-video', () => {
+  const RSS_XML = `<?xml version="1.0"?>
+    <feed xmlns:yt="http://www.youtube.com/xml/schemas/2015">
+      <entry><yt:videoId>abc123</yt:videoId></entry>
+      <entry><yt:videoId>def456</yt:videoId></entry>
+    </feed>`;
+
+  beforeEach(() => {
+    global.fetch = jest.fn();
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  it('returns the first videoId from the RSS feed', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({ ok: true, text: () => Promise.resolve(RSS_XML) });
+    const result = asResult(await handler(makeEvent('GET', '/api/youtube/latest-video')));
+    expect(result.statusCode).toBe(200);
+    expect(JSON.parse(result.body as string)).toEqual({ videoId: 'abc123' });
+  });
+
+  it('returns 502 when the YouTube RSS fetch fails', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({ ok: false });
+    const result = asResult(await handler(makeEvent('GET', '/api/youtube/latest-video')));
+    expect(result.statusCode).toBe(502);
+  });
+
+  it('returns 404 when the feed contains no videoId entries', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({ ok: true, text: () => Promise.resolve('<feed></feed>') });
+    const result = asResult(await handler(makeEvent('GET', '/api/youtube/latest-video')));
+    expect(result.statusCode).toBe(404);
+  });
+
+  it('fetches the correct playlist RSS URL', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({ ok: true, text: () => Promise.resolve(RSS_XML) });
+    await handler(makeEvent('GET', '/api/youtube/latest-video'));
+    expect(global.fetch).toHaveBeenCalledWith(
+      expect.stringContaining('PLbkf2yT5-y0dvsy8NsvQ7EFY7n2_niejH'),
+    );
+  });
+});

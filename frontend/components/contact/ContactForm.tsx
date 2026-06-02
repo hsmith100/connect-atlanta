@@ -57,7 +57,7 @@ export default function ContactForm() {
 
   return (
     <div>
-      <h2 className="font-title text-3xl md:text-5xl font-black mb-4 text-brand-header uppercase">
+      <h2 className="font-title text-3xl md:text-5xl font-black mb-4 text-brand-header uppercase text-center">
         Send us a message
       </h2>
       <p className="text-lg text-brand-header/80 mb-8">

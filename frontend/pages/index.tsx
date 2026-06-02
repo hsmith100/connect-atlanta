@@ -5,6 +5,7 @@ import Footer from '../components/layout/Footer'
 import ConnectModal from '../components/shared/ConnectModal'
 import { organizationSchema, websiteSchema, eventSeriesSchema, faqSchema } from '../lib/structuredData'
 import { getEvents, getHeroCards } from '../lib/api'
+import { getEventDatetimes } from '../lib/formatters'
 import type { Event } from '@shared/types/events'
 import type { HeroCard } from '@shared/types/heroCards'
 import HeroSection from '../components/home/HeroSection'
@@ -33,7 +34,7 @@ export default function Home() {
       try {
         const events = await getEvents()
         const today = new Date().toISOString().slice(0, 10)
-        setUpcomingEvents(events.filter(e => e.date >= today).sort((a, b) => a.date.localeCompare(b.date)))
+        setUpcomingEvents(events.filter(e => e.date >= today).sort((a, b) => getEventDatetimes(a).start.getTime() - getEventDatetimes(b).start.getTime()))
         setPastEvents(
           events
             .filter(e => e.date < today)

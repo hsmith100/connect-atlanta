@@ -19,7 +19,7 @@ export function getEventDatetimes(event: Event): { start: Date; end: Date } {
 }
 
 // Returns the id of the event that should be the active tab.
-// Priority: earliest unstarted event. If all have started, latest start time.
+// Always the earliest event so the active tab is leftmost.
 export function getDefaultActiveId(events: Event[]): string | null {
     if (events.length === 0) return null
     const now = new Date()
@@ -29,9 +29,9 @@ export function getDefaultActiveId(events: Event[]): string | null {
             getEventDatetimes(a).start.getTime() - getEventDatetimes(b).start.getTime()
         )[0].id
     }
-    // All started — show the one with the latest start time
+    // All started — show the earliest (leftmost tab)
     return [...events].sort((a, b) =>
-        getEventDatetimes(b).start.getTime() - getEventDatetimes(a).start.getTime()
+        getEventDatetimes(a).start.getTime() - getEventDatetimes(b).start.getTime()
     )[0].id
 }
 
