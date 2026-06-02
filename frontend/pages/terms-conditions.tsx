@@ -17,7 +17,7 @@ export default function TermsConditions() {
         {/* Hero Section */}
         <section className="relative pt-32 pb-12 bg-gradient-to-br from-white via-yellow-50 to-amber-100">
           <div className="container mx-auto px-6">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-brand-primary via-purple-600 to-brand-secondary bg-clip-text text-transparent">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-brand-pink">
               Terms & Conditions
             </h1>
             <p className="text-xl text-gray-600">

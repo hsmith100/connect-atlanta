@@ -25,7 +25,7 @@ export default function SponsorInquiries() {
         <section className="relative overflow-hidden hero-gradient-gold">
           <div className="pt-6 pb-2">
             <div className="section-container relative z-10">
-              <h1 className="font-horizon text-5xl md:text-7xl lg:text-8xl font-black text-center mb-3 uppercase bg-gradient-to-r from-brand-pink to-brand-primary bg-clip-text text-transparent">
+              <h1 className="font-horizon text-5xl md:text-7xl lg:text-8xl font-black text-center mb-3 uppercase text-brand-pink">
                 Sponsor Inquiries
               </h1>
               <p className="text-xl md:text-2xl text-center text-brand-text max-w-4xl mx-auto mb-3">

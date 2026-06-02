@@ -19,7 +19,7 @@ export default function SecretLineup() {
 
             {/* Title */}
             <div className="text-center mb-4">
-              <h1 className="font-horizon text-5xl md:text-7xl lg:text-8xl font-black mb-4 uppercase bg-gradient-to-r from-brand-pink via-brand-peach to-brand-primary bg-clip-text text-transparent">
+              <h1 className="font-horizon text-5xl md:text-7xl lg:text-8xl font-black mb-4 uppercase text-brand-pink">
                 Secret Lineup
               </h1>
             </div>
