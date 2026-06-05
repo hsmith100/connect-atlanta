@@ -18,7 +18,7 @@ describe('desktop nav', () => {
     expect(screen.getByText('About')).toBeInTheDocument()
     expect(screen.getByText('Events')).toBeInTheDocument()
     expect(screen.getByText('Gallery')).toBeInTheDocument()
-    expect(screen.getByText('Join Us')).toBeInTheDocument()
+    expect(screen.getByText('Apply')).toBeInTheDocument()
     expect(screen.getByText('Merch')).toBeInTheDocument()
     expect(screen.getByText('Contact')).toBeInTheDocument()
   })

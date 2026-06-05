@@ -4,13 +4,13 @@ const MERCH_ITEMS = [
   {
     name: 'BOTB 2026 Colorblast Tee',
     price: '$35.00',
-    image: '/images/merch/Gray-Shirt.jpeg',
+    image: '/images/merch/2026 Colorblast Tee Back.jpeg',
     url: 'https://www.bonfire.com/botb-2026-colorblast-tee/',
   },
   {
     name: 'BOTB 2026 Green Tee',
     price: '$35.00',
-    image: '/images/merch/Blue-Green-Shirt.jpeg',
+    image: '/images/merch/2026 Green Tee Back.jpeg',
     url: 'https://www.bonfire.com/botb-2026-green-tee/',
   },
 ]
@@ -54,7 +54,7 @@ export default function MerchGrid() {
           href="https://www.bonfire.com/store/beats-on-the-block/"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-block bg-brand-primary text-white font-bold py-3 px-8 rounded-full hover:opacity-90 transition-opacity text-lg"
+          className="inline-block bg-brand-pink text-white font-bold py-3 px-8 rounded-full hover:bg-brand-pink-dark transition-colors text-lg"
         >
           Shop All on Bonfire
         </a>

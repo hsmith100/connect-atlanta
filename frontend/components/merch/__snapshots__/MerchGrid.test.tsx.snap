@@ -17,7 +17,7 @@ exports[`matches snapshot 1`] = `
         >
           <img
             alt="BOTB 2026 Colorblast Tee"
-            src="/images/merch/Gray-Shirt.jpeg"
+            src="/images/merch/2026 Colorblast Tee Back.jpeg"
           />
         </div>
         <div
@@ -46,7 +46,7 @@ exports[`matches snapshot 1`] = `
         >
           <img
             alt="BOTB 2026 Green Tee"
-            src="/images/merch/Blue-Green-Shirt.jpeg"
+            src="/images/merch/2026 Green Tee Back.jpeg"
           />
         </div>
         <div
@@ -79,7 +79,7 @@ exports[`matches snapshot 1`] = `
         All merchandise is available for purchase at our events and online. Follow us on social media for announcements about upcoming festivals and merch drops!
       </p>
       <a
-        class="inline-block bg-brand-primary text-white font-bold py-3 px-8 rounded-full hover:opacity-90 transition-opacity text-lg"
+        class="inline-block bg-brand-pink text-white font-bold py-3 px-8 rounded-full hover:bg-brand-pink-dark transition-colors text-lg"
         href="https://www.bonfire.com/store/beats-on-the-block/"
         rel="noopener noreferrer"
         target="_blank"

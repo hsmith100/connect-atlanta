@@ -18,7 +18,7 @@ export default function ContactInfo() {
           <h3 className="text-xl font-bold text-brand-header mb-2">Email</h3>
           <a href="mailto:info@beatsontheblockfest.com"
             className="text-brand-pink hover:text-brand-header transition-colors text-lg">
-            info@connectevents.co
+            info@beatsontheblockfest.com
           </a>
         </div>
 

@@ -155,6 +155,7 @@ async function sponsorInquiry(raw: FormPayload): Promise<APIGatewayProxyResultV2
     phone: data.phone,
     company: data.company,
     productIndustry: data.productIndustry,
+    yearsInterested: data.yearsInterested ?? [],
     notes: '',
   };
 
@@ -162,7 +163,7 @@ async function sponsorInquiry(raw: FormPayload): Promise<APIGatewayProxyResultV2
 
   await sendEmail(
     `New Sponsor Inquiry from ${data.company}`,
-    `New Sponsor Inquiry\n\nName: ${data.name}\nCompany: ${data.company}\nEmail: ${data.email}\nPhone: ${data.phone}\n\nProduct/Industry:\n${data.productIndustry}\n\nSubmitted via connectevents.co`,
+    `New Sponsor Inquiry\n\nName: ${data.name}\nCompany: ${data.company}\nEmail: ${data.email}\nPhone: ${data.phone}\n\nProduct/Industry:\n${data.productIndustry}\n\nYears Interested: ${(data.yearsInterested ?? []).join(', ')}\n\nSubmitted via connectevents.co`,
   );
 
   await sendConfirmationEmail(

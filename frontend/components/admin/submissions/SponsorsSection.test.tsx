@@ -65,6 +65,17 @@ it('calls updateSponsorNotes on textarea blur', async () => {
   await waitFor(() => expect(updateSponsorNotes).toHaveBeenCalledWith('my-key', '1', 'Autosave me'))
 })
 
+it('displays years interested when present', () => {
+  render(<SponsorsSection sponsors={[makeSubmission('1', { yearsInterested: ['2026', '2028'] })]} adminKey="key" />)
+  expect(screen.getByText(/Years interested:/)).toBeInTheDocument()
+  expect(screen.getByText(/2026, 2028/)).toBeInTheDocument()
+})
+
+it('does not display years interested row when empty', () => {
+  render(<SponsorsSection sponsors={[makeSubmission('1', { yearsInterested: [] })]} adminKey="key" />)
+  expect(screen.queryByText(/Years interested:/)).not.toBeInTheDocument()
+})
+
 it('renders the date filter dropdown', () => {
   render(<SponsorsSection sponsors={[]} adminKey="key" />)
   expect(screen.getByRole('combobox')).toBeInTheDocument()

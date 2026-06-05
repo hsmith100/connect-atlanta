@@ -7,8 +7,8 @@ export default function Footer() {
         <div className="flex flex-col items-center space-y-6">
           {/* Logo */}
           <img
-            src="/images/BOTB_Black.png"
-            alt="botb logo"
+            src="/images/Logo/Final_logo.svg"
+            alt="Beats on the Block"
             className="h-24 w-auto"
           />
 

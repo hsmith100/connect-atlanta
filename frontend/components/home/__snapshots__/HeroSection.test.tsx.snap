@@ -3,7 +3,7 @@
 exports[`matches snapshot while events loading 1`] = `
 <div>
   <section
-    class="relative min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-8 hero-gradient-gold"
+    class="relative overflow-hidden pt-24 pb-8 hero-gradient-gold"
   >
     <div
       class="section-container relative z-10 w-full"
@@ -13,7 +13,7 @@ exports[`matches snapshot while events loading 1`] = `
       >
         <img
           alt="Presented by Advanced Health Solutions"
-          class="block mx-auto max-w-[120px] md:max-w-[150px]"
+          class="block mx-auto max-w-[160px] md:max-w-[200px]"
           src="/images/Sponsor%20Logos%202026/2.png"
         />
       </div>
@@ -28,8 +28,8 @@ exports[`matches snapshot while events loading 1`] = `
           />
           <img
             alt="Beats on the Block logo"
-            class="relative w-auto h-72 mx-auto"
-            src="images/Logo/BOTB_Full-Color_CMYK_Logo.png"
+            class="relative w-auto h-80 mx-auto"
+            src="/images/Logo/Final_logo.svg"
           />
         </div>
       </div>
@@ -62,7 +62,7 @@ exports[`matches snapshot while events loading 1`] = `
 exports[`matches snapshot with hero cards and no events 1`] = `
 <div>
   <section
-    class="relative min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-8 hero-gradient-gold"
+    class="relative overflow-hidden pt-24 pb-8 hero-gradient-gold"
   >
     <div
       class="section-container relative z-10 w-full"
@@ -72,7 +72,7 @@ exports[`matches snapshot with hero cards and no events 1`] = `
       >
         <img
           alt="Presented by Advanced Health Solutions"
-          class="block mx-auto max-w-[120px] md:max-w-[150px]"
+          class="block mx-auto max-w-[160px] md:max-w-[200px]"
           src="/images/Sponsor%20Logos%202026/2.png"
         />
       </div>
@@ -87,8 +87,8 @@ exports[`matches snapshot with hero cards and no events 1`] = `
           />
           <img
             alt="Beats on the Block logo"
-            class="relative w-auto h-72 mx-auto"
-            src="images/Logo/BOTB_Full-Color_CMYK_Logo.png"
+            class="relative w-auto h-80 mx-auto"
+            src="/images/Logo/Final_logo.svg"
           />
         </div>
       </div>
@@ -128,7 +128,7 @@ exports[`matches snapshot with hero cards and no events 1`] = `
 exports[`matches snapshot with no cards and no events 1`] = `
 <div>
   <section
-    class="relative min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-8 hero-gradient-gold"
+    class="relative overflow-hidden pt-24 pb-8 hero-gradient-gold"
   >
     <div
       class="section-container relative z-10 w-full"
@@ -138,7 +138,7 @@ exports[`matches snapshot with no cards and no events 1`] = `
       >
         <img
           alt="Presented by Advanced Health Solutions"
-          class="block mx-auto max-w-[120px] md:max-w-[150px]"
+          class="block mx-auto max-w-[160px] md:max-w-[200px]"
           src="/images/Sponsor%20Logos%202026/2.png"
         />
       </div>
@@ -153,8 +153,8 @@ exports[`matches snapshot with no cards and no events 1`] = `
           />
           <img
             alt="Beats on the Block logo"
-            class="relative w-auto h-72 mx-auto"
-            src="images/Logo/BOTB_Full-Color_CMYK_Logo.png"
+            class="relative w-auto h-80 mx-auto"
+            src="/images/Logo/Final_logo.svg"
           />
         </div>
       </div>
@@ -214,7 +214,7 @@ exports[`matches snapshot with no cards and no events 1`] = `
 exports[`matches snapshot with upcoming event 1`] = `
 <div>
   <section
-    class="relative min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-8 hero-gradient-gold"
+    class="relative overflow-hidden pt-24 pb-8 hero-gradient-gold"
   >
     <div
       class="section-container relative z-10 w-full"
@@ -224,7 +224,7 @@ exports[`matches snapshot with upcoming event 1`] = `
       >
         <img
           alt="Presented by Advanced Health Solutions"
-          class="block mx-auto max-w-[120px] md:max-w-[150px]"
+          class="block mx-auto max-w-[160px] md:max-w-[200px]"
           src="/images/Sponsor%20Logos%202026/2.png"
         />
       </div>
@@ -239,8 +239,8 @@ exports[`matches snapshot with upcoming event 1`] = `
           />
           <img
             alt="Beats on the Block logo"
-            class="relative w-auto h-72 mx-auto"
-            src="images/Logo/BOTB_Full-Color_CMYK_Logo.png"
+            class="relative w-auto h-80 mx-auto"
+            src="/images/Logo/Final_logo.svg"
           />
         </div>
       </div>
@@ -264,7 +264,7 @@ exports[`matches snapshot with upcoming event 1`] = `
 exports[`matches snapshot with upcoming event and hero cards 1`] = `
 <div>
   <section
-    class="relative min-h-screen flex items-center justify-center overflow-hidden pt-24 pb-8 hero-gradient-gold"
+    class="relative overflow-hidden pt-24 pb-8 hero-gradient-gold"
   >
     <div
       class="section-container relative z-10 w-full"
@@ -274,7 +274,7 @@ exports[`matches snapshot with upcoming event and hero cards 1`] = `
       >
         <img
           alt="Presented by Advanced Health Solutions"
-          class="block mx-auto max-w-[120px] md:max-w-[150px]"
+          class="block mx-auto max-w-[160px] md:max-w-[200px]"
           src="/images/Sponsor%20Logos%202026/2.png"
         />
       </div>
@@ -289,8 +289,8 @@ exports[`matches snapshot with upcoming event and hero cards 1`] = `
           />
           <img
             alt="Beats on the Block logo"
-            class="relative w-auto h-72 mx-auto"
-            src="images/Logo/BOTB_Full-Color_CMYK_Logo.png"
+            class="relative w-auto h-80 mx-auto"
+            src="/images/Logo/Final_logo.svg"
           />
         </div>
       </div>
