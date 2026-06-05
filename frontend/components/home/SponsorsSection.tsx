@@ -1,17 +1,17 @@
 const SPONSORS_2026 = [
-  { name: 'Sponsor 3',  logo: '/images/Sponsor%20Logos%202026/3.png'  },
-  { name: 'Sponsor 4',  logo: '/images/Sponsor%20Logos%202026/4.png'  },
-  { name: 'Sponsor 5',  logo: '/images/Sponsor%20Logos%202026/5.png'  },
-  { name: 'Sponsor 6',  logo: '/images/Sponsor%20Logos%202026/6.png'  },
-  { name: 'Sponsor 7',  logo: '/images/Sponsor%20Logos%202026/7.png'  },
-  { name: 'Sponsor 8',  logo: '/images/Sponsor%20Logos%202026/8.png'  },
-  { name: 'Sponsor 9',  logo: '/images/Sponsor%20Logos%202026/9.png'  },
-  { name: 'Sponsor 10', logo: '/images/Sponsor%20Logos%202026/10.png' },
-  { name: 'Sponsor 11', logo: '/images/Sponsor%20Logos%202026/11.png' },
-  { name: 'Sponsor 12', logo: '/images/Sponsor%20Logos%202026/12.png' },
-  { name: 'Sponsor 13', logo: '/images/Sponsor%20Logos%202026/13.png' },
-  { name: 'Sponsor 14', logo: '/images/Sponsor%20Logos%202026/14.png' },
-  { name: 'Sponsor 15', logo: '/images/Sponsor%20Logos%202026/15.png' },
+  { name: 'Sponsor 6',   logo: '/images/sponsors/logos/6.svg'   },
+  { name: 'Sponsor 7',   logo: '/images/sponsors/logos/7.svg'   },
+  { name: 'Sponsor 8',   logo: '/images/sponsors/logos/8.svg'   },
+  { name: 'Sponsor 9',   logo: '/images/sponsors/logos/9.svg'   },
+  { name: 'Sponsor 10',  logo: '/images/sponsors/logos/10.svg'  },
+  { name: 'Sponsor 11',  logo: '/images/sponsors/logos/11.svg'  },
+  { name: 'Sponsor 12',  logo: '/images/sponsors/logos/12.svg'  },
+  { name: 'Sponsor 13',  logo: '/images/sponsors/logos/13.svg'  },
+  { name: 'Sponsor 14',  logo: '/images/sponsors/logos/14.svg'  },
+  { name: 'Sponsor 15',  logo: '/images/sponsors/logos/15.svg'  },
+  { name: 'Sponsor 16',  logo: '/images/sponsors/logos/16.svg'  },
+  { name: 'Sponsor 17',  logo: '/images/sponsors/logos/17.svg'  },
+  { name: 'Sponsor 18',  logo: '/images/sponsors/logos/18.svg'  },
 ]
 
 export default function SponsorsSection() {
@@ -27,11 +27,11 @@ export default function SponsorsSection() {
           <img
             src="/images/Sponsor%20Logos%202026/2.png"
             alt="Advanced Health Solutions — Presenting Sponsor"
-            className="max-w-[180px] md:max-w-[220px] h-auto"
+            className="max-w-[220px] md:max-w-[260px] h-auto"
           />
         </div>
 
-        <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 items-center max-w-3xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-center max-w-5xl mx-auto">
           {SPONSORS_2026.map((sponsor, idx) => (
             <div key={idx} className="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1">
               <img
@@ -39,7 +39,7 @@ export default function SponsorsSection() {
                 alt={sponsor.name}
                 width="100"
                 height="80"
-                className="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
+                className="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
                 loading="lazy"
               />
             </div>

@@ -43,9 +43,9 @@ export function SponsorsSection({ sponsors, adminKey }: Props) {
           <button
             onClick={() => downloadCsv(
               'sponsor-inquiries.csv',
-              ['Name', 'Company', 'Email', 'Phone', 'Industry', 'Notes', 'Submitted'],
+              ['Name', 'Company', 'Email', 'Phone', 'Industry', 'Years Interested', 'Notes', 'Submitted'],
               filtered,
-              ['name', 'company', 'email', 'phone', 'productIndustry', 'notes', 'createdAt'],
+              ['name', 'company', 'email', 'phone', 'productIndustry', 'yearsInterested', 'notes', 'createdAt'],
             )}
             className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded text-sm transition-colors"
           >
@@ -67,7 +67,13 @@ export function SponsorsSection({ sponsors, adminKey }: Props) {
                   <p className="text-sm text-gray-400">{s.email as string} · {s.phone as string}</p>
                   <p className="text-xs text-gray-500 mt-0.5">{fmt(s.createdAt as string)}</p>
                 </div>
-                <p className="text-sm text-gray-300 mb-3 whitespace-pre-wrap">{s.productIndustry as string}</p>
+                <p className="text-sm text-gray-300 mb-1 whitespace-pre-wrap">{s.productIndustry as string}</p>
+                {(s.yearsInterested as string[] | undefined)?.length ? (
+                  <p className="text-sm text-gray-400 mb-3">
+                    <span className="font-medium text-gray-300">Years interested:</span>{' '}
+                    {(s.yearsInterested as string[]).join(', ')}
+                  </p>
+                ) : null}
                 <div className="relative">
                   <textarea
                     value={notes[id] ?? ''}

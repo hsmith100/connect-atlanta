@@ -37,7 +37,8 @@
 /* Custom Fonts */
 @font-face {
     font-family: 'Anton';
-    src: url('/fonts/Anton/Anton-Regular.ttf') format('truetype');
+    src: url('/fonts/Anton/Anton-Regular.woff2') format('woff2'),
+         url('/fonts/Anton/Anton-Regular.ttf') format('truetype');
     font-weight: 400;
     font-style: normal;
     font-display: swap;
@@ -45,7 +46,8 @@
 
 @font-face {
     font-family: 'Bricolage Grotesque';
-    src: url('/fonts/BricolageGrotesque/BricolageGrotesque-VariableFont_opsz,wdth,wght.ttf') format('truetype');
+    src: url('/fonts/BricolageGrotesque/BricolageGrotesque-VariableFont_opsz,wdth,wght.woff2') format('woff2'),
+         url('/fonts/BricolageGrotesque/BricolageGrotesque-VariableFont_opsz,wdth,wght.ttf') format('truetype');
     font-weight: 100 900;
     font-style: normal;
     font-display: swap;
@@ -53,8 +55,40 @@
 
 @font-face {
     font-family: 'Avenir Next';
-    src: url('/fonts/AvenirNext/Avenir Next.ttc') format('truetype');
-    font-weight: 100 900;
+    src: url('/fonts/AvenirNext/AvenirNext-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Avenir Next';
+    src: url('/fonts/AvenirNext/AvenirNext-Medium.woff2') format('woff2');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Avenir Next';
+    src: url('/fonts/AvenirNext/AvenirNext-DemiBold.woff2') format('woff2');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Avenir Next';
+    src: url('/fonts/AvenirNext/AvenirNext-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Avenir Next';
+    src: url('/fonts/AvenirNext/AvenirNext-Heavy.woff2') format('woff2');
+    font-weight: 900;
     font-style: normal;
     font-display: swap;
 }

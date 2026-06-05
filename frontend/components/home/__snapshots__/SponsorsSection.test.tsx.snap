@@ -18,58 +18,22 @@ exports[`matches snapshot 1`] = `
       >
         <img
           alt="Advanced Health Solutions — Presenting Sponsor"
-          class="max-w-[180px] md:max-w-[220px] h-auto"
+          class="max-w-[220px] md:max-w-[260px] h-auto"
           src="/images/Sponsor%20Logos%202026/2.png"
         />
       </div>
       <div
-        class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 items-center max-w-3xl mx-auto"
+        class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-center max-w-5xl mx-auto"
       >
         <div
           class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
         >
           <img
-            alt="Sponsor 3"
-            class="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
-            height="80"
-            loading="lazy"
-            src="/images/Sponsor%20Logos%202026/3.png"
-            width="100"
-          />
-        </div>
-        <div
-          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
-        >
-          <img
-            alt="Sponsor 4"
-            class="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
-            height="80"
-            loading="lazy"
-            src="/images/Sponsor%20Logos%202026/4.png"
-            width="100"
-          />
-        </div>
-        <div
-          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
-        >
-          <img
-            alt="Sponsor 5"
-            class="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
-            height="80"
-            loading="lazy"
-            src="/images/Sponsor%20Logos%202026/5.png"
-            width="100"
-          />
-        </div>
-        <div
-          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
-        >
-          <img
             alt="Sponsor 6"
-            class="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
+            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/Sponsor%20Logos%202026/6.png"
+            src="/images/sponsors/logos/6.svg"
             width="100"
           />
         </div>
@@ -78,10 +42,10 @@ exports[`matches snapshot 1`] = `
         >
           <img
             alt="Sponsor 7"
-            class="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
+            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/Sponsor%20Logos%202026/7.png"
+            src="/images/sponsors/logos/7.svg"
             width="100"
           />
         </div>
@@ -90,10 +54,10 @@ exports[`matches snapshot 1`] = `
         >
           <img
             alt="Sponsor 8"
-            class="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
+            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/Sponsor%20Logos%202026/8.png"
+            src="/images/sponsors/logos/8.svg"
             width="100"
           />
         </div>
@@ -102,10 +66,10 @@ exports[`matches snapshot 1`] = `
         >
           <img
             alt="Sponsor 9"
-            class="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
+            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/Sponsor%20Logos%202026/9.png"
+            src="/images/sponsors/logos/9.svg"
             width="100"
           />
         </div>
@@ -114,10 +78,10 @@ exports[`matches snapshot 1`] = `
         >
           <img
             alt="Sponsor 10"
-            class="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
+            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/Sponsor%20Logos%202026/10.png"
+            src="/images/sponsors/logos/10.svg"
             width="100"
           />
         </div>
@@ -126,10 +90,10 @@ exports[`matches snapshot 1`] = `
         >
           <img
             alt="Sponsor 11"
-            class="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
+            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/Sponsor%20Logos%202026/11.png"
+            src="/images/sponsors/logos/11.svg"
             width="100"
           />
         </div>
@@ -138,10 +102,10 @@ exports[`matches snapshot 1`] = `
         >
           <img
             alt="Sponsor 12"
-            class="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
+            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/Sponsor%20Logos%202026/12.png"
+            src="/images/sponsors/logos/12.svg"
             width="100"
           />
         </div>
@@ -150,10 +114,10 @@ exports[`matches snapshot 1`] = `
         >
           <img
             alt="Sponsor 13"
-            class="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
+            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/Sponsor%20Logos%202026/13.png"
+            src="/images/sponsors/logos/13.svg"
             width="100"
           />
         </div>
@@ -162,10 +126,10 @@ exports[`matches snapshot 1`] = `
         >
           <img
             alt="Sponsor 14"
-            class="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
+            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/Sponsor%20Logos%202026/14.png"
+            src="/images/sponsors/logos/14.svg"
             width="100"
           />
         </div>
@@ -174,10 +138,46 @@ exports[`matches snapshot 1`] = `
         >
           <img
             alt="Sponsor 15"
-            class="object-contain max-w-[120px] max-h-[100px] h-auto opacity-100 transition-opacity"
+            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/Sponsor%20Logos%202026/15.png"
+            src="/images/sponsors/logos/15.svg"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="Sponsor 16"
+            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/sponsors/logos/16.svg"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="Sponsor 17"
+            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/sponsors/logos/17.svg"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="Sponsor 18"
+            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/sponsors/logos/18.svg"
             width="100"
           />
         </div>

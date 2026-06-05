@@ -8,9 +8,10 @@ interface SponsorFormData {
   phone: string
   company: string
   productIndustry: string
+  yearsInterested: string[]
 }
 
-const EMPTY_FORM: SponsorFormData = { name: '', email: '', phone: '', company: '', productIndustry: '' }
+const EMPTY_FORM: SponsorFormData = { name: '', email: '', phone: '', company: '', productIndustry: '', yearsInterested: [] }
 
 function FormField({ label, children }: { readonly label: React.ReactNode; readonly children: React.ReactNode }) {
   return (
@@ -32,6 +33,15 @@ export default function SponsorInquiryForm() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData(prev => ({ ...prev, [name]: value } as SponsorFormData))
+  }
+
+  const handleYearToggle = (year: string) => {
+    setFormData(prev => ({
+      ...prev,
+      yearsInterested: prev.yearsInterested.includes(year)
+        ? prev.yearsInterested.filter(y => y !== year)
+        : [...prev.yearsInterested, year],
+    }))
   }
 
   const scrollToForm = () => formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })
@@ -75,7 +85,7 @@ export default function SponsorInquiryForm() {
             Let's work together
           </h2>
           <p className="text-xl text-brand-text font-bold max-w-2xl mx-auto">
-            Interested in being a Sponsor for 2026 BOTB? Please fill out the form below and a team member will reach out!
+            Become a partner for future Beats on the Block! Please fill out the form below and a team member will reach out.
           </p>
         </div>
 
@@ -127,6 +137,23 @@ export default function SponsorInquiryForm() {
                   className="textarea textarea-bordered h-24 focus:textarea-primary w-full"
                   placeholder="Tell us about your product or industry..."
                   disabled={submitting} required />
+              </FormField>
+
+              <FormField label="Year interested in sponsoring">
+                <div className="flex gap-6 mt-2">
+                  {['2026', '2027', '2028'].map(year => (
+                    <label key={year} className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        className="checkbox checkbox-primary"
+                        checked={formData.yearsInterested.includes(year)}
+                        onChange={() => handleYearToggle(year)}
+                        disabled={submitting}
+                      />
+                      <span className="font-medium text-brand-header">{year}</span>
+                    </label>
+                  ))}
+                </div>
               </FormField>
 
               <div className="pt-6">

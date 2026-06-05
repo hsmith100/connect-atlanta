@@ -41,10 +41,59 @@ describe('rendering', () => {
     expect(screen.getByRole('heading', { name: /let's work together/i })).toBeInTheDocument()
   })
 
+  it('renders the updated intro text', () => {
+    render(<SponsorInquiryForm />)
+    expect(screen.getByText(/become a partner for future beats on the block/i)).toBeInTheDocument()
+  })
+
   it('does not show status banners initially', () => {
     render(<SponsorInquiryForm />)
     expect(screen.queryByText(/thank you for your interest/i)).not.toBeInTheDocument()
     expect(screen.queryByText(/something went wrong/i)).not.toBeInTheDocument()
+  })
+})
+
+// ── year checkboxes ───────────────────────────────────────────────────────────
+
+describe('year interested checkboxes', () => {
+  it('renders checkboxes for 2026, 2027, and 2028', () => {
+    render(<SponsorInquiryForm />)
+    expect(screen.getByLabelText('2026')).toBeInTheDocument()
+    expect(screen.getByLabelText('2027')).toBeInTheDocument()
+    expect(screen.getByLabelText('2028')).toBeInTheDocument()
+  })
+
+  it('all year checkboxes start unchecked', () => {
+    render(<SponsorInquiryForm />)
+    expect(screen.getByLabelText('2026')).not.toBeChecked()
+    expect(screen.getByLabelText('2027')).not.toBeChecked()
+    expect(screen.getByLabelText('2028')).not.toBeChecked()
+  })
+
+  it('checking a year toggles it on', () => {
+    render(<SponsorInquiryForm />)
+    fireEvent.click(screen.getByLabelText('2027'))
+    expect(screen.getByLabelText('2027')).toBeChecked()
+  })
+
+  it('unchecking a year toggles it off', () => {
+    render(<SponsorInquiryForm />)
+    fireEvent.click(screen.getByLabelText('2027'))
+    fireEvent.click(screen.getByLabelText('2027'))
+    expect(screen.getByLabelText('2027')).not.toBeChecked()
+  })
+
+  it('includes selected years in the fetch payload', async () => {
+    ;(globalThis.fetch as jest.Mock).mockResolvedValue({ ok: true })
+    render(<SponsorInquiryForm />)
+    fillForm()
+    fireEvent.click(screen.getByLabelText('2026'))
+    fireEvent.click(screen.getByLabelText('2028'))
+    submitForm()
+    await waitFor(() => expect(globalThis.fetch).toHaveBeenCalled())
+    const body = JSON.parse((globalThis.fetch as jest.Mock).mock.calls[0][1].body)
+    expect(body.yearsInterested).toEqual(expect.arrayContaining(['2026', '2028']))
+    expect(body.yearsInterested).not.toContain('2027')
   })
 })
 

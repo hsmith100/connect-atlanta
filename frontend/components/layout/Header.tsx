@@ -104,7 +104,7 @@ export default function Header() {
               href="/join"
               className="text-gray-800 hover:text-brand-pink transition-colors font-medium"
             >
-              Join Us
+              Apply
             </Link>
             <Link
               href="/merch"
@@ -176,7 +176,7 @@ export default function Header() {
               onClick={closeMobileMenu}
               className="block text-gray-800 hover:text-brand-pink transition-colors font-medium py-2 px-4 rounded-lg hover:bg-gray-100"
             >
-              Join Us
+              Apply
             </Link>
             <Link
               href="/merch"

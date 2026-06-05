@@ -155,6 +155,32 @@ describe('sponsorInquiry', () => {
     expect(result.statusCode).toBe(201);
     jest.restoreAllMocks();
   });
+
+  it('saves yearsInterested array to DynamoDB when provided', async () => {
+    ddbMock.on(PutCommand).resolves({});
+    await sponsorInquiry({ ...validPayload, yearsInterested: ['2026', '2028'] });
+    expect(ddbMock).toHaveReceivedCommandWith(PutCommand, {
+      Item: expect.objectContaining({ yearsInterested: ['2026', '2028'] }),
+    });
+  });
+
+  it('saves empty yearsInterested array when not provided', async () => {
+    ddbMock.on(PutCommand).resolves({});
+    await sponsorInquiry(validPayload);
+    expect(ddbMock).toHaveReceivedCommandWith(PutCommand, {
+      Item: expect.objectContaining({ yearsInterested: [] }),
+    });
+  });
+
+  it('includes years interested in the notification email body', async () => {
+    ddbMock.on(PutCommand).resolves({});
+    await sponsorInquiry({ ...validPayload, yearsInterested: ['2027'] });
+    expect(sesMock).toHaveReceivedCommandWith(SendEmailCommand, {
+      Message: expect.objectContaining({
+        Body: { Text: { Data: expect.stringContaining('2027') } },
+      }),
+    });
+  });
 });
 
 // ── contactForm ───────────────────────────────────────────────────────────────

@@ -65,4 +65,5 @@ export interface SponsorInquiryPayload {
   phone: string;
   company: string;
   productIndustry: string;
+  yearsInterested?: string[];
 }

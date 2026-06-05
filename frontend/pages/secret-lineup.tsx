@@ -28,7 +28,7 @@ export default function SecretLineup() {
             <div className="max-w-4xl mx-auto mb-16">
               <div className="text-center">
                 <img
-                  src="/images/Sponsor Logos 2026/2.png"
+                  src="/images/sponsors/logos/2.svg"
                   alt="Presented by Advanced Health Solutions"
                   className="mx-auto max-w-[200px] md:max-w-xs my-6"
                 />

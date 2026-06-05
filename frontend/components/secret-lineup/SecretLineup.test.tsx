@@ -67,7 +67,7 @@ describe('AHS sponsor section', () => {
   it('AHS logo src points to the correct asset', () => {
     render(<SecretLineup />)
     const logo = screen.getByAltText('Presented by Advanced Health Solutions') as HTMLImageElement
-    expect(logo.src).toContain('Sponsor%20Logos%202026/2.png')
+    expect(logo.src).toContain('sponsors/logos/2.svg')
   })
 
   it('renders the opening blurb paragraph', () => {
