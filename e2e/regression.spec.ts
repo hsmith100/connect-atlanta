@@ -36,7 +36,7 @@ test.describe('navigation', () => {
     await expect(page.getByRole('heading', { name: 'Events', exact: true })).toBeVisible();
 
     await openNavIfMobile();
-    await page.getByRole('link', { name: 'Join Us' }).first().click();
+    await page.getByRole('link', { name: 'Apply' }).first().click();
     await expect(page).toHaveURL(/\/join/);
     await expect(page.getByRole('heading', { name: 'Join Us', exact: true })).toBeVisible();
 
@@ -222,7 +222,7 @@ test.describe('footer', () => {
   test('renders logo, copyright, and social links on home page', async ({ page }) => {
     await page.goto('/');
     const footer = page.locator('footer');
-    await expect(footer.locator('img[alt="botb logo"]')).toBeVisible();
+    await expect(footer.locator('img[alt="Beats on the Block"]')).toBeVisible();
     await expect(footer.getByText(/Copyright 2025 Connect Events/)).toBeVisible();
     await expect(footer.getByLabel('Instagram')).toBeVisible();
     await expect(footer.getByLabel('Facebook')).toBeVisible();
