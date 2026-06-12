@@ -62,7 +62,7 @@ test.describe('gallery page', () => {
     await page.goto('/gallery');
     // The embed fetches the latest video ID from the Lambda then renders an iframe
     const iframe = page.locator('iframe[title="Latest Beats on the Block video"]');
-    await expect(iframe).toBeVisible({ timeout: 10000 });
+    await expect(iframe).toBeVisible({ timeout: 30000 });
     const src = await iframe.getAttribute('src');
     expect(src).toContain('youtube.com/embed/');
   });

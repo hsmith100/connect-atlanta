@@ -49,11 +49,12 @@ export class DnsStack extends cdk.Stack {
       ],
     });
 
-    // SPF record — authorizes Google Workspace to send on behalf of connectevents.co.
-    // Without this, receiving servers reject outbound mail as "unauthenticated".
+    // SPF record — authorizes Google Workspace and SendGrid (PeerPop campaigns) to send
+    // on behalf of connectevents.co. Without sendgrid.net, PeerPop campaign emails fail
+    // SPF checks and land in spam even though DKIM CNAMEs are present.
     new route53.TxtRecord(this, 'SpfRecord', {
       zone: this.hostedZone,
-      values: ['v=spf1 include:_spf.google.com ~all'],
+      values: ['v=spf1 include:_spf.google.com include:sendgrid.net ~all'],
     });
 
     // SendGrid email authentication for PeerPop marketing campaigns.
@@ -142,7 +143,7 @@ export class DnsStack extends cdk.Stack {
     // SPF — authorizes both SES (noreply@ Lambda emails) and Google Workspace (info@/updates@ staff email).
     new route53.TxtRecord(this, 'BeatsSpfRecord', {
       zone: this.beatsontheblockfestHostedZone,
-      values: ['v=spf1 include:amazonses.com include:_spf.google.com ~all'],
+      values: ['v=spf1 include:amazonses.com include:_spf.google.com include:sendgrid.net ~all'],
     });
 
     // DMARC monitoring policy — p=none means monitor only until sender reputation is established.
