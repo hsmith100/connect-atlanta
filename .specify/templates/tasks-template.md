@@ -157,6 +157,8 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] TXXX [P] Unit tests for any new logic not yet covered (Principle X)
 - [ ] TXXX Security hardening
 - [ ] TXXX Run quickstart.md validation
+- [ ] TXXX Pre-PR validation gate (Principle XIII): run `npm test -- --ci && npm run lint` in
+      `frontend/` and `npm test` in `lambda/` — all checks MUST pass before opening the PR
 
 ---
 
