@@ -56,7 +56,7 @@ export default function Home() {
         title="Beats on the Block | Atlanta's Premier Free Outdoor Electronic Music Experience"
         description="Beats on the Block is Atlanta's premier free outdoor music festival, produced by Connect Atlanta. Join thousands of fans for world-class DJs and community vibes along the BeltLine."
         keywords="beats on the block, connect atlanta, atlanta music festival, free outdoor festival, atlanta beltline, electronic music atlanta, house music atlanta, outdoor concerts atlanta"
-        canonicalUrl="https://connectevents.co"
+        canonicalUrl="https://beatsontheblockfest.com"
         structuredData={{
           "@context": "https://schema.org",
           "@graph": [organizationSchema, websiteSchema, eventSeriesSchema, faqSchema]

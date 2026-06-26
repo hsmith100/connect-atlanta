@@ -55,13 +55,13 @@ Every public page has a title leading with "Beats on the Block" and a descriptio
 
 **Why this priority**: Removing the wrong signal (Atlanta EDM) must be paired with adding the correct signal (Connect Atlanta) so search engines and AI models have an unambiguous authoritative source to attribute the festival to.
 
-**Independent Test**: Can be tested by inspecting the `<title>` and `<meta name="description">` on all 8 public pages — each must lead with "Beats on the Block" and name Connect Atlanta in the description.
+**Independent Test**: Can be tested by inspecting the `<title>` and `<meta name="description">` on all 12 public pages — each must lead with "Beats on the Block" and name Connect Atlanta in the description.
 
 **Acceptance Scenarios**:
 
 1. **Given** search results show a page title, **When** a user sees it, **Then** "Beats on the Block" is the primary name and "Atlanta EDM" does not appear
 2. **Given** a page description, **When** a search engine or AI reads it, **Then** Connect Atlanta is named as the organizer or producing organization
-3. **Given** all 8 public pages are reviewed, **When** each title and description is read, **Then** none reference "Atlanta EDM" in an identity context and all attribute the event to Connect Atlanta
+3. **Given** all 12 public pages are reviewed, **When** each title and description is read, **Then** none reference "Atlanta EDM" in an identity context and all attribute the event to Connect Atlanta
 
 ---
 
@@ -83,7 +83,7 @@ Every public page has a title leading with "Beats on the Block" and a descriptio
 - **FR-006**: The keyword metadata MUST NOT contain "atlanta edm" or "edm atlanta" — these terms reference the Atlanta EDM partner organization and must not appear as keywords for the festival's own identity
 - **FR-007**: Structured data (machine-readable metadata) MUST be present on the homepage identifying Connect Atlanta as the organizer of the Beats on the Block event series — enabling AI models to attribute ownership correctly
 - **FR-008**: Structured data MUST also be present on the Events page(s), attributing each individual Beats on the Block event to Connect Atlanta as the organizer
-- **FR-009**: All 8 public-facing pages (home, events, gallery, join, contact, merch, sponsor inquiries, cookie policy) MUST have per-page titles that lead with "Beats on the Block" and descriptions that name Connect Atlanta as the organizer
+- **FR-009**: All 12 public-facing pages (home, events, gallery, join, contact, merch, sponsor-inquiries, cookie-policy, privacy-policy, terms-conditions, 404, about) MUST have per-page titles that lead with "Beats on the Block" and descriptions that name Connect Atlanta as the organizer
 - **FR-010**: The `og:site_name` property MUST be set to "Connect Atlanta"
 
 ## Success Criteria *(mandatory)*
@@ -92,7 +92,7 @@ Every public page has a title leading with "Beats on the Block" and a descriptio
 
 - **SC-001**: Zero public-facing pages contain "Atlanta EDM Festival" in their title, description, or keyword metadata — verifiable immediately on deploy via page source inspection
 - **SC-002**: Zero pages contain "atlanta edm" or "edm atlanta" in keyword metadata — verifiable immediately on deploy
-- **SC-003**: All 8 public pages have titles that lead with "Beats on the Block" and descriptions that name Connect Atlanta as the organizer — verifiable immediately on deploy
+- **SC-003**: All 12 public pages have titles that lead with "Beats on the Block" and descriptions that name Connect Atlanta as the organizer — verifiable immediately on deploy
 - **SC-004**: Structured data on the homepage and Events page(s) explicitly names Connect Atlanta as the event organizer — verifiable immediately via structured data testing tools
 - **SC-005**: Querying an AI assistant "who organizes Beats on the Block" returns Connect Atlanta (not Atlanta EDM) as the answer within 4–8 weeks of deployment
 

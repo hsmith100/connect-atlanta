@@ -44,7 +44,7 @@ export const eventSeriesSchema = {
   "@type": "EventSeries",
   "name": "Beats on the Block",
   "description": "Atlanta's premier FREE outdoor electronic music festival series. Experience world-class DJs, food vendors, and community vibes on the iconic Atlanta BeltLine.",
-  "url": "https://connectevents.co/events",
+  "url": "https://beatsontheblockfest.com/events",
   "organizer": {
     "@id": "https://beatsontheblockfest.com/#org"
   },
@@ -102,7 +102,7 @@ export function createEventSchema(event: StructuredDataEvent): object {
         "addressCountry": "US"
       }
     },
-    "image": event.flyerUrl ? `https://connectevents.co${event.flyerUrl}` : "https://connectevents.co/images/events/september-2025.png",
+    "image": event.flyerUrl ? `https://beatsontheblockfest.com${event.flyerUrl}` : "https://beatsontheblockfest.com/images/events/september-2025.png",
     "organizer": {
       "@id": "https://beatsontheblockfest.com/#org"
     },
@@ -112,7 +112,7 @@ export function createEventSchema(event: StructuredDataEvent): object {
     } : undefined,
     "offers": {
       "@type": "Offer",
-      "url": "https://connectevents.co/events",
+      "url": "https://beatsontheblockfest.com/events",
       "price": "0",
       "priceCurrency": "USD",
       "availability": "https://schema.org/InStock",
@@ -138,7 +138,7 @@ export const breadcrumbSchema = (items: BreadcrumbItem[]): object => ({
     "@type": "ListItem",
     "position": index + 1,
     "name": item.name,
-    "item": `https://connectevents.co${item.url}`
+    "item": `https://beatsontheblockfest.com${item.url}`
   }))
 })
 
@@ -238,7 +238,7 @@ export const faqSchema = {
       "name": "How do I apply to DJ at Beats on the Block?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "DJs can apply through our website at connectevents.co/join. We review all applications and select performers based on their experience, style, and fit with our community-focused events."
+        "text": "DJs can apply through our website at beatsontheblockfest.com/join. We review all applications and select performers based on their experience, style, and fit with our community-focused events."
       }
     }
   ]
