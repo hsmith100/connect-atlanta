@@ -12,8 +12,8 @@ export default function Contact() {
     <>
       <SEO
         title="Contact Us | Beats on the Block"
-        description="Get in touch with Beats on the Block. We'd love to hear from you about partnerships, performances, or general inquiries."
-        canonicalUrl="https://yourfestival.com/contact"
+        description="Get in touch with Connect Atlanta, producers of Beats on the Block. Reach out about partnerships, performances, or general inquiries."
+        canonicalUrl="https://beatsontheblockfest.com/contact"
       />
 
       <Header />

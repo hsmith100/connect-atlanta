@@ -6,11 +6,12 @@
 export const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "name": "Connect Events",
-  "legalName": "Connect Events, Inc.",
-  "url": "https://connectevents.co",
-  "logo": "https://connectevents.co/images/BOTB_White.png",
-  "description": "Atlanta's premier FREE outdoor electronic music festival producer. We create unforgettable daytime experiences on the Atlanta BeltLine through our Beats on the Block event series.",
+  "@id": "https://beatsontheblockfest.com/#org",
+  "name": "Connect Atlanta",
+  "legalName": "Connect Atlanta",
+  "url": "https://beatsontheblockfest.com",
+  "logo": "https://beatsontheblockfest.com/images/BOTB_White.png",
+  "description": "Connect Atlanta produces Beats on the Block — Atlanta's premier free outdoor music festival on the BeltLine.",
   "address": {
     "@type": "PostalAddress",
     "addressLocality": "Atlanta",
@@ -29,8 +30,10 @@ export const organizationSchema = {
     "areaServed": "US"
   },
   "sameAs": [
-    "https://www.instagram.com/connecteventsatl/",
-    "https://www.facebook.com/connecteventsatl/"
+    "https://www.instagram.com/connect__atlanta",
+    "https://www.facebook.com/profile.php?id=61573559046886",
+    "https://www.youtube.com/@Connect_Atlanta",
+    "https://www.tiktok.com/@connect__atlanta"
   ],
   "foundingDate": "2024",
   "slogan": "Where music meets community on the Atlanta BeltLine"
@@ -43,9 +46,7 @@ export const eventSeriesSchema = {
   "description": "Atlanta's premier FREE outdoor electronic music festival series. Experience world-class DJs, food vendors, and community vibes on the iconic Atlanta BeltLine.",
   "url": "https://connectevents.co/events",
   "organizer": {
-    "@type": "Organization",
-    "name": "Connect Events",
-    "url": "https://connectevents.co"
+    "@id": "https://beatsontheblockfest.com/#org"
   },
   "location": {
     "@type": "Place",
@@ -103,9 +104,7 @@ export function createEventSchema(event: StructuredDataEvent): object {
     },
     "image": event.flyerUrl ? `https://connectevents.co${event.flyerUrl}` : "https://connectevents.co/images/events/september-2025.png",
     "organizer": {
-      "@type": "Organization",
-      "name": "Connect Events",
-      "url": "https://connectevents.co"
+      "@id": "https://beatsontheblockfest.com/#org"
     },
     "performer": event.artists ? {
       "@type": "PerformingGroup",
@@ -146,36 +145,27 @@ export const breadcrumbSchema = (items: BreadcrumbItem[]): object => ({
 export const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  "name": "Connect Events",
-  "alternateName": "Beats on the Block",
-  "url": "https://connectevents.co",
-  "description": "Atlanta's premier FREE outdoor electronic music festival",
+  "name": "Beats on the Block",
+  "alternateName": "Connect Atlanta",
+  "url": "https://beatsontheblockfest.com",
+  "description": "Beats on the Block — Atlanta's premier free outdoor music festival, produced by Connect Atlanta.",
   "publisher": {
-    "@type": "Organization",
-    "name": "Connect Events, Inc.",
-    "logo": {
-      "@type": "ImageObject",
-      "url": "https://connectevents.co/images/BOTB_White.png"
-    }
+    "@id": "https://beatsontheblockfest.com/#org"
   },
   "potentialAction": {
     "@type": "SearchAction",
-    "target": "https://connectevents.co/events?q={search_term_string}",
+    "target": "https://beatsontheblockfest.com/events?q={search_term_string}",
     "query-input": "required name=search_term_string"
-  },
-  "sameAs": [
-    "https://www.instagram.com/connecteventsatl/",
-    "https://www.facebook.com/connecteventsatl/"
-  ]
+  }
 }
 
 export const localBusinessSchema = {
   "@context": "https://schema.org",
   "@type": "LocalBusiness",
-  "@id": "https://connectevents.co/#business",
-  "name": "Connect Events",
-  "image": "https://connectevents.co/images/BOTB_White.png",
-  "url": "https://connectevents.co",
+  "@id": "https://beatsontheblockfest.com/#business",
+  "name": "Connect Atlanta",
+  "image": "https://beatsontheblockfest.com/images/BOTB_White.png",
+  "url": "https://beatsontheblockfest.com",
   "telephone": "",
   "email": "info@connectevents.co",
   "address": {
@@ -203,7 +193,7 @@ export const localBusinessSchema = {
   },
   "priceRange": "Free Events",
   "paymentAccepted": "N/A",
-  "description": "Event production company specializing in FREE outdoor electronic music festivals in Atlanta"
+  "description": "Connect Atlanta produces Beats on the Block, a free outdoor music festival series on the Atlanta BeltLine."
 }
 
 // FAQ Schema for common questions

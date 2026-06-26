@@ -13,9 +13,9 @@ interface SEOProps {
 }
 
 export default function SEO({
-  title = 'Connect Events - Beats on the Block | Atlanta EDM Festival',
-  description = 'Atlanta\'s premier FREE outdoor electronic music experience. Join us for Beats on the Block featuring top DJs, amazing vibes, and unforgettable daytime parties on the Atlanta BeltLine.',
-  keywords = 'atlanta events, beats on the block, edm atlanta, electronic music festival, atlanta beltline, free concerts atlanta, outdoor music atlanta, atlanta edm, house music atlanta, techno atlanta',
+  title = 'Beats on the Block | Connect Atlanta',
+  description = "Beats on the Block is Atlanta's premier free outdoor music festival, produced by Connect Atlanta. Join thousands of fans for world-class DJs and community vibes along the BeltLine.",
+  keywords = 'beats on the block, connect atlanta, atlanta music festival, free outdoor festival, atlanta beltline, electronic music atlanta, house music atlanta, outdoor concerts atlanta, connect events',
   ogImage = '/images/BOTB_White.png',
   ogType = 'website',
   twitterCard = 'summary_large_image',
@@ -53,7 +53,7 @@ export default function SEO({
       <meta property="og:image" content={`${siteUrl}${ogImage}`} />
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
-      <meta property="og:site_name" content="Connect Events" />
+      <meta property="og:site_name" content="Connect Atlanta" />
       <meta property="og:locale" content="en_US" />
 
       {/* Twitter */}
@@ -66,7 +66,7 @@ export default function SEO({
       {/* Additional Meta Tags */}
       <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
       <meta httpEquiv="content-language" content="en" />
-      <meta name="author" content="Connect Events, Inc." />
+      <meta name="author" content="Connect Atlanta" />
 
       {/* Geographic Meta Tags */}
       <meta name="geo.region" content="US-GA" />

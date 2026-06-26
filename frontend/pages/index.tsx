@@ -54,8 +54,8 @@ export default function Home() {
     <>
       <SEO
         title="Beats on the Block | Atlanta's Premier Free Outdoor Electronic Music Experience"
-        description="Atlanta's premier free outdoor electronic music festival. Join 5,000-10,000 attendees for world-class DJs, local vendors, and community vibes along the Beltline."
-        keywords="beats on the block, atlanta music festival, beltline, electronic music, free festival, atlanta edm, house music, techno"
+        description="Beats on the Block is Atlanta's premier free outdoor music festival, produced by Connect Atlanta. Join thousands of fans for world-class DJs and community vibes along the BeltLine."
+        keywords="beats on the block, connect atlanta, atlanta music festival, free outdoor festival, atlanta beltline, electronic music atlanta, house music atlanta, outdoor concerts atlanta"
         canonicalUrl="https://connectevents.co"
         structuredData={{
           "@context": "https://schema.org",

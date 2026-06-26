@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useRouter } from 'next/router'
 import SEO from '../components/shared/SEO'
 import Header from '../components/layout/Header'
@@ -6,6 +6,7 @@ import Footer from '../components/layout/Footer'
 import ConnectModal from '../components/shared/ConnectModal'
 import { Calendar, Music, Loader2, AlertCircle, X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { getEvents, getEventGallery } from '../lib/api'
+import { organizationSchema, createEventSchema } from '../lib/structuredData'
 import type { Event } from '@shared/types/events'
 import type { Photo } from '@shared/types/photos'
 import { formatEventDate, getEventDatetimes, getDefaultActiveId } from '../lib/formatters'
@@ -32,6 +33,14 @@ export default function Events() {
     const [pastEvents, setPastEvents] = useState<Event[]>([])
     const [activeEventId, setActiveEventId] = useState<string | null>(null)
     const [selectedFlyerIndex, setSelectedFlyerIndex] = useState<number | null>(null)
+
+    const eventsStructuredData = useMemo(() => ({
+        '@context': 'https://schema.org',
+        '@graph': [
+            organizationSchema,
+            ...upcomingEvents.map(e => createEventSchema({ title: e.title, date: e.date, flyerUrl: e.flyerUrl, artists: e.artists, description: e.subtitle })),
+        ],
+    }), [upcomingEvents])
 
     // Load events on mount — split using time-aware logic
     useEffect(() => {
@@ -139,8 +148,9 @@ export default function Events() {
         <>
             <SEO
                 title="Events | Beats on the Block"
-                description="Explore upcoming and past events from Beats on the Block. Join us for Atlanta's premier free outdoor electronic music experience."
-                canonicalUrl="https://yourfestival.com/events"
+                description="Explore upcoming and past Beats on the Block events, produced by Connect Atlanta — Atlanta's premier free outdoor music festival on the BeltLine."
+                canonicalUrl="https://beatsontheblockfest.com/events"
+                structuredData={eventsStructuredData}
             />
 
             <Header />

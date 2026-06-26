@@ -6,8 +6,8 @@ export default function TermsConditions() {
   return (
     <>
       <SEO 
-        title="Terms & Conditions"
-        description="Terms and conditions for using the Connect Events website and attending Beats on the Block events."
+        title="Terms & Conditions | Beats on the Block"
+        description="Terms and conditions for using the Beats on the Block website and attending Connect Atlanta events."
         canonicalUrl="https://connectevents.co/terms-conditions"
       />
       

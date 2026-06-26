@@ -26,12 +26,12 @@ afterEach(() => {
 describe('defaults', () => {
   it('renders the default title', () => {
     render(<SEO />)
-    expect(document.title).toContain('Connect Events')
+    expect(document.title).toContain('Beats on the Block')
   })
 
   it('renders the default description meta tag', () => {
     render(<SEO />)
-    expect(getMeta('description')?.content).toContain("Atlanta's premier FREE")
+    expect(getMeta('description')?.content).toContain('Connect Atlanta')
   })
 
   it('renders robots as index/follow by default', () => {

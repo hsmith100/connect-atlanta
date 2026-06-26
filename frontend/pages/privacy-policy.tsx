@@ -6,8 +6,8 @@ export default function PrivacyPolicy() {
   return (
     <>
       <SEO 
-        title="Privacy Policy"
-        description="Connect Events privacy policy - How we collect, use, and protect your personal information."
+        title="Privacy Policy | Beats on the Block"
+        description="Connect Atlanta privacy policy — how we collect, use, and protect your personal information on the Beats on the Block website."
         canonicalUrl="https://connectevents.co/privacy-policy"
       />
       
