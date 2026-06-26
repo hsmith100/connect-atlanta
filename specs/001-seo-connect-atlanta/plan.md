@@ -35,7 +35,7 @@ Replace "Atlanta EDM Festival" with Connect Atlanta ownership signals across all
 | X. Testing Standards | ✅ Pass | Two existing default-value tests in `SEO.test.tsx` must be updated to match new defaults. No new logic → no new test cases required beyond fixing broken assertions. |
 | XI. UX Consistency | ✅ Pass | No UI changes — meta tags only |
 | XII. Performance | ✅ Pass | JSON-LD adds ~500 bytes to homepage `<head>`; no runtime cost |
-| XIII. Pre-PR Validation Gate | ✅ Pass | T016 runs `npm test -- --ci` and `npm run lint` in `frontend/` before PR. Lambda checks exempt — no Lambda code changed in this feature. |
+| XIII. Pre-PR Validation Gate | ✅ Pass | T016 runs `npm test -- --ci`, `npm run lint`, and `npm run typecheck` in `frontend/` before PR. Lambda checks exempt — no Lambda code changed in this feature. |
 
 ## Project Structure
 

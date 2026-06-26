@@ -2,9 +2,9 @@
 SYNC IMPACT REPORT
 ==================
 Generated: 2026-06-25
-Version change: 1.3.0 → 1.4.0 (MINOR — added Principle XIII: Pre-PR Validation Gate,
-  requiring all quality checks to pass locally before opening a PR. Closes a workflow
-  gap where CI failures from trivially catchable issues were discovered only after push.)
+Version change: 1.3.0 → 1.4.1 (MINOR→PATCH amendment — added `npm run typecheck` to
+  Principle XIII's required pre-PR checks. Typecheck was already mandated by Principle X
+  but was omitted from the XIII command list. Caught by first real application of the gate.)
 
 Modified principles: none
 
@@ -138,11 +138,12 @@ local validation.
 
 ```bash
 # Frontend — from frontend/
-npm test -- --ci   # all tests must pass
-npm run lint       # zero errors (warnings acceptable)
+npm test -- --ci     # all tests must pass
+npm run lint         # zero errors (warnings acceptable)
+npm run typecheck    # zero type errors
 
 # Lambda — from lambda/
-npm test           # all tests must pass
+npm test             # all tests must pass
 ```
 
 **Why this is required**: CI pipeline runs are ephemeral and results arrive minutes after push.
@@ -188,4 +189,4 @@ update `LAST_AMENDED_DATE`, and regenerate the Sync Impact Report comment above.
 Constitution Check in its plan.md confirming no principle violations. Violations MUST be documented
 in the Complexity Tracking table with justification.
 
-**Version**: 1.4.0 | **Ratified**: 2026-03-06 | **Last Amended**: 2026-06-25
+**Version**: 1.4.1 | **Ratified**: 2026-03-06 | **Last Amended**: 2026-06-25

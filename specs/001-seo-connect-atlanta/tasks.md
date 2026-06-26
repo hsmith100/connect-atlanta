@@ -82,7 +82,7 @@ All tasks in this phase touch different files and can run in parallel.
 
 - [x] T014 [P] [US3] Verify `title` props on `frontend/pages/gallery.tsx`, `frontend/pages/join.tsx`, `frontend/pages/contact.tsx`, `frontend/pages/merch.tsx`, `frontend/pages/sponsor-inquiries.tsx` all follow the `"[Section] | Beats on the Block"` pattern — update any that deviate
 - [x] T015 [US3] Run full validation from `quickstart.md`: confirm `og:site_name="Connect Atlanta"` and `<meta name="author" content="Connect Atlanta">` on all pages by inspecting page source on the PR environment
-- [x] T016 Pre-PR validation gate (Principle XIII): run `npm test -- --ci` in `frontend/` and `npm run lint` in `frontend/` — all checks MUST pass before opening PR. Lambda checks exempt — no Lambda code changed in this feature.
+- [x] T016 Pre-PR validation gate (Principle XIII): run `npm test -- --ci`, `npm run lint`, and `npm run typecheck` in `frontend/` — all checks MUST pass before opening PR. Lambda checks exempt — no Lambda code changed in this feature.
 
 **Checkpoint**: All constitution gates green. No pages contain "Atlanta EDM" in metadata. All pages attribute Connect Atlanta as organizer in descriptions. Tests and lint pass.
 
