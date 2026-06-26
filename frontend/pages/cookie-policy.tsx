@@ -6,8 +6,8 @@ export default function CookiePolicy() {
   return (
     <>
       <SEO 
-        title="Cookie Policy"
-        description="Learn about how Connect Events uses cookies and similar technologies on our website."
+        title="Cookie Policy | Beats on the Block"
+        description="Learn about how Connect Atlanta uses cookies and similar technologies on the Beats on the Block website."
         canonicalUrl="https://connectevents.co/cookie-policy"
       />
       

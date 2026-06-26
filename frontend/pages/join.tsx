@@ -35,8 +35,8 @@ export default function JoinUs() {
     <>
       <SEO
         title="Join Us | Beats on the Block"
-        description="Join Beats on the Block as a volunteer, vendor, or DJ. Be part of Atlanta's premier free outdoor electronic music experience."
-        canonicalUrl="https://yourfestival.com/join"
+        description="Join Beats on the Block as a DJ, volunteer, or vendor. Be part of Connect Atlanta's premier free outdoor music festival on the BeltLine."
+        canonicalUrl="https://beatsontheblockfest.com/join"
       />
 
       <Header />

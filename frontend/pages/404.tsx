@@ -8,7 +8,7 @@ export default function NotFound() {
     <>
       <SEO
         title="404 | Beats on the Block"
-        description="Page not found."
+        description="Page not found. Head back to the Beats on the Block homepage from Connect Atlanta."
       />
       <Header />
       <main className="pt-28 md:pt-[3.5rem] min-h-screen bg-brand-bg flex items-center justify-center">

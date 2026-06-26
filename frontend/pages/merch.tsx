@@ -9,8 +9,8 @@ export default function Merch() {
     <>
       <SEO
         title="Merch | Beats on the Block"
-        description="Shop official Beats on the Block merchandise. Festival apparel, accessories, and more."
-        canonicalUrl="https://yourfestival.com/merch"
+        description="Shop official Beats on the Block merchandise, produced by Connect Atlanta. Festival apparel, accessories, and more."
+        canonicalUrl="https://beatsontheblockfest.com/merch"
       />
 
       <Header />

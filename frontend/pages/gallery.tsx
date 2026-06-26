@@ -46,8 +46,8 @@ export default function Gallery() {
     <>
       <SEO
         title="Event Gallery | Beats on the Block"
-        description="Check out our vibe! Browse photos from Beats on the Block events."
-        canonicalUrl="https://yourfestival.com/gallery"
+        description="Browse photos from Beats on the Block events, produced by Connect Atlanta — Atlanta's premier free outdoor music festival."
+        canonicalUrl="https://beatsontheblockfest.com/gallery"
       />
 
       <Header />

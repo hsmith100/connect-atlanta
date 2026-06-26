@@ -10,8 +10,8 @@ export default function About() {
     <>
       <SEO
         title="About Us | Beats on the Block"
-        description="Learn about Atlanta's premier free outdoor electronic music experience. Discover our mission, vision, and the story behind Beats on the Block."
-        canonicalUrl="https://yourfestival.com/about"
+        description="Learn about Beats on the Block, produced by Connect Atlanta — Atlanta's premier free outdoor music festival. Discover our mission and story."
+        canonicalUrl="https://beatsontheblockfest.com/about"
       />
 
       <Header />

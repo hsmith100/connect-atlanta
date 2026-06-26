@@ -1,28 +1,30 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Generated: 2026-03-06
-Version change: 1.2.1 → 1.3.0 (MINOR — Principle X rewritten from "no testing gate" to mandatory
-  unit tests now that Jest infrastructure is fully operational in both lambda/ and frontend/)
+Generated: 2026-06-25
+Version change: 1.3.0 → 1.4.1 (MINOR→PATCH amendment — added `npm run typecheck` to
+  Principle XIII's required pre-PR checks. Typecheck was already mandated by Principle X
+  but was omitted from the XIII command list. Caught by first real application of the gate.)
 
-Modified principles:
-  ~ X. Testing Standards — replaced placeholder deferral with concrete, enforceable unit test
-       mandate. Infrastructure (Jest + ts-jest for lambda, Jest + RTL for frontend) is live.
-       CI test gates are active. Tests are now a required merge gate alongside lint/typecheck/build.
+Modified principles: none
 
-Added sections: none
+Added sections:
+  + XIII. Pre-PR Validation Gate
+
 Removed sections: none
 
 Template consistency review:
-  ✅ .specify/templates/plan-template.md — no updates needed; Testing field captures framework.
-  ✅ .specify/templates/spec-template.md — no updates needed; testing section already mandatory.
-  ✅ .specify/templates/tasks-template.md — updated: tests are no longer optional per Principle X.
-  ✅ .specify/templates/constitution-template.md — source template intact; no drift.
-  ℹ️  .specify/templates/commands/ — no command files found; skipped.
+  ✅ .specify/templates/plan-template.md — no updates needed; Constitution Check table
+       will naturally include Principle XIII for implementation tasks.
+  ✅ .specify/templates/spec-template.md — no updates needed; principle applies at
+       implementation time, not spec time.
+  ✅ .specify/templates/tasks-template.md — no updates needed; Polish phase already
+       includes a "Run quickstart.md validation" placeholder slot that covers pre-PR
+       validation. Future task generation should add an explicit pre-PR check task in
+       the final phase per Principle XIII.
+  ℹ️  .specify/templates/commands/ — directory does not exist; skipped.
 
-Deferred TODOs:
-  - Integration testing constitution: defer to future spec.
-  - Promotion gate (regression tests blocking prod): reinstate when integration tests defined.
+Deferred TODOs: none
 -->
 
 # Connect Atlanta Constitution
@@ -127,6 +129,31 @@ cold starts are acceptable but MUST NOT be introduced into synchronous user-faci
 through unnecessary handler chaining. CloudFront cache behavior MUST be considered for every new
 route — static assets use long TTLs, API responses use no-cache.
 
+### XIII. Pre-PR Validation Gate
+Before opening a pull request, the implementer MUST run all quality checks locally and confirm they
+pass. A PR MUST NOT be opened when locally-reproducible failures exist — CI is not a substitute for
+local validation.
+
+**Required checks before every PR:**
+
+```bash
+# Frontend — from frontend/
+npm test -- --ci     # all tests must pass
+npm run lint         # zero errors (warnings acceptable)
+npm run typecheck    # zero type errors
+
+# Lambda — from lambda/
+npm test             # all tests must pass
+```
+
+**Why this is required**: CI pipeline runs are ephemeral and results arrive minutes after push.
+Catching failures locally before push eliminates the turnaround cost of fixing trivial issues
+(failing tests, lint errors, type errors) that were known before the PR was opened. The CI pipeline
+is a safety net, not a first-line check.
+
+**Scope**: This gate applies to all implementation work — features, fixes, refactors, and dependency
+updates. It does not apply to documentation-only changes (`*.md`, `specs/`) that have no code impact.
+
 ## Development Workflow
 
 ### Branching & Deployment
@@ -162,4 +189,4 @@ update `LAST_AMENDED_DATE`, and regenerate the Sync Impact Report comment above.
 Constitution Check in its plan.md confirming no principle violations. Violations MUST be documented
 in the Complexity Tracking table with justification.
 
-**Version**: 1.3.0 | **Ratified**: 2026-03-06 | **Last Amended**: 2026-03-06
+**Version**: 1.4.1 | **Ratified**: 2026-03-06 | **Last Amended**: 2026-06-25
