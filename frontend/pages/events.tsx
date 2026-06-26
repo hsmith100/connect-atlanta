@@ -38,7 +38,7 @@ export default function Events() {
         '@context': 'https://schema.org',
         '@graph': [
             organizationSchema,
-            ...upcomingEvents.map(e => createEventSchema({ title: e.title, date: e.date, flyerUrl: e.flyerUrl, artists: e.artists, description: e.subtitle })),
+            ...upcomingEvents.map(e => createEventSchema({ title: e.title, date: e.date, flyerUrl: e.flyerUrl, artists: e.artists, description: e.description ?? undefined })),
         ],
     }), [upcomingEvents])
 
