@@ -18,8 +18,8 @@ exports[`matches snapshot 1`] = `
       >
         <img
           alt="Advanced Health Solutions — Presenting Sponsor"
-          class="max-w-[220px] md:max-w-[260px] h-auto"
-          src="/images/Sponsor%20Logos%202026/2.png"
+          class="w-full max-w-[500px] h-auto"
+          src="/images/sponsors/logos/ahs.svg"
         />
       </div>
       <div
@@ -33,7 +33,7 @@ exports[`matches snapshot 1`] = `
             class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/sponsors/logos/6.svg"
+            src="/images/sponsors/logos/4_ever_young.svg"
             width="100"
           />
         </div>
@@ -45,7 +45,7 @@ exports[`matches snapshot 1`] = `
             class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/sponsors/logos/7.svg"
+            src="/images/sponsors/logos/babey_drew_foundation.svg"
             width="100"
           />
         </div>
@@ -57,7 +57,7 @@ exports[`matches snapshot 1`] = `
             class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/sponsors/logos/8.svg"
+            src="/images/sponsors/logos/bang.svg"
             width="100"
           />
         </div>
@@ -69,7 +69,7 @@ exports[`matches snapshot 1`] = `
             class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/sponsors/logos/9.svg"
+            src="/images/sponsors/logos/bebop.svg"
             width="100"
           />
         </div>
@@ -81,7 +81,7 @@ exports[`matches snapshot 1`] = `
             class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/sponsors/logos/10.svg"
+            src="/images/sponsors/logos/coca_cola.svg"
             width="100"
           />
         </div>
@@ -93,7 +93,7 @@ exports[`matches snapshot 1`] = `
             class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/sponsors/logos/11.svg"
+            src="/images/sponsors/logos/deep_eddy.svg"
             width="100"
           />
         </div>
@@ -105,7 +105,7 @@ exports[`matches snapshot 1`] = `
             class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/sponsors/logos/12.svg"
+            src="/images/sponsors/logos/evdy.svg"
             width="100"
           />
         </div>
@@ -117,7 +117,7 @@ exports[`matches snapshot 1`] = `
             class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/sponsors/logos/13.svg"
+            src="/images/sponsors/logos/lunazul.svg"
             width="100"
           />
         </div>
@@ -129,7 +129,7 @@ exports[`matches snapshot 1`] = `
             class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/sponsors/logos/14.svg"
+            src="/images/sponsors/logos/marta.svg"
             width="100"
           />
         </div>
@@ -141,7 +141,7 @@ exports[`matches snapshot 1`] = `
             class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/sponsors/logos/15.svg"
+            src="/images/sponsors/logos/nine_dot.svg"
             width="100"
           />
         </div>
@@ -153,7 +153,7 @@ exports[`matches snapshot 1`] = `
             class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/sponsors/logos/16.svg"
+            src="/images/sponsors/logos/pibb.svg"
             width="100"
           />
         </div>
@@ -165,7 +165,7 @@ exports[`matches snapshot 1`] = `
             class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/sponsors/logos/17.svg"
+            src="/images/sponsors/logos/smart_water.svg"
             width="100"
           />
         </div>
@@ -177,7 +177,31 @@ exports[`matches snapshot 1`] = `
             class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
-            src="/images/sponsors/logos/18.svg"
+            src="/images/sponsors/logos/sound_system.svg"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="Sponsor 19"
+            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/sponsors/logos/surfside.svg"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="Sponsor 19"
+            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/sponsors/logos/topo_chico.svg"
             width="100"
           />
         </div>
