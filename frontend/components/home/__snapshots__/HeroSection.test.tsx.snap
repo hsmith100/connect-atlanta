@@ -13,8 +13,8 @@ exports[`matches snapshot while events loading 1`] = `
       >
         <img
           alt="Presented by Advanced Health Solutions"
-          class="block mx-auto max-w-[160px] md:max-w-[200px]"
-          src="/images/Sponsor%20Logos%202026/2.png"
+          class="block mx-auto max-w-[220px] md:max-w-[400px]"
+          src="/images/sponsors/logos/ahs_presented.svg"
         />
       </div>
       <div
@@ -72,8 +72,8 @@ exports[`matches snapshot with hero cards and no events 1`] = `
       >
         <img
           alt="Presented by Advanced Health Solutions"
-          class="block mx-auto max-w-[160px] md:max-w-[200px]"
-          src="/images/Sponsor%20Logos%202026/2.png"
+          class="block mx-auto max-w-[220px] md:max-w-[400px]"
+          src="/images/sponsors/logos/ahs_presented.svg"
         />
       </div>
       <div
@@ -138,8 +138,8 @@ exports[`matches snapshot with no cards and no events 1`] = `
       >
         <img
           alt="Presented by Advanced Health Solutions"
-          class="block mx-auto max-w-[160px] md:max-w-[200px]"
-          src="/images/Sponsor%20Logos%202026/2.png"
+          class="block mx-auto max-w-[220px] md:max-w-[400px]"
+          src="/images/sponsors/logos/ahs_presented.svg"
         />
       </div>
       <div
@@ -224,8 +224,8 @@ exports[`matches snapshot with upcoming event 1`] = `
       >
         <img
           alt="Presented by Advanced Health Solutions"
-          class="block mx-auto max-w-[160px] md:max-w-[200px]"
-          src="/images/Sponsor%20Logos%202026/2.png"
+          class="block mx-auto max-w-[220px] md:max-w-[400px]"
+          src="/images/sponsors/logos/ahs_presented.svg"
         />
       </div>
       <div
@@ -274,8 +274,8 @@ exports[`matches snapshot with upcoming event and hero cards 1`] = `
       >
         <img
           alt="Presented by Advanced Health Solutions"
-          class="block mx-auto max-w-[160px] md:max-w-[200px]"
-          src="/images/Sponsor%20Logos%202026/2.png"
+          class="block mx-auto max-w-[220px] md:max-w-[400px]"
+          src="/images/sponsors/logos/ahs_presented.svg"
         />
       </div>
       <div

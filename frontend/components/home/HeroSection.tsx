@@ -127,9 +127,9 @@ export default function HeroSection({
         {/* Presented By AHS - Desktop only */}
         <div className="hidden md:block text-center mb-4">
           <img
-            src="/images/Sponsor%20Logos%202026/2.png"
+            src="/images/sponsors/logos/ahs_presented.svg"
             alt="Presented by Advanced Health Solutions"
-            className="block mx-auto max-w-[160px] md:max-w-[200px]"
+            className="block mx-auto max-w-[220px] md:max-w-[400px]"
           />
         </div>
 

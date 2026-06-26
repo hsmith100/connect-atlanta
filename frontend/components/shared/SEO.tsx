@@ -16,7 +16,7 @@ export default function SEO({
   title = 'Beats on the Block | Connect Atlanta',
   description = "Beats on the Block is Atlanta's premier free outdoor music festival, produced by Connect Atlanta. Join thousands of fans for world-class DJs and community vibes along the BeltLine.",
   keywords = 'beats on the block, connect atlanta, atlanta music festival, free outdoor festival, atlanta beltline, electronic music atlanta, house music atlanta, outdoor concerts atlanta, connect events',
-  ogImage = '/images/BOTB_White.png',
+  ogImage = '/images/Logo/Final_logo.svg',
   ogType = 'website',
   twitterCard = 'summary_large_image',
   canonicalUrl,
