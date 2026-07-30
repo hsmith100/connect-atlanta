@@ -9,7 +9,7 @@
     "cdk": "cdk"
   },
   "dependencies": {
-    "aws-cdk-lib": "^2.262.1",
+    "aws-cdk-lib": "^2.262.2",
     "constructs": "^10.7.1",
     "source-map-support": "^0.5.21"
   },
