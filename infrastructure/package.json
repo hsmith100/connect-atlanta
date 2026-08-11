@@ -21,7 +21,7 @@
     "globals": "^17.9.0",
     "aws-cdk": "^2.1135.0",
     "esbuild": "^0.28.1",
-    "eslint": "^10.8.0",
+    "eslint": "^10.8.1",
     "ts-node": "^10.9.1",
     "typescript": "^5.6.0"
   }
