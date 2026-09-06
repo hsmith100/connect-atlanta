@@ -35,6 +35,19 @@ const nextConfig = {
   } : {}),
 
   poweredByHeader: false,
+
+  experimental: {
+    // TypeScript 7's native compiler doesn't ship the classic in-process
+    // compiler API that Next.js's build-time type-checking normally uses.
+    // The "typescript" package here is aliased to Microsoft's
+    // @typescript/typescript6 compatibility shim (see package.json) so
+    // typescript-eslint keeps working; that shim only exposes the classic
+    // API (lib/typescript.js), not a "tsc" CLI binary. Disabling
+    // useTypeScriptCli (Next 16's new default) makes Next use the classic
+    // API path instead of shelling out to a "typescript/bin/tsc" binary
+    // that the shim doesn't provide.
+    useTypeScriptCli: false,
+  },
 }
 
 module.exports = nextConfig

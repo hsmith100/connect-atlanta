@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "npx serve out --listen 3000",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "node node_modules/typescript-native/bin/tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch"
   },
@@ -42,6 +42,7 @@
     "jest-environment-jsdom": "^30.5.0",
     "postcss": "^8.5.26",
     "tailwindcss": "^4.3.3",
-    "typescript": "^6.0.3"
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "typescript-native": "npm:typescript@^7.0.2"
   }
 }

@@ -2,12 +2,15 @@
   "compilerOptions": {
     "target": "ES2022",
     "lib": ["ES2022"],
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "node16",
+    "moduleResolution": "node16",
     "strict": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
-    "outDir": "./dist"
+    "isolatedModules": true,
+    "rootDir": "..",
+    "outDir": "./dist",
+    "types": ["node", "jest", "aws-lambda"]
   },
   "include": ["src/**/*", "../shared/**/*"],
   "exclude": ["node_modules", "dist"]
