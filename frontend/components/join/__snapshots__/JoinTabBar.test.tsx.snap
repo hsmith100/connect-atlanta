@@ -109,7 +109,7 @@ exports[`matches snapshot with dj tab active 1`] = `
         >
           <svg
             aria-hidden="true"
-            class="lucide lucide-building2 lucide-building-2 md:w-5 md:h-5"
+            class="lucide lucide-building-2 md:w-5 md:h-5"
             fill="none"
             height="18"
             stroke="currentColor"
@@ -253,7 +253,7 @@ exports[`matches snapshot with volunteer tab active 1`] = `
         >
           <svg
             aria-hidden="true"
-            class="lucide lucide-building2 lucide-building-2 md:w-5 md:h-5"
+            class="lucide lucide-building-2 md:w-5 md:h-5"
             fill="none"
             height="18"
             stroke="currentColor"
