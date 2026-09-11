@@ -38,7 +38,7 @@ exports[`matches snapshot while events loading 1`] = `
       >
         <svg
           aria-hidden="true"
-          class="lucide lucide-loader-circle animate-spin text-brand-pink"
+          class="lucide lucide-loader-circle lucide-loader-2 animate-spin text-brand-pink"
           fill="none"
           height="40"
           stroke="currentColor"
