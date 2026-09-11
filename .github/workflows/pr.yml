@@ -54,6 +54,9 @@ jobs:
     name: Deploy — PR environment
     needs: [synth, build-frontend]
     runs-on: ubuntu-latest
+    concurrency:
+      group: pr-env-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
     permissions:
       id-token: write
       contents: read
