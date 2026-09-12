@@ -24,9 +24,9 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: infrastructure/package-lock.json
-      - run: npm ci --prefix infrastructure
-      - run: npm ci --prefix lambda
-      - run: npx cdk synth --app 'npx ts-node bin/app.ts' --all
+      - run: npm ci --ignore-scripts --prefix infrastructure
+      - run: npm ci --ignore-scripts --prefix lambda
+      - run: npm exec --no -- cdk synth --app 'npm exec --no -- ts-node bin/app.ts' --all
         working-directory: infrastructure
 
   build-frontend:
@@ -40,7 +40,7 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: frontend/package-lock.json
-      - run: npm ci --prefix frontend
+      - run: npm ci --ignore-scripts --prefix frontend
       - run: npm run build --prefix frontend
       - uses: actions/upload-artifact@v4
         with:
@@ -54,6 +54,9 @@ jobs:
     name: Deploy — PR environment
     needs: [synth, build-frontend]
     runs-on: ubuntu-latest
+    concurrency:
+      group: pr-env-${{ github.event.pull_request.number }}
+      cancel-in-progress: false
     permissions:
       id-token: write
       contents: read
@@ -76,15 +79,15 @@ jobs:
           aws-region: us-east-1
 
       - name: Install infrastructure dependencies
-        run: npm ci --prefix infrastructure
+        run: npm ci --ignore-scripts --prefix infrastructure
 
       - name: Install lambda dependencies
-        run: npm ci --prefix lambda
+        run: npm ci --ignore-scripts --prefix lambda
 
       - name: CDK deploy PR env
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
-        run: npx cdk deploy ConnectPR${PR_NUMBER}DynamoStack ConnectPR${PR_NUMBER}BackendStack ConnectPR${PR_NUMBER}FrontendStack --context pr=${PR_NUMBER} --require-approval never
+        run: npm exec --no -- cdk deploy ConnectPR${PR_NUMBER}DynamoStack ConnectPR${PR_NUMBER}BackendStack ConnectPR${PR_NUMBER}FrontendStack --context pr=${PR_NUMBER} --require-approval never
         working-directory: infrastructure
 
       - name: Download frontend build

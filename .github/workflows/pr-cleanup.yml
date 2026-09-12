@@ -28,14 +28,14 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm ci --prefix infrastructure
-          npm ci --prefix lambda
+          npm ci --ignore-scripts --prefix infrastructure
+          npm ci --ignore-scripts --prefix lambda
 
       - name: Destroy PR stacks
         env:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          npx cdk destroy \
+          npm exec --no -- cdk destroy \
             ConnectPR${PR_NUMBER}FrontendStack \
             ConnectPR${PR_NUMBER}BackendStack \
             ConnectPR${PR_NUMBER}DynamoStack \
