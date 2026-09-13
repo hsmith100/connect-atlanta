@@ -12,5 +12,4 @@ export const CORE_PAGES: Page[] = [
   { route: '/sponsor-inquiries', heading: 'Sponsor Inquiries' },
   { route: '/merch', heading: 'Merch' },
   { route: '/about', heading: 'About Us' },
-  { route: '/secret-lineup', heading: 'Secret Lineup' },
 ];
