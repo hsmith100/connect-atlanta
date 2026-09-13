@@ -124,15 +124,6 @@ export default function HeroSection({
     <section className="relative overflow-hidden pt-24 pb-8 hero-gradient-gold">
       <div className="section-container relative z-10 w-full">
 
-        {/* Presented By AHS - Desktop only */}
-        <div className="hidden md:block text-center mb-4">
-          <img
-            src="/images/sponsors/logos/ahs_presented.svg"
-            alt="Presented by Advanced Health Solutions"
-            className="block mx-auto max-w-[220px] md:max-w-[400px]"
-          />
-        </div>
-
         {/* Hero Logo & Title - Desktop Only */}
         <div className="text-center mb-8 hidden md:block">
           <div className="relative inline-block mx-auto">

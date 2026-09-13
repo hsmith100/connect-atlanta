@@ -1,5 +1,6 @@
 const SPONSORS_2026 = [
   { name: 'Sponsor 6', logo: '/images/sponsors/logos/4_ever_young.svg' },
+  { name: 'Advanced Health Solutions', logo: '/images/sponsors/logos/ahs.svg' },
   { name: 'Sponsor 7', logo: '/images/sponsors/logos/babey_drew_foundation.svg' },
   { name: 'Sponsor 8', logo: '/images/sponsors/logos/bang.svg' },
   { name: 'Sponsor 9', logo: '/images/sponsors/logos/bebop.svg' },
@@ -23,15 +24,6 @@ export default function SponsorsSection() {
         <h2 className="font-title text-5xl md:text-7xl font-black text-center mb-6 text-brand-header uppercase">
           Sponsors
         </h2>
-
-        {/* Presenting sponsor — featured above the grid */}
-        <div className="flex justify-center mb-8">
-          <img
-            src="/images/sponsors/logos/ahs.svg"
-            alt="Advanced Health Solutions — Presenting Sponsor"
-            className="w-full max-w-[500px] h-auto"
-          />
-        </div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-center max-w-5xl mx-auto">
           {SPONSORS_2026.map((sponsor, idx) => (
