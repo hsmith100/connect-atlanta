@@ -27,7 +27,6 @@ export default function ContactForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!turnstileToken) return
     setSubmitting(true)
     setStatus(null)
 
@@ -145,7 +144,7 @@ export default function ContactForm() {
           <div className="pt-4">
             <button type="submit"
               className="btn-festival btn-lg w-full disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={submitting || !turnstileToken}>
+              disabled={submitting}>
               <Send size={20} className="inline mr-2" />
               {submitting ? 'SENDING...' : 'SEND MESSAGE'}
             </button>
