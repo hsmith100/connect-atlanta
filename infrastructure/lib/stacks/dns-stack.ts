@@ -146,6 +146,27 @@ export class DnsStack extends cdk.Stack {
       values: ['v=spf1 include:amazonses.com include:_spf.google.com include:sendgrid.net ~all'],
     });
 
+    // SendGrid email authentication for PeerPop marketing campaigns sent as
+    // info@beatsontheblockfest.com. Same purpose as the connectevents.co records above —
+    // lets receiving mail servers verify PeerPop/SendGrid mail on behalf of this domain.
+    new route53.CnameRecord(this, 'BeatsSendGridEmailTracking', {
+      zone: this.beatsontheblockfestHostedZone,
+      recordName: 'em45',
+      domainName: 'u40615086.wl087.sendgrid.net',
+    });
+
+    new route53.CnameRecord(this, 'BeatsSendGridDkimKey1', {
+      zone: this.beatsontheblockfestHostedZone,
+      recordName: 's1._domainkey',
+      domainName: 's1.domainkey.u40615086.wl087.sendgrid.net',
+    });
+
+    new route53.CnameRecord(this, 'BeatsSendGridDkimKey2', {
+      zone: this.beatsontheblockfestHostedZone,
+      recordName: 's2._domainkey',
+      domainName: 's2.domainkey.u40615086.wl087.sendgrid.net',
+    });
+
     // DMARC monitoring policy — p=none means monitor only until sender reputation is established.
     new route53.TxtRecord(this, 'BeatsDmarcRecord', {
       zone: this.beatsontheblockfestHostedZone,
