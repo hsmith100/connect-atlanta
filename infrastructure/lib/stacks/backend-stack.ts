@@ -127,9 +127,9 @@ export class BackendStack extends cdk.Stack {
         ADMIN_SECRET_ARN: adminKeySecret.secretArn,
         // Cloudflare Turnstile bot verification
         TURNSTILE_SECRET_ARN: turnstileSecret.secretArn,
-        // Soft-gated during rollout — flip to 'true' once the frontend is deployed
-        // and sending tokens in every environment (dev, staging, prod).
-        TURNSTILE_ENFORCE: 'false',
+        // Real Cloudflare Turnstile verification confirmed working on production
+        // (2026-09-18) — bot submissions without a valid token are now rejected.
+        TURNSTILE_ENFORCE: 'true',
       },
     });
 
