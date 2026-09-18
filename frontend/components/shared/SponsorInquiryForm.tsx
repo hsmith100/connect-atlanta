@@ -51,7 +51,6 @@ export default function SponsorInquiryForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!turnstileToken) return
     setSubmitting(true)
     setStatus(null)
 
@@ -174,7 +173,7 @@ export default function SponsorInquiryForm() {
               </div>
 
               <div className="pt-6">
-                <button type="submit" disabled={submitting || !turnstileToken}
+                <button type="submit" disabled={submitting}
                   className="btn-festival btn-lg w-full disabled:opacity-50 disabled:cursor-not-allowed">
                   <Briefcase size={20} className="inline mr-2" />
                   {submitting ? 'Submitting...' : 'Submit Inquiry'}
