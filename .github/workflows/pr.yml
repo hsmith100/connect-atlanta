@@ -42,6 +42,9 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci --ignore-scripts --prefix frontend
       - run: npm run build --prefix frontend
+        env:
+          # Cloudflare's published always-pass Turnstile test sitekey — not a secret.
+          NEXT_PUBLIC_TURNSTILE_SITE_KEY: 1x00000000000000000000AA
       - uses: actions/upload-artifact@v4
         with:
           name: frontend-out

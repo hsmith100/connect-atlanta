@@ -4,6 +4,17 @@ import SponsorInquiryForm from './SponsorInquiryForm'
 
 jest.mock('../../lib/gtag', () => ({ trackFormSubmission: jest.fn() }))
 
+jest.mock('./TurnstileWidget', () => {
+  const { useEffect } = jest.requireActual('react')
+  return {
+    __esModule: true,
+    default: function MockTurnstileWidget({ onVerify }: { onVerify: (token: string) => void }) {
+      useEffect(() => { onVerify('test-token') }, [onVerify])
+      return null
+    },
+  }
+})
+
 const { trackFormSubmission } = jest.requireMock('../../lib/gtag')
 
 beforeAll(() => {

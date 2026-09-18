@@ -44,7 +44,12 @@ new FrontendStack(app, 'ConnectStagingFrontendStack', { env, backendStack: stagi
 // Persistent environment for local development. Lambda + DynamoDB only —
 // no CloudFront (PR envs each get their own ephemeral frontend).
 const devDynamoStack = new DynamoStack(app, 'ConnectDevDynamoStack', { env, tablePrefix: 'dev-' });
-const _devBackendStack = new BackendStack(app, 'ConnectDevBackendStack', { env, dynamoStack: devDynamoStack, contactEmail: 'productions.connectatlanta@gmail.com' });
+const _devBackendStack = new BackendStack(app, 'ConnectDevBackendStack', {
+  env, dynamoStack: devDynamoStack,
+  contactEmail: 'productions.connectatlanta@gmail.com',
+  // Cloudflare's published always-pass Turnstile dummy secret key — no manual setup needed.
+  turnstileSecretValue: '1x0000000000000000000000000000000AA',
+});
 
 // ── Per-PR ephemeral environments ─────────────────────────────────────────────
 // Created on-demand via: cdk deploy ... --context pr=<PR_NUMBER>
@@ -58,6 +63,8 @@ if (prNum) {
     env, dynamoStack: prDynamoStack,
     contactEmail: 'productions.connectatlanta@gmail.com',
     ephemeral: true,
+    // Cloudflare's published always-pass Turnstile dummy secret key — no manual setup needed.
+    turnstileSecretValue: '1x0000000000000000000000000000000AA',
   });
   const _prFrontendStack = new FrontendStack(app, `ConnectPR${prNum}FrontendStack`, {
     env, backendStack: prBackendStack, ephemeral: true,

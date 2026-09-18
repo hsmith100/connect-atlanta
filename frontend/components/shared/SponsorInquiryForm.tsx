@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import { Mail, User, Phone, Building2, Briefcase } from 'lucide-react'
 import * as gtag from '../../lib/gtag'
+import TurnstileWidget, { type TurnstileWidgetHandle } from './TurnstileWidget'
 
 interface SponsorFormData {
   name: string
@@ -26,9 +27,11 @@ function FormField({ label, children }: { readonly label: React.ReactNode; reado
 
 export default function SponsorInquiryForm() {
   const formRef = useRef<HTMLDivElement>(null)
+  const turnstileRef = useRef<TurnstileWidgetHandle>(null)
   const [formData, setFormData] = useState<SponsorFormData>(EMPTY_FORM)
   const [submitting, setSubmitting] = useState(false)
   const [status, setStatus] = useState<'success' | 'error' | null>(null)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -48,6 +51,7 @@ export default function SponsorInquiryForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (!turnstileToken) return
     setSubmitting(true)
     setStatus(null)
 
@@ -55,7 +59,7 @@ export default function SponsorInquiryForm() {
       const response = await fetch('/api/forms/sponsor-inquiry', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, turnstileToken }),
       })
 
       if (response.ok) {
@@ -66,11 +70,15 @@ export default function SponsorInquiryForm() {
         setTimeout(() => setStatus(null), 5000)
       } else {
         setStatus('error')
+        turnstileRef.current?.reset()
+        setTurnstileToken(null)
         scrollToForm()
       }
     } catch (error) {
       console.error('Error:', error)
       setStatus('error')
+      turnstileRef.current?.reset()
+      setTurnstileToken(null)
       scrollToForm()
     } finally {
       setSubmitting(false)
@@ -156,8 +164,17 @@ export default function SponsorInquiryForm() {
                 </div>
               </FormField>
 
+              <div className="pt-2">
+                <TurnstileWidget
+                  ref={turnstileRef}
+                  onVerify={setTurnstileToken}
+                  onExpire={() => setTurnstileToken(null)}
+                  onError={() => setTurnstileToken(null)}
+                />
+              </div>
+
               <div className="pt-6">
-                <button type="submit" disabled={submitting}
+                <button type="submit" disabled={submitting || !turnstileToken}
                   className="btn-festival btn-lg w-full disabled:opacity-50 disabled:cursor-not-allowed">
                   <Briefcase size={20} className="inline mr-2" />
                   {submitting ? 'Submitting...' : 'Submit Inquiry'}

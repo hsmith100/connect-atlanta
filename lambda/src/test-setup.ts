@@ -8,5 +8,6 @@ process.env.PHOTOS_TABLE = 'test-photos';
 process.env.MEDIA_BUCKET = 'test-media-bucket';
 process.env.CLOUDFRONT_DOMAIN = 'media.test';
 process.env.ADMIN_SECRET_ARN = 'arn:aws:secretsmanager:us-east-1:123:secret:test-admin';
+process.env.TURNSTILE_SECRET_ARN = 'arn:aws:secretsmanager:us-east-1:123:secret:test-turnstile';
 process.env.CONTACT_EMAIL = 'contact@test.com';
 process.env.FROM_EMAIL = 'noreply@test.com';

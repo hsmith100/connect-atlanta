@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import { Music, Mail, User, Phone, MapPin, Link as LinkIcon, MessageSquare, Headphones } from 'lucide-react'
 import * as gtag from '../../lib/gtag'
+import TurnstileWidget, { type TurnstileWidgetHandle } from '../shared/TurnstileWidget'
 
 interface ArtistFormData {
   email: string
@@ -78,9 +79,11 @@ function GenreSelect({ name, value, onChange, disabled, required }: {
 
 export default function DJApplicationForm() {
   const formRef = useRef<HTMLFormElement>(null)
+  const turnstileRef = useRef<TurnstileWidgetHandle>(null)
   const [formData, setFormData] = useState<ArtistFormData>(EMPTY_FORM)
   const [submitting, setSubmitting] = useState(false)
   const [status, setStatus] = useState<'success' | 'error' | null>(null)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
@@ -89,6 +92,7 @@ export default function DJApplicationForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (!turnstileToken) return
     setSubmitting(true)
     setStatus(null)
 
@@ -97,6 +101,7 @@ export default function DJApplicationForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          turnstileToken,
           email: formData.email,
           fullLegalName: formData.fullLegalName,
           djName: formData.djName,
@@ -127,11 +132,15 @@ export default function DJApplicationForm() {
         setTimeout(() => setStatus(null), 5000)
       } else {
         setStatus('error')
+        turnstileRef.current?.reset()
+        setTurnstileToken(null)
         formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }
     } catch (error) {
       console.error('Error:', error)
       setStatus('error')
+      turnstileRef.current?.reset()
+      setTurnstileToken(null)
       formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     } finally {
       setSubmitting(false)
@@ -423,9 +432,19 @@ export default function DJApplicationForm() {
                 className="textarea textarea-bordered w-full focus:textarea-primary" disabled={submitting} />
             </div>
 
+            {/* Bot verification */}
+            <div className="pt-2">
+              <TurnstileWidget
+                ref={turnstileRef}
+                onVerify={setTurnstileToken}
+                onExpire={() => setTurnstileToken(null)}
+                onError={() => setTurnstileToken(null)}
+              />
+            </div>
+
             {/* Submit */}
             <div className="pt-6">
-              <button type="submit" disabled={submitting}
+              <button type="submit" disabled={submitting || !turnstileToken}
                 className="btn-festival btn-lg w-full disabled:opacity-50 disabled:cursor-not-allowed">
                 <Music size={20} className="inline mr-2" />
                 {submitting ? 'Submitting...' : 'Submit DJ Application'}

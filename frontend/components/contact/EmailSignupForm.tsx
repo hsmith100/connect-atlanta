@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react'
 import * as gtag from '../../lib/gtag'
+import TurnstileWidget, { type TurnstileWidgetHandle } from '../shared/TurnstileWidget'
 
 interface SignupFormData {
   name: string
@@ -12,9 +13,11 @@ const EMPTY_FORM: SignupFormData = { name: '', email: '', phone: '', marketingCo
 
 export default function EmailSignupForm() {
   const formRef = useRef<HTMLFormElement>(null)
+  const turnstileRef = useRef<TurnstileWidgetHandle>(null)
   const [formData, setFormData] = useState<SignupFormData>(EMPTY_FORM)
   const [submitting, setSubmitting] = useState(false)
   const [status, setStatus] = useState<'success' | 'error' | null>(null)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target
@@ -23,6 +26,7 @@ export default function EmailSignupForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (!turnstileToken) return
     setSubmitting(true)
     setStatus(null)
 
@@ -36,6 +40,7 @@ export default function EmailSignupForm() {
           phone: formData.phone,
           marketing_consent: formData.marketingConsent,
           source: 'contact_page',
+          turnstileToken,
         }),
       })
 
@@ -49,11 +54,15 @@ export default function EmailSignupForm() {
         }, 3000)
       } else {
         setStatus('error')
+        turnstileRef.current?.reset()
+        setTurnstileToken(null)
         formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }
     } catch (error) {
       console.error('Error submitting form:', error)
       setStatus('error')
+      turnstileRef.current?.reset()
+      setTurnstileToken(null)
       formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     } finally {
       setSubmitting(false)
@@ -122,8 +131,17 @@ export default function EmailSignupForm() {
               </label>
             </div>
 
+            <div className="pt-2 flex justify-center">
+              <TurnstileWidget
+                ref={turnstileRef}
+                onVerify={setTurnstileToken}
+                onExpire={() => setTurnstileToken(null)}
+                onError={() => setTurnstileToken(null)}
+              />
+            </div>
+
             <div className="pt-4">
-              <button type="submit" disabled={submitting}
+              <button type="submit" disabled={submitting || !turnstileToken}
                 className="btn-festival btn-lg w-full text-xl disabled:opacity-50 disabled:cursor-not-allowed">
                 {submitting ? 'SIGNING UP...' : 'SIGN UP FOR UPDATES'}
               </button>
