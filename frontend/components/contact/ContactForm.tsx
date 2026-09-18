@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import { Mail, MessageSquare, User, Send } from 'lucide-react'
 import * as gtag from '../../lib/gtag'
+import TurnstileWidget, { type TurnstileWidgetHandle } from '../shared/TurnstileWidget'
 
 interface ContactFormData {
   name: string
@@ -13,9 +14,11 @@ const EMPTY_FORM: ContactFormData = { name: '', email: '', subject: '', message:
 
 export default function ContactForm() {
   const formRef = useRef<HTMLDivElement>(null)
+  const turnstileRef = useRef<TurnstileWidgetHandle>(null)
   const [formData, setFormData] = useState<ContactFormData>(EMPTY_FORM)
   const [submitting, setSubmitting] = useState(false)
   const [status, setStatus] = useState<'success' | 'error' | null>(null)
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -24,6 +27,7 @@ export default function ContactForm() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    if (!turnstileToken) return
     setSubmitting(true)
     setStatus(null)
 
@@ -31,7 +35,7 @@ export default function ContactForm() {
       const response = await fetch('/api/forms/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, turnstileToken }),
       })
 
       if (response.ok) {
@@ -44,11 +48,15 @@ export default function ContactForm() {
         }, 5000)
       } else {
         setStatus('error')
+        turnstileRef.current?.reset()
+        setTurnstileToken(null)
         formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
       }
     } catch (error) {
       console.error('Error submitting contact form:', error)
       setStatus('error')
+      turnstileRef.current?.reset()
+      setTurnstileToken(null)
       formRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
     } finally {
       setSubmitting(false)
@@ -125,10 +133,19 @@ export default function ContactForm() {
               placeholder="Tell us what's on your mind..." required disabled={submitting} />
           </div>
 
+          <div className="pt-2">
+            <TurnstileWidget
+              ref={turnstileRef}
+              onVerify={setTurnstileToken}
+              onExpire={() => setTurnstileToken(null)}
+              onError={() => setTurnstileToken(null)}
+            />
+          </div>
+
           <div className="pt-4">
             <button type="submit"
               className="btn-festival btn-lg w-full disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={submitting}>
+              disabled={submitting || !turnstileToken}>
               <Send size={20} className="inline mr-2" />
               {submitting ? 'SENDING...' : 'SEND MESSAGE'}
             </button>

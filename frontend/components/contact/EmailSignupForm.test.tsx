@@ -4,6 +4,17 @@ import EmailSignupForm from './EmailSignupForm'
 
 jest.mock('../../lib/gtag', () => ({ trackEmailSignup: jest.fn() }))
 
+jest.mock('../shared/TurnstileWidget', () => {
+  const { useEffect } = jest.requireActual('react')
+  return {
+    __esModule: true,
+    default: function MockTurnstileWidget({ onVerify }: { onVerify: (token: string) => void }) {
+      useEffect(() => { onVerify('test-token') }, [onVerify])
+      return null
+    },
+  }
+})
+
 const { trackEmailSignup } = jest.requireMock('../../lib/gtag')
 
 beforeAll(() => {

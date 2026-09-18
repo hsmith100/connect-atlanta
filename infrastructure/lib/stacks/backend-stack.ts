@@ -23,6 +23,10 @@ interface BackendStackProps extends cdk.StackProps {
   alertEmail?: string;
   // When true, media bucket uses DESTROY policy and SNS alarm is skipped (ephemeral PR environments).
   ephemeral?: boolean;
+  // Seeds the Turnstile secret with a known value (e.g. Cloudflare's always-pass dummy
+  // secret key) instead of auto-generating a placeholder. Used for dev/PR environments
+  // so they work out of the box with no manual Secrets Manager write.
+  turnstileSecretValue?: string;
 }
 
 export class BackendStack extends cdk.Stack {
@@ -34,7 +38,7 @@ export class BackendStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: BackendStackProps) {
     super(scope, id, props);
 
-    const { dynamoStack, contactEmail = 'info@beatsontheblockfest.com', alertEmail = 'productions.connectatlanta@gmail.com', ephemeral = false } = props;
+    const { dynamoStack, contactEmail = 'info@beatsontheblockfest.com', alertEmail = 'productions.connectatlanta@gmail.com', ephemeral = false, turnstileSecretValue } = props;
     const lambdaDir = path.join(__dirname, '../../../lambda/src/handlers');
 
     // ── Media S3 Bucket ───────────────────────────────────────────────────────
@@ -76,6 +80,17 @@ export class BackendStack extends cdk.Stack {
       generateSecretString: { excludePunctuation: true, passwordLength: 32 },
     });
 
+    // ── Turnstile secret key ──────────────────────────────────────────────────
+    // Real (prod/staging) environments get an auto-generated placeholder here;
+    // the actual Cloudflare-issued secret key is written manually after deploy:
+    //   aws secretsmanager put-secret-value --secret-id <arn> --secret-string <cloudflare-secret-key>
+    // Dev/PR environments pass turnstileSecretValue (Cloudflare's always-pass dummy
+    // secret key) so they work with zero manual setup.
+    const turnstileSecret = new secretsmanager.Secret(this, 'TurnstileSecretKey', {
+      secretStringValue: turnstileSecretValue ? cdk.SecretValue.unsafePlainText(turnstileSecretValue) : undefined,
+      generateSecretString: turnstileSecretValue ? undefined : { excludePunctuation: true, passwordLength: 32 },
+    });
+
     // ── Events Lambda ─────────────────────────────────────────────────────────
     const eventsLambda = new NodejsFunction(this, 'EventsLambda', {
       entry: path.join(lambdaDir, 'events.ts'),
@@ -110,6 +125,11 @@ export class BackendStack extends cdk.Stack {
         FROM_EMAIL: 'noreply@beatsontheblockfest.com',
         // Admin key — shared secret between frontend and forms Lambda
         ADMIN_SECRET_ARN: adminKeySecret.secretArn,
+        // Cloudflare Turnstile bot verification
+        TURNSTILE_SECRET_ARN: turnstileSecret.secretArn,
+        // Soft-gated during rollout — flip to 'true' once the frontend is deployed
+        // and sending tokens in every environment (dev, staging, prod).
+        TURNSTILE_ENFORCE: 'false',
       },
     });
 
@@ -117,6 +137,7 @@ export class BackendStack extends cdk.Stack {
     dynamoStack.artistApplicationsTable.grantReadWriteData(formsLambda);
     dynamoStack.sponsorInquiriesTable.grantReadWriteData(formsLambda);
     adminKeySecret.grantRead(formsLambda);
+    turnstileSecret.grantRead(formsLambda);
 
     // SES send permission — beatsontheblockfest.com and connectevents.co both verified in ConnectDnsStack
     formsLambda.addToRolePolicy(new iam.PolicyStatement({
@@ -261,6 +282,10 @@ export class BackendStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'AdminKeySecretArn', {
       value: adminKeySecret.secretArn,
       description: 'Retrieve admin key: aws secretsmanager get-secret-value --secret-id <arn> --query SecretString --output text',
+    });
+    new cdk.CfnOutput(this, 'TurnstileSecretArn', {
+      value: turnstileSecret.secretArn,
+      description: 'Write real Cloudflare Turnstile secret key: aws secretsmanager put-secret-value --secret-id <arn> --secret-string <cloudflare-secret-key>',
     });
   }
 }

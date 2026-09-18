@@ -4,6 +4,17 @@ import DJApplicationForm from './DJApplicationForm'
 
 jest.mock('../../lib/gtag', () => ({ trackDJApplication: jest.fn() }))
 
+jest.mock('../shared/TurnstileWidget', () => {
+  const { useEffect } = jest.requireActual('react')
+  return {
+    __esModule: true,
+    default: function MockTurnstileWidget({ onVerify }: { onVerify: (token: string) => void }) {
+      useEffect(() => { onVerify('test-token') }, [onVerify])
+      return null
+    },
+  }
+})
+
 const { trackDJApplication } = jest.requireMock('../../lib/gtag')
 
 beforeAll(() => {

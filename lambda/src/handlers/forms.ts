@@ -2,6 +2,7 @@ import type { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda
 import { errResponse, parseBody } from '../lib/formShared';
 import { FORM_ROUTES } from './formSubmissions';
 import { listArtists, listSponsors, updateSponsorNotes, listEmailSignups } from './adminSubmissions';
+import { verifyTurnstileToken, isTurnstileEnforced } from '../lib/turnstile';
 
 export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGatewayProxyResultV2> => {
   try {
@@ -22,6 +23,13 @@ export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGateway
       const route = FORM_ROUTES[formType];
       if (!route) return errResponse(404, `Unknown form type: ${formType}`);
       const data = parseBody(event);
+
+      const isValid = await verifyTurnstileToken(data.turnstileToken, event.requestContext.http.sourceIp);
+      if (!isValid) {
+        console.warn(`Turnstile verification failed for ${formType} (enforced=${isTurnstileEnforced()})`);
+        if (isTurnstileEnforced()) return errResponse(403, 'Verification failed. Please refresh and try again.');
+      }
+
       return route(data);
     }
 

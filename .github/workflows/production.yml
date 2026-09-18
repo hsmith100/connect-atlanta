@@ -57,6 +57,8 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci --ignore-scripts --prefix frontend
       - run: npm run build --prefix frontend
+        env:
+          NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.TURNSTILE_SITE_KEY }}
       - uses: actions/upload-artifact@v4
         with:
           name: frontend-out
@@ -249,6 +251,8 @@ jobs:
           cache-dependency-path: frontend/package-lock.json
 
       - name: Build frontend at previous SHA
+        env:
+          NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.TURNSTILE_SITE_KEY }}
         run: |
           npm ci --ignore-scripts --prefix frontend
           npm run build --prefix frontend
