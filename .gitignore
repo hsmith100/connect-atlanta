@@ -94,3 +94,6 @@ lambda/node_modules/
 .rsync-exclude
 *.Zone.Identifier
 backend/env.txt
+
+# Spam-cleanup review exports — contain PII (names, emails, phone numbers)
+data/spam-review/

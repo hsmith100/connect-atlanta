@@ -18,6 +18,10 @@
     "invalidate:staging": "aws cloudfront create-invalidation --distribution-id $(aws cloudformation describe-stacks --stack-name ConnectStagingFrontendStack --query 'Stacks[0].Outputs[?OutputKey==`CloudFrontDistributionId`].OutputValue' --output text) --paths '/*'",
 
     "seed:staging": "NODE_PATH=lambda/node_modules node data/seed.js staging",
-    "seed:prod": "NODE_PATH=lambda/node_modules node data/seed.js prod"
+    "seed:prod": "NODE_PATH=lambda/node_modules node data/seed.js prod",
+
+    "spam-audit:prod": "NODE_PATH=lambda/node_modules node data/spam-audit.js prod",
+    "spam-delete:prod": "NODE_PATH=lambda/node_modules node data/spam-delete.js prod",
+    "spam-delete:prod:execute": "NODE_PATH=lambda/node_modules node data/spam-delete.js prod --execute"
   }
 }
