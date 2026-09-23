@@ -20,6 +20,102 @@ exports[`matches snapshot 1`] = `
           class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
         >
           <img
+            alt="Sponsor 10"
+            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/sponsors/logos/coca_cola.svg"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="Sponsor 8"
+            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/sponsors/logos/bang.svg"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="Sponsor 17"
+            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/sponsors/logos/smart_water.svg"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="Sponsor 19"
+            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/sponsors/logos/topo_chico.svg"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="Sponsor 13"
+            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/sponsors/logos/lunazul.svg"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="Sponsor 11"
+            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/sponsors/logos/deep_eddy.svg"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="Sponsor 19"
+            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/sponsors/logos/surfside.svg"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="Sponsor 16"
+            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/sponsors/logos/pibb.svg"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
             alt="Sponsor 6"
             class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
@@ -56,18 +152,6 @@ exports[`matches snapshot 1`] = `
           class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
         >
           <img
-            alt="Sponsor 8"
-            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
-            height="80"
-            loading="lazy"
-            src="/images/sponsors/logos/bang.svg"
-            width="100"
-          />
-        </div>
-        <div
-          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
-        >
-          <img
             alt="Sponsor 9"
             class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
@@ -80,47 +164,11 @@ exports[`matches snapshot 1`] = `
           class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
         >
           <img
-            alt="Sponsor 10"
-            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
-            height="80"
-            loading="lazy"
-            src="/images/sponsors/logos/coca_cola.svg"
-            width="100"
-          />
-        </div>
-        <div
-          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
-        >
-          <img
-            alt="Sponsor 11"
-            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
-            height="80"
-            loading="lazy"
-            src="/images/sponsors/logos/deep_eddy.svg"
-            width="100"
-          />
-        </div>
-        <div
-          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
-        >
-          <img
             alt="Sponsor 12"
             class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
             src="/images/sponsors/logos/evdy.svg"
-            width="100"
-          />
-        </div>
-        <div
-          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
-        >
-          <img
-            alt="Sponsor 13"
-            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
-            height="80"
-            loading="lazy"
-            src="/images/sponsors/logos/lunazul.svg"
             width="100"
           />
         </div>
@@ -152,59 +200,11 @@ exports[`matches snapshot 1`] = `
           class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
         >
           <img
-            alt="Sponsor 16"
-            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
-            height="80"
-            loading="lazy"
-            src="/images/sponsors/logos/pibb.svg"
-            width="100"
-          />
-        </div>
-        <div
-          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
-        >
-          <img
-            alt="Sponsor 17"
-            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
-            height="80"
-            loading="lazy"
-            src="/images/sponsors/logos/smart_water.svg"
-            width="100"
-          />
-        </div>
-        <div
-          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
-        >
-          <img
             alt="Sponsor 18"
             class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
             height="80"
             loading="lazy"
             src="/images/sponsors/logos/sound_system.svg"
-            width="100"
-          />
-        </div>
-        <div
-          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
-        >
-          <img
-            alt="Sponsor 19"
-            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
-            height="80"
-            loading="lazy"
-            src="/images/sponsors/logos/surfside.svg"
-            width="100"
-          />
-        </div>
-        <div
-          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
-        >
-          <img
-            alt="Sponsor 19"
-            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
-            height="80"
-            loading="lazy"
-            src="/images/sponsors/logos/topo_chico.svg"
             width="100"
           />
         </div>

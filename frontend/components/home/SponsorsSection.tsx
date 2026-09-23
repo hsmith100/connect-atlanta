@@ -1,20 +1,20 @@
 const SPONSORS_2026 = [
+  { name: 'Sponsor 10', logo: '/images/sponsors/logos/coca_cola.svg' },
+  { name: 'Sponsor 8', logo: '/images/sponsors/logos/bang.svg' },
+  { name: 'Sponsor 17', logo: '/images/sponsors/logos/smart_water.svg' },
+  { name: 'Sponsor 19', logo: '/images/sponsors/logos/topo_chico.svg' },
+  { name: 'Sponsor 13', logo: '/images/sponsors/logos/lunazul.svg' },
+  { name: 'Sponsor 11', logo: '/images/sponsors/logos/deep_eddy.svg' },
+  { name: 'Sponsor 19', logo: '/images/sponsors/logos/surfside.svg' },
+  { name: 'Sponsor 16', logo: '/images/sponsors/logos/pibb.svg' },
   { name: 'Sponsor 6', logo: '/images/sponsors/logos/4_ever_young.svg' },
   { name: 'Advanced Health Solutions', logo: '/images/sponsors/logos/ahs.svg' },
   { name: 'Sponsor 7', logo: '/images/sponsors/logos/babey_drew_foundation.svg' },
-  { name: 'Sponsor 8', logo: '/images/sponsors/logos/bang.svg' },
   { name: 'Sponsor 9', logo: '/images/sponsors/logos/bebop.svg' },
-  { name: 'Sponsor 10', logo: '/images/sponsors/logos/coca_cola.svg' },
-  { name: 'Sponsor 11', logo: '/images/sponsors/logos/deep_eddy.svg' },
   { name: 'Sponsor 12', logo: '/images/sponsors/logos/evdy.svg' },
-  { name: 'Sponsor 13', logo: '/images/sponsors/logos/lunazul.svg' },
   { name: 'Sponsor 14', logo: '/images/sponsors/logos/marta.svg' },
   { name: 'Sponsor 15', logo: '/images/sponsors/logos/nine_dot.svg' },
-  { name: 'Sponsor 16', logo: '/images/sponsors/logos/pibb.svg' },
-  { name: 'Sponsor 17', logo: '/images/sponsors/logos/smart_water.svg' },
   { name: 'Sponsor 18', logo: '/images/sponsors/logos/sound_system.svg' },
-  { name: 'Sponsor 19', logo: '/images/sponsors/logos/surfside.svg' },
-  { name: 'Sponsor 19', logo: '/images/sponsors/logos/topo_chico.svg' },
 ]
 
 export default function SponsorsSection() {
