@@ -208,6 +208,30 @@ exports[`matches snapshot 1`] = `
             width="100"
           />
         </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="Breakaway"
+            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/sponsors/logos/breakaway.svg"
+            width="100"
+          />
+        </div>
+        <div
+          class="flex items-center justify-center hover:scale-110 transition-transform cursor-pointer p-1"
+        >
+          <img
+            alt="Simply Pop"
+            class="object-contain w-full max-h-[70px] md:max-h-[140px] h-auto opacity-100 transition-opacity"
+            height="80"
+            loading="lazy"
+            src="/images/sponsors/logos/simply_pop.svg"
+            width="100"
+          />
+        </div>
       </div>
     </div>
   </section>

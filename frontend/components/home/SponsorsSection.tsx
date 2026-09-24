@@ -15,6 +15,8 @@ const SPONSORS_2026 = [
   { name: 'Sponsor 14', logo: '/images/sponsors/logos/marta.svg' },
   { name: 'Sponsor 15', logo: '/images/sponsors/logos/nine_dot.svg' },
   { name: 'Sponsor 18', logo: '/images/sponsors/logos/sound_system.svg' },
+  { name: 'Breakaway', logo: '/images/sponsors/logos/breakaway.svg' },
+  { name: 'Simply Pop', logo: '/images/sponsors/logos/simply_pop.svg' },
 ]
 
 export default function SponsorsSection() {
