@@ -16,23 +16,32 @@
 - Q: Should photographers be paid automatically for their share of each sale? → A: Yes. Each photographer's share is sent to them automatically after every sale; the organizer does not pay photographers by hand.
 - Q: Where does the photo store live on the site? → A: The existing Merch page becomes a single "Shop" page with two sections, Merch and Event Photos. The nav link "Merch" is renamed "Shop" (no new nav link), and the Gallery links visitors to the Event Photos section.
 
+### Session 2026-10-06
+
+- Q: Should gallery photos and store photos be managed separately? → A: No. There is one photo library, organized by event, managed in one admin place. Each photo has two independent switches: "Show in gallery" and "For sale". The separate gallery photo system is retired.
+- Q: What does the public Gallery show for each photo? → A: A clean (unwatermarked) web-size version, about 2000px on the long edge. The full-quality original stays private and is only delivered to buyers.
+- Q: What happens to the photos already in the gallery? → A: They are moved into the library by a one-time migration: each original is moved to private storage, the web and watermarked versions are generated, and the public full-resolution file is removed. They stay in the gallery and can be marked for sale.
+- Q: Can a library photo exist without an event? → A: No. Every photo belongs to an event. Existing gallery photos without an event are assigned one during migration.
+
 ## User Scenarios & Testing *(mandatory)*
 
-### User Story 1 - Admin Uploads and Prices Photos for Sale (Priority: P1)
+### User Story 1 - Admin Manages One Photo Library and Prices Photos for Sale (Priority: P1)
 
-An organizer has a large batch of event photos (hundreds per event). They sign in to the existing admin area, choose an event, and bulk-upload the full-resolution photos. Admins upload only the full-quality photos. For each one, the system automatically creates a watermarked, lower-quality preview that visitors browse publicly, and links the preview to its full-quality original so a purchase of the preview delivers the matching original. Only the full-quality original is kept private. The organizer sets a default price for the event's photos, can override the price on individual photos, and marks the collection as "for sale" when ready.
+An organizer has a large batch of event photos (hundreds per event). They sign in to the existing admin area, open the **Photos** tab, choose the event's collection, and bulk-upload the full-quality photos. Admins upload only the full-quality photos. For each one, the system automatically creates a clean web-size version for the gallery and a watermarked, lower-quality preview for the store, and links both to the full-quality original, so a purchase of the preview delivers the matching original. Only the full-quality original is kept private. Each photo has two switches, **Show in gallery** and **For sale**, so the same photo can appear in the free gallery, be sold, both, or neither. The organizer sets a default price for the event's photos, can override the price on individual photos, and publishes the collection's store listing when ready.
 
-**Why this priority**: Nothing can be shown or sold until photos are stored safely and priced. This also answers the core "where do the pictures live" question: originals are kept privately and never exposed until purchased.
+**Why this priority**: Nothing can be shown or sold until photos are stored safely and priced. Managing gallery and store photos in one place avoids uploading the same photos twice and keeping two copies in sync.
 
-**Independent Test**: Upload a batch of photos for one event through the admin area, assign a photographer, confirm previews are generated and watermarked, confirm the originals cannot be reached by any public link, and confirm prices are saved.
+**Independent Test**: Upload a batch of photos for one event through the Photos tab, assign a photographer, confirm the web and watermarked versions are generated, confirm the originals cannot be reached by any public link, toggle gallery and for-sale on a few photos, and confirm prices are saved.
 
 **Acceptance Scenarios**:
 
-1. **Given** an authenticated admin, **When** they upload 200 full-quality photos to an event's sale collection, **Then** all 200 are stored, each gets an automatically generated watermarked preview linked to it, and upload progress and any per-file failures are shown.
-2. **Given** a stored photo, **When** anyone requests it via a public page or guessed URL, **Then** only the watermarked preview is reachable; the full-resolution original is not.
+1. **Given** an authenticated admin, **When** they upload 200 full-quality photos to an event's collection, **Then** all 200 are stored, each gets an automatically generated clean web version and watermarked preview linked to it, and upload progress and any per-file failures are shown.
+2. **Given** a stored photo, **When** anyone requests it via a public page or guessed URL, **Then** only the web-size and watermarked versions are reachable; the full-quality original is not.
 3. **Given** an event collection, **When** the admin sets a default price and overrides one photo's price, **Then** the overridden photo shows its own price and all others show the default.
 4. **Given** an upload batch, **When** the admin assigns the photographer who took it, **Then** every photo in the batch is attributed to that photographer and their name appears as the credit.
-5. **Given** a collection marked "not for sale" (draft), **When** a visitor browses the store, **Then** that collection is not visible.
+5. **Given** a collection whose store listing is not published (draft), **When** a visitor browses the store, **Then** that collection is not visible in the store (its gallery photos are unaffected).
+6. **Given** a photo, **When** the admin turns on "Show in gallery" and turns off "For sale", **Then** it appears in the public gallery as a clean web-size image and does not appear in the store; and the reverse combination shows it only in the store.
+7. **Given** photos shown in the gallery, **When** the admin reorders them in the gallery order view, **Then** the public gallery shows them in that order.
 
 ---
 
@@ -123,6 +132,24 @@ An attendee asks that a photo of them be taken down. The organizer finds the pho
 
 ---
 
+### User Story 7 - Gallery Runs on the Photo Library (Priority: P1)
+
+The public Gallery page shows photos from the photo library that are switched into the gallery, as clean web-size images in the admin's chosen order. The 43 photos currently in the gallery are moved into the library once: each is assigned to an event, its original goes to private storage, its web and watermarked versions are created, and its public full-resolution file is removed. Afterwards there is only one place to manage photos.
+
+**Why this priority**: Without it the site keeps two photo systems, and today's gallery serves full-resolution originals (up to 30 MB) that anyone can download for free, which undermines selling those photos and slows the gallery.
+
+**Independent Test**: Run the migration in dev, then confirm the Gallery shows the same photos in the same order using web-size images, each photo appears in its event's collection in the Photos tab, the old full-resolution URLs no longer load, and the old gallery admin screen is gone.
+
+**Acceptance Scenarios**:
+
+1. **Given** library photos with "Show in gallery" on, **When** a visitor opens the Gallery, **Then** they see those photos' clean web-size versions in gallery order, and none of the photos with it off.
+2. **Given** the existing gallery photos, **When** the migration runs, **Then** every photo is in the library under an event, keeps its gallery visibility and order, has its original in private storage, and its old public full-resolution URL no longer returns the image.
+3. **Given** an existing gallery photo without an event, **When** the migration runs, **Then** it does not proceed until that photo has been assigned an event.
+4. **Given** the migration ran, **When** it is run again, **Then** no photo is duplicated (the migration is safe to re-run).
+5. **Given** the migration is complete, **When** an admin opens the admin area, **Then** the old separate gallery photo management screen is no longer present.
+
+---
+
 ### Edge Cases
 
 - A visitor buys the same photo twice → allowed; each order is independent (or the system warns them it is already purchased with that email — warning only, not a block).
@@ -139,6 +166,9 @@ An attendee asks that a photo of them be taken down. The organizer finds the pho
 - A photographer's payment account becomes restricted after their photos are on sale (e.g., the provider needs more information) → the sale still completes, their share is recorded as "not sent", the admin is shown the problem, and the admin can retry sending once the photographer fixes their account.
 - A photographer's setup link expires or is lost → the admin can send a new one at any time.
 - Preview generation fails for an uploaded photo → the photo stays unpublished and is flagged in the admin area with a retry option; it never appears in the store without a preview.
+- A photo is shown in the gallery and then removed on request → it disappears from both the gallery and the store.
+- A photo is switched out of the gallery → it disappears from the gallery but remains for sale if "For sale" is on.
+- A photo is switched to "For sale" without a photographer (e.g. a migrated gallery photo) → the collection can't be published until a photographer is assigned.
 - Admin replaces a photo's full-quality file → the preview is regenerated from the new file and the link stays intact; past buyers' downloads deliver the version current at download time.
 - Very large originals (e.g., 25+ MB each) → upload and download still succeed; previews remain small and fast.
 
@@ -148,14 +178,18 @@ An attendee asks that a photo of them be taken down. The organizer finds the pho
 
 **Storage & Management (Admin)**
 
-- **FR-001**: Admins MUST be able to bulk-upload full-resolution photos into a sale collection associated with an existing event, at least 500 photos per upload session.
+- **FR-000**: There MUST be a single photo library managed from one admin place (the Photos tab). Every photo belongs to exactly one event's collection. The gallery and the store both read from this library; there is no separate gallery photo system.
+- **FR-001**: Admins MUST be able to bulk-upload full-resolution photos into an event's collection, at least 500 photos per upload session.
 - **FR-002**: Admins MUST upload only the full-quality photo. The system MUST store it in private storage that is never publicly accessible except through a purchase-granted, time-limited download link.
-- **FR-003**: For each uploaded photo the system MUST automatically generate a public preview that is reduced in resolution and visibly watermarked with the Beats on the Block brand. Admins do not create or upload watermarked files.
-- **FR-003a**: Each preview MUST be permanently linked one-to-one to the full-quality original it was generated from, as a single Sale Photo. Buying a preview MUST deliver exactly its linked original. Removing a Sale Photo removes both versions together.
+- **FR-003**: For each uploaded photo the system MUST automatically generate (a) a public preview that is reduced in resolution and visibly watermarked with the Beats on the Block brand, for the store, and (b) a clean, unwatermarked web-size version (about 2000px on the long edge), for the gallery. Admins do not create or upload these versions.
+- **FR-003a**: All versions of a photo MUST be permanently linked to the full-quality original they were generated from, as a single Library Photo. Buying a preview MUST deliver exactly its linked original. Removing a Library Photo removes all of its versions together.
+- **FR-003b**: Each photo MUST have two independent switches, "Show in gallery" and "For sale". Only photos with "For sale" on, in a collection whose store listing is published, appear in the store. Only photos with "Show in gallery" on appear in the gallery.
+- **FR-003c**: Admins MUST be able to set the order of gallery photos across all events.
 - **FR-004**: Admins MUST be able to set a default price per collection and override the price for individual photos.
 - **FR-005**: Admins MUST be able to publish/unpublish a collection and remove individual photos from sale; changes take effect on the public store within 1 minute.
-- **FR-006**: Admins MUST be able to choose a cover photo and reorder or hide photos within a collection.
-- **FR-007**: Store management MUST be restricted to authenticated admins using the existing admin sign-in.
+- **FR-006**: Admins MUST be able to choose a cover photo and reorder photos within a collection, and switch photos in or out of the gallery and the store individually or in bulk.
+- **FR-007**: Photo library and store management MUST be restricted to authenticated admins using the existing admin sign-in.
+- **FR-007a**: The existing gallery photos MUST be migrated into the library by a one-time process that moves each original to private storage, generates its web and watermarked versions, assigns it to an event, keeps its gallery visibility and order, and then removes its public full-resolution file. After migration, the old gallery photo storage and admin screen are retired.
 
 **Browsing (Visitor)**
 
@@ -209,8 +243,8 @@ An attendee asks that a photo of them be taken down. The organizer finds the pho
 
 ### Key Entities
 
-- **Photo Collection**: A set of for-sale photos tied to one event; has status (draft/published), default price, cover photo, photographer credit, and display order.
-- **Sale Photo**: One photo in a collection, credited to one photographer; has a private full-quality original and a public watermarked preview plus thumbnail that are generated from that original and permanently linked to it (one Sale Photo = one original + its previews), optional price override, visibility (for sale/removed), and sort order.
+- **Photo Collection**: All library photos for one event, used by both the gallery and the store; has status (draft/published), default price, cover photo, photographer credit, and display order.
+- **Library Photo** (formerly "Sale Photo"): One photo in an event's collection, credited to one photographer (required before it can be sold). It has a private full-quality original plus public versions generated from it and permanently linked to it: a clean web-size version and thumbnail for the gallery, and a watermarked preview and thumbnail for the store. It also has "Show in gallery" and "For sale" switches, a gallery order, an optional price override, a removed flag (takedown), and an order within its collection.
 - **Cart**: A visitor's temporary selection of sale photos with a running total; not tied to an account.
 - **Order**: A completed (or failed/refunded) purchase; has buyer email, line items (photo + price paid), total, payment reference, status, and timestamps.
 - **Download Grant**: Time-limited access to the originals in one order; has expiry and can be reissued or revoked.
@@ -229,6 +263,7 @@ An attendee asks that a photo of them be taken down. The organizer finds the pho
 - **SC-004**: 100% of successful payments result in the buyer receiving download access (on-page and by email); zero originals are reachable without a purchase.
 - **SC-005**: 95% of buyers download their photos without contacting the organizer for help.
 - **SC-006**: Photo takedown requests are actioned (photo removed from sale) within 1 minute of the admin acting on them.
+- **SC-006a**: After migration, zero full-resolution photos are publicly reachable, and the Gallery's full-size view loads in under 2 seconds on a typical mobile connection.
 - **SC-007**: Photographer earnings reports match order records to the cent for every photographer in every reporting period.
 - **SC-008**: 100% of photographer shares are sent automatically within 1 minute of payment, with zero manual payments by the organizer (excluding shares held because a photographer's account is restricted).
 - **SC-009**: At least 30% of orders contain 3 or more photos (volume discounts encourage larger orders).
@@ -237,7 +272,8 @@ An attendee asks that a photo of them be taken down. The organizer finds the pho
 ## Assumptions
 
 - Photos for sale are event photos (attendees, DJs, crowd) from Beats on the Block / Connect Atlanta events, organized by event.
-- The store is a new section separate from the existing free public gallery; the gallery continues to show its curated photos unchanged.
+- The free public Gallery and the store share one photo library. The Gallery shows clean web-size versions of photos switched into the gallery; the store shows watermarked previews of photos switched on for sale.
+- Hero cards and event flyers are not photos in the library; they keep their current admin screens.
 - Buyers check out as guests by email; no customer accounts are created.
 - Prices are in USD; sales tax handling follows the payment provider's standard tools for digital goods.
 - The existing admin area and its sign-in are reused for store management and orders.

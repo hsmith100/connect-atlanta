@@ -42,7 +42,8 @@ stripe listen --forward-to <DevApiUrl>/api/store/stripe-webhook   # optional: ex
 |---|---|---|---|
 | 1 | Admin → Store → Photographers: add "Test Shooter" at 40% and "Second Shooter" at 50%; click **Send setup link** for each | Both show "Setup pending"; setup emails arrive | US5-1 |
 | 1b | Open each setup link and complete Stripe test onboarding (use test values: SSN `000-00-0000`, routing `110000000`, account `000123456789`) | Return page says "You're all set"; admin shows "Ready to be paid" | US5-2 |
-| 2 | Store → Collections → New from an existing event; default price $15.00 | Draft collection created | US1-3 |
+| 2 | Admin → **Photos** → Collections → New from an existing event; default price $15.00 | Draft collection created | US1-3 |
+| 2b | In the collection, select 3 photos → Show in gallery; select 2 → Take off sale; then Photos → Gallery order → reorder → Save | Public `/gallery` shows the 3 clean (unwatermarked) web-size photos in that order; the Shop lists only for-sale photos | US1-6, US1-7 |
 | 3 | Upload 20 JPEGs (include one >25 MB and one `.txt` renamed to `.jpg`) as Test Shooter | 19 Done, 1 Failed with reason and Retry; progress visible throughout | US1-1, edge cases |
 | 4 | Re-upload one of the same files | Flagged Duplicate and skipped | Edge case |
 | 5 | Copy any `previewUrl`; open it | Watermarked, ≤1600px | FR-003 |
@@ -64,6 +65,18 @@ stripe listen --forward-to <DevApiUrl>/api/store/stripe-webhook   # optional: ex
 | 20 | Admin → Orders → filter by date and event → Export CSV; Earnings → Export CSV | CSVs match on-screen rows | US4-3, US5-4 |
 | 21 | Resize to 320px wide and repeat steps 9–12 | Fully usable | Principle XI |
 | 22 | Nav shows "Shop" (not "Merch") on desktop and mobile; visit `/merch` on both domains | Redirects to `/shop`; merch products still link to Bonfire | FR-008, FR-008a, FR-008c |
+
+## 3b. Gallery migration (US7, per environment: dev → staging → prod)
+```bash
+cd infrastructure
+npx tsx scripts/migrate-gallery.ts --env dev --plan                                 # writes gallery-migration-dev.csv
+# fill in eventId for every blank row, then:
+npx tsx scripts/migrate-gallery.ts --env dev --run --map gallery-migration-dev.csv
+npx tsx scripts/migrate-gallery.ts --env dev --verify
+# after checking /gallery looks identical (and PR B is deployed to that env):
+npx tsx scripts/migrate-gallery.ts --env dev --cleanup
+```
+Expected: same Gallery photos and order; old `https://<media>/photos/<id>.jpg` URLs return 403/404; Photos tab shows each migrated photo under its event with "In gallery".
 
 ## 4. Pre-PR gate (Principle XIII)
 ```bash

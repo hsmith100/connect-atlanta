@@ -26,14 +26,33 @@ All visitor-facing store pages live under `/shop`, which replaces `/merch` (FR-0
 
 **Footer/legal**: add a "Photo License" section to `pages/terms-conditions.tsx` (personal-use terms) and a "Request photo removal" link that goes to `/contact?subject=Photo%20removal` (FR-024).
 
-## Admin: new "Store" tab in `pages/admin.tsx`
+## Admin: one photo library (revised 2026-10-06)
+
+### "Photos" tab (replaces the old gallery Photos tab): the single photo library
+| View | Component | Behavior |
+|---|---|---|
+| Collections list | `admin/library/LibraryTab.tsx` → `CollectionsSection.tsx` | One collection per event. Each row shows title, date, photo count, for-sale count, and a store badge (Draft/Published). "New collection" picks an event without one. |
+| Collection detail | `CollectionDetail.tsx` | Settings: default price, default photographer, Publish/Unpublish store listing (shows `problems[]` on 422). Photo grid: watermarked thumbnail with **In gallery** and **For sale** badges. Multi-select actions: Show in gallery / Remove from gallery, Put on sale / Take off sale, set or clear price override, assign photographer, set cover, delete. Also reorder arrows, Replace file, and the embedded uploader. |
+| Uploader | `StoreUploader.tsx` (→ `PhotoUploader.tsx`) | As before, plus per-batch defaults "Show in gallery" (off) and "For sale" (on). The photographer is required when "For sale" is on. Generates all four versions per file. |
+| Gallery order | `GalleryOrderSection.tsx` | All photos currently in the Gallery (clean thumbnails) across events. Drag or arrow reorder, then **Save order**. Remove from gallery here too. Mirrors what the public Gallery shows. |
+
+The old `components/admin/PhotosTab.tsx` and its `PhotoCard` are deleted after migration (US7).
+
+### "Store" tab: selling only
+Sub-sections follow the `SubmissionsTab` sub-navigation pattern:
+
+| Sub-section | Component | Behavior |
+|---|---|---|
+| Orders | `admin/store/OrdersSection.tsx` | See below |
+| Photographers | `admin/store/PhotographersSection.tsx` | See below |
+| Settings | `admin/store/StoreSettingsSection.tsx` | Discount tier editor |
+
+#### Store tab details (from the original design)
 
 Sub-sections follow the `SubmissionsTab` sub-navigation pattern:
 
 | Sub-section | Component | Behavior |
 |---|---|---|
-| Collections | `admin/store/CollectionsSection.tsx` + `CollectionDetail.tsx` | List with status badges; create from an existing event. Detail view: default price, default photographer, publish toggle (shows a `problems[]` list on 422), photo grid with multi-select actions (set price override, set photographer, hide, remove, delete, set cover), drag or arrow reorder. |
-| Upload | `admin/store/StoreUploader.tsx` | Drag-and-drop or file picker (JPEG/PNG). Photographer selector (required). Per-file progress rows (Processing, Uploading, Done, Failed+Retry, Duplicate+Upload anyway). Overall "143 / 300" progress. Concurrency 3. Uses `lib/store/generateWatermarked.ts` for the preview and thumbnail. |
 | Orders | `admin/store/OrdersSection.tsx` | Date and event filters, total revenue, table (date, email, photos, total, status, photographer-payment badge). Row actions: Re-send links, **Refund** (confirmation dialog states the amount and that photographer shares will be taken back), **Retry photographer payments** (shown only when a transfer failed). CSV export via `submissions/shared.ts` helpers. |
 | Photographers | `admin/store/PhotographersSection.tsx` | CRUD list (name, email, commission %, active) with a payment status badge (Setup not started / Setup pending / Ready to be paid) and actions **Send setup link** and **Open their Stripe dashboard**. Earnings panel with date range: per-photographer earnings, sent, not sent, taken back, owed; CSV export (summary and per-sale). |
 | Settings | `admin/store/StoreSettingsSection.tsx` | Discount tier editor (rows of min qty and % off) with validation messages. |
