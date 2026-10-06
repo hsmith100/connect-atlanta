@@ -1,27 +1,28 @@
 <!--
 SYNC IMPACT REPORT
 ==================
-Generated: 2026-06-25
-Version change: 1.3.0 → 1.4.1 (MINOR→PATCH amendment — added `npm run typecheck` to
-  Principle XIII's required pre-PR checks. Typecheck was already mandated by Principle X
-  but was omitted from the XIII command list. Caught by first real application of the gate.)
+Generated: 2026-10-05
+Version change: 1.4.1 → 1.5.0 (MINOR — materially expanded Principle X with mandatory
+  end-to-end (Playwright) test requirements; Principle XIII and Development Workflow updated
+  to match.)
 
-Modified principles: none
+Modified principles:
+  ~ X. Testing Standards — added "End-to-End Tests" subsection (MUST rules for new public
+    pages, user flows, payment flows, smoke-suite safety, and data independence)
+  ~ XIII. Pre-PR Validation Gate — added local e2e run requirement when e2e specs change
 
-Added sections:
-  + XIII. Pre-PR Validation Gate
+Added sections: none (new subsection within Principle X)
 
 Removed sections: none
 
 Template consistency review:
-  ✅ .specify/templates/plan-template.md — no updates needed; Constitution Check table
-       will naturally include Principle XIII for implementation tasks.
-  ✅ .specify/templates/spec-template.md — no updates needed; principle applies at
-       implementation time, not spec time.
-  ✅ .specify/templates/tasks-template.md — no updates needed; Polish phase already
-       includes a "Run quickstart.md validation" placeholder slot that covers pre-PR
-       validation. Future task generation should add an explicit pre-PR check task in
-       the final phase per Principle XIII.
+  ✅ .specify/templates/tasks-template.md — Tests note now names e2e requirement; Polish phase
+       gains an e2e coverage placeholder task
+  ✅ .specify/templates/plan-template.md — no structural change needed; the Constitution Check
+       table is generated from this file, and the Testing field already prompts for tooling
+  ✅ .specify/templates/spec-template.md — no change; principle applies at plan/task time
+  ✅ README.md — E2E section already documents suites; added pointer to Principle X
+  ✅ docs/testing/E2E-TESTING.md — added "When E2E tests are required" section
   ℹ️  .specify/templates/commands/ — directory does not exist; skipped.
 
 Deferred TODOs: none
@@ -110,6 +111,39 @@ Both test suites run as mandatory CI gates (`test-lambda` and `test-frontend` jo
 `.github/workflows/quality-checks.yml`) — a PR MUST NOT be merged if any test fails. Tests MUST
 pass alongside lint, typecheck, and build before merge.
 
+#### End-to-End Tests
+
+Playwright tests live in `e2e/`. `regression.spec.ts` runs against every PR environment and
+against staging before production deploys; `smoke.spec.ts` runs against production after deploy
+and triggers automatic rollback on failure. Unit tests prove components work in isolation; e2e
+tests prove the deployed site works for a visitor.
+
+**What MUST have e2e coverage:**
+- Every new or renamed public page that renders without query parameters: add it to
+  `CORE_PAGES` in `e2e/types/pages.ts` (heading visible, no JS errors), which covers both
+  regression and smoke. Pages that require query parameters (e.g. a token or ID) MUST instead be
+  covered by a regression test that visits them with a missing or invalid parameter and asserts
+  the error state.
+- Every new user flow (a multi-step journey such as browse → cart, or submit form → confirmation):
+  at least one regression test exercising the happy path through the deployed frontend and API.
+- Every payment or money-moving flow: a full end-to-end purchase test using the payment
+  provider's **test mode**, running on PR environments. Payment tests MUST NOT run against
+  production or use live keys.
+- Navigation changes: the navigation regression test MUST be updated in the same PR.
+
+**Rules for e2e tests:**
+- Regression tests MUST pass on an empty PR environment and on staging. Assert on either-state
+  outcomes (data or empty state), or seed the data the test needs through an idempotent seed
+  script that refuses to run outside PR environments.
+- The smoke suite MUST be read-only: no form submissions, purchases, or writes of any kind.
+- A PR that changes existing page headings, routes, or navigation MUST update the affected e2e
+  tests in the same PR — a broken regression suite blocks production deploys.
+
+**What is exempt:** admin-only screens (`/admin`), which are covered by unit tests, and purely
+visual changes with no new route, flow, or navigation change.
+
+E2E test tasks MUST appear in `tasks.md` for any feature that meets the criteria above.
+
 ### XI. User Experience Consistency
 All UI MUST use Tailwind utility classes — no inline styles, no CSS modules, no styled-components.
 Every async operation (API calls, image uploads) MUST display a loading state so users are never
@@ -147,6 +181,14 @@ npm test             # all tests must pass
 ```
 
 **Why this is required**: CI pipeline runs are ephemeral and results arrive minutes after push.
+**When the PR adds or changes e2e specs**, also run the affected specs locally against the dev
+server or a deployed environment before opening the PR:
+
+```bash
+# E2E — from e2e/ (frontend dev server running, or BASE_URL pointing at a deployed env)
+BASE_URL=http://localhost:3000 npx playwright test regression.spec.ts --project=chromium
+```
+
 Catching failures locally before push eliminates the turnaround cost of fixing trivial issues
 (failing tests, lint errors, type errors) that were known before the PR was opened. The CI pipeline
 is a safety net, not a first-line check.
@@ -168,6 +210,8 @@ updates. It does not apply to documentation-only changes (`*.md`, `specs/`) that
 2. New Lambda routes: add handler function, register route in the router (`photos.ts` or `forms.ts`),
    update API client in `frontend/lib/api/`
 3. New CDK resources: add to the appropriate stack, deploy staging first to validate, then production
+4. New public pages, user flows, or navigation changes: add or update Playwright tests in `e2e/`
+   in the same PR (Principle X, End-to-End Tests)
 
 ### Code Style
 - TypeScript everywhere — no `any` unless absolutely unavoidable (Principle IX)
@@ -189,4 +233,4 @@ update `LAST_AMENDED_DATE`, and regenerate the Sync Impact Report comment above.
 Constitution Check in its plan.md confirming no principle violations. Violations MUST be documented
 in the Complexity Tracking table with justification.
 
-**Version**: 1.4.1 | **Ratified**: 2026-03-06 | **Last Amended**: 2026-06-25
+**Version**: 1.5.0 | **Ratified**: 2026-03-06 | **Last Amended**: 2026-10-05
