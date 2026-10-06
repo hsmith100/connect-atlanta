@@ -45,20 +45,20 @@ description: "Task list for 009-photo-store"
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T004 In `infrastructure/lib/stacks/dynamo-stack.ts` add 4 public readonly tables per data-model.md, following the existing table pattern (`connect-${p}…`, PAY_PER_REQUEST, `removalPolicy`), plus a `CfnOutput` for each:
+- [X] T004 In `infrastructure/lib/stacks/dynamo-stack.ts` add 4 public readonly tables per data-model.md, following the existing table pattern (`connect-${p}…`, PAY_PER_REQUEST, `removalPolicy`), plus a `CfnOutput` for each:
   - `storeCollectionsTable`: `connect-${p}store-collections`, GSI `byEventDate` (PK `entity` S, SK `eventDate` S)
   - `storePhotosTable`: `connect-${p}store-photos`, GSI `byCollection` (PK `collectionId` S, SK `sortOrder` N)
   - `storePhotographersTable`: `connect-${p}store-photographers`, no GSI
   - `storeOrdersTable`: `connect-${p}store-orders`, `timeToLiveAttribute: 'expiresAt'`, GSI `byCreatedAt` (PK `entity` S, SK `createdAt` S) and GSI `byEmail` (PK `buyerEmail` S, SK `createdAt` S)
-- [ ] T005 In `infrastructure/lib/stacks/backend-stack.ts` add `StoreOriginalsBucket`: `BLOCK_ALL`, `RETAIN` (DESTROY + `autoDeleteObjects` when `ephemeral`), CORS PUT from `*` (same as MediaBucket), lifecycle rule transitioning to `INTELLIGENT_TIERING` after 30 days, and **no** CloudFront distribution or OAI. Add `CfnOutput` `StoreOriginalsBucketName`.
-- [ ] T006 In `infrastructure/lib/stacks/backend-stack.ts` add the Stripe secret (research R8). Add two new props to `BackendStackProps`: `siteOriginMode?: 'prod' | 'any-cloudfront'` (default `'any-cloudfront'`) and `stripeSecretMode?: 'own' | 'devShared' | 'importDev'` (default `'own'`):
+- [X] T005 In `infrastructure/lib/stacks/backend-stack.ts` add `StoreOriginalsBucket`: `BLOCK_ALL`, `RETAIN` (DESTROY + `autoDeleteObjects` when `ephemeral`), CORS PUT from `*` (same as MediaBucket), lifecycle rule transitioning to `INTELLIGENT_TIERING` after 30 days, and **no** CloudFront distribution or OAI. Add `CfnOutput` `StoreOriginalsBucketName`.
+- [X] T006 In `infrastructure/lib/stacks/backend-stack.ts` add the Stripe secret (research R8). Add two new props to `BackendStackProps`: `siteOriginMode?: 'prod' | 'any-cloudfront'` (default `'any-cloudfront'`) and `stripeSecretMode?: 'own' | 'devShared' | 'importDev'` (default `'own'`):
   - `'own'`: `new secretsmanager.Secret(this, 'StripeSecret', { generateSecretString: { excludePunctuation: true, passwordLength: 32 } })`
   - `'devShared'`: same, with `secretName: 'connect-dev-stripe'`
   - `'importDev'`: `secretsmanager.Secret.fromSecretNameV2(this, 'StripeSecret', 'connect-dev-stripe')`
 
   Add `CfnOutput` `StripeSecretArn` with the description `aws secretsmanager put-secret-value --secret-id <arn> --secret-string '{"secretKey":"sk_...","webhookSecret":"whsec_..."}'`.
-- [ ] T007 In `infrastructure/bin/app.ts` pass `siteOriginMode: 'prod'` to `ConnectBackendStack` (prod only), `stripeSecretMode: 'devShared'` to `ConnectDevBackendStack`, and `stripeSecretMode: 'importDev'` to the PR `BackendStack`; staging keeps both defaults
-- [ ] T008 In `infrastructure/lib/stacks/backend-stack.ts` add `StoreLambda` (`NodejsFunction`, entry `store.ts`, NODEJS_22_X, ARM_64, `memorySize: 512`, `timeout: 30s`, same `depsLockFilePath`) with environment:
+- [X] T007 In `infrastructure/bin/app.ts` pass `siteOriginMode: 'prod'` to `ConnectBackendStack` (prod only), `stripeSecretMode: 'devShared'` to `ConnectDevBackendStack`, and `stripeSecretMode: 'importDev'` to the PR `BackendStack`; staging keeps both defaults
+- [X] T008 In `infrastructure/lib/stacks/backend-stack.ts` add `StoreLambda` (`NodejsFunction`, entry `store.ts`, NODEJS_22_X, ARM_64, `memorySize: 512`, `timeout: 30s`, same `depsLockFilePath`) with environment:
   - `STORE_COLLECTIONS_TABLE`, `STORE_PHOTOS_TABLE`, `STORE_PHOTOGRAPHERS_TABLE`, `STORE_ORDERS_TABLE`, `EVENTS_TABLE`
   - `MEDIA_BUCKET`, `CLOUDFRONT_DOMAIN`, `ORIGINALS_BUCKET`
   - `ADMIN_SECRET_ARN`, `STRIPE_SECRET_ARN`, `TURNSTILE_SECRET_ARN`
@@ -71,7 +71,7 @@ description: "Task list for 009-photo-store"
   - SES `ses:SendEmail` / `ses:SendRawEmail` policy (same as FormsLambda)
 
   Add `HttpLambdaIntegration('StoreIntegration', storeLambda)` and register routes `/api/store/{proxy+}` (GET, POST) and `/api/admin/store/{proxy+}` (GET, POST, PATCH, PUT, DELETE). Add `apigateway.CorsHttpMethod.PUT` to `corsPreflight.allowMethods`.
-- [ ] T009 [P] Create `lambda/src/lib/storeShared.ts` with `lambda/src/lib/storeShared.test.ts`:
+- [X] T009 [P] Create `lambda/src/lib/storeShared.ts` with `lambda/src/lib/storeShared.test.ts`:
   - `ddb`, `s3`, `ses` clients; env constants for the T008 variables
   - `newId()`, `nowIso()`
   - `generateToken(prefix: string): { token: string; hash: string }`: `${prefix}.${randomBytes(32).toString('base64url')}`, hashing only the secret part with SHA-256 hex
@@ -83,10 +83,10 @@ description: "Task list for 009-photo-store"
   - `mediaUrl(key)`
 
   Tests cover token round-trip, malformed tokens, allowlist in both modes, and email validation.
-- [ ] T010 [P] Create `lambda/src/lib/stripeClient.ts`: `getStripe(): Promise<Stripe | null>` reads `STRIPE_SECRET_ARN` JSON `{secretKey, webhookSecret}` once per cold start and returns `null` when `secretKey` doesn't start with `sk_` (placeholder). Also export `getWebhookSecret(): Promise<string | null>` and `export function __resetStripeCache()` for tests. Add `lambda/src/lib/stripeClient.test.ts` (placeholder → null, valid → client, cached).
-- [ ] T011 Create `lambda/src/handlers/store.ts`, a thin router in the same style as `lambda/src/handlers/photos.ts`: method + `rawPath` matching with regexes for `{id}` segments, a try/catch that returns `errResponse(500, 'Internal server error')`, and a 404 fallback. Start with no routes; each story phase registers its routes here.
-- [ ] T012 [P] Create `frontend/lib/api/store.ts` (public) and `frontend/lib/api/adminStore.ts` (admin, uses `adminHeaders`) as empty modules that import `fetchAPI` from `./client`, and re-export both from `frontend/lib/api/index.ts`. Later tasks add functions with colocated tests (`store.test.ts`, `adminStore.test.ts`) following `client.test.ts` mocking style.
-- [ ] T013 Add a **Store** tab to `frontend/pages/admin.tsx` that renders a new `frontend/components/admin/store/StoreTab.tsx`. `StoreTab` has a sub-navigation in the same style as `frontend/components/admin/SubmissionsTab.tsx` with Collections, Upload, Orders, Photographers and Settings; each sub-section renders a placeholder until its story phase. Add `frontend/components/admin/store/StoreTab.test.tsx` (switching sub-sections).
+- [X] T010 [P] Create `lambda/src/lib/stripeClient.ts`: `getStripe(): Promise<Stripe | null>` reads `STRIPE_SECRET_ARN` JSON `{secretKey, webhookSecret}` once per cold start and returns `null` when `secretKey` doesn't start with `sk_` (placeholder). Also export `getWebhookSecret(): Promise<string | null>` and `export function __resetStripeCache()` for tests. Add `lambda/src/lib/stripeClient.test.ts` (placeholder → null, valid → client, cached).
+- [X] T011 Create `lambda/src/handlers/store.ts`, a thin router in the same style as `lambda/src/handlers/photos.ts`: method + `rawPath` matching with regexes for `{id}` segments, a try/catch that returns `errResponse(500, 'Internal server error')`, and a 404 fallback. Start with no routes; each story phase registers its routes here.
+- [X] T012 [P] Create `frontend/lib/api/store.ts` (public) and `frontend/lib/api/adminStore.ts` (admin, uses `adminHeaders`) as empty modules that import `fetchAPI` from `./client`, and re-export both from `frontend/lib/api/index.ts`. *(Implemented note: not created empty, since an unused import fails lint and an empty module is dead code; each file is created by its first function in T021/T028, along with its `index.ts` re-export.)* Later tasks add functions with colocated tests (`store.test.ts`, `adminStore.test.ts`) following `client.test.ts` mocking style.
+- [X] T013 Add a **Store** tab to `frontend/pages/admin.tsx` that renders a new `frontend/components/admin/store/StoreTab.tsx`. `StoreTab` has a sub-navigation in the same style as `frontend/components/admin/SubmissionsTab.tsx` with Collections, Upload, Orders, Photographers and Settings; each sub-section renders a placeholder until its story phase. Add `frontend/components/admin/store/StoreTab.test.tsx` (switching sub-sections).
 
 **Checkpoint**: `cdk synth` succeeds; `cdk deploy ConnectDevDynamoStack ConnectDevBackendStack` (review changeset) creates the tables, bucket, secret and StoreLambda; any `/api/store/x` returns a 404 JSON body.
 

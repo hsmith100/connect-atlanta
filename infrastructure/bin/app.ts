@@ -26,7 +26,7 @@ const env = {
 // ── Production ────────────────────────────────────────────────────────────────
 const dnsStack = new DnsStack(app, 'ConnectDnsStack', { env });
 const dynamoStack = new DynamoStack(app, 'ConnectDynamoStack', { env });
-const backendStack = new BackendStack(app, 'ConnectBackendStack', { env, dynamoStack });
+const backendStack = new BackendStack(app, 'ConnectBackendStack', { env, dynamoStack, siteOriginMode: 'prod' });
 new FrontendStack(app, 'ConnectFrontendStack', { env, dnsStack, backendStack });
 
 // ── CI/CD ─────────────────────────────────────────────────────────────────────
@@ -47,6 +47,7 @@ const devDynamoStack = new DynamoStack(app, 'ConnectDevDynamoStack', { env, tabl
 const _devBackendStack = new BackendStack(app, 'ConnectDevBackendStack', {
   env, dynamoStack: devDynamoStack,
   contactEmail: 'productions.connectatlanta@gmail.com',
+  stripeSecretMode: 'devShared',
   // Cloudflare's published always-pass Turnstile dummy secret key — no manual setup needed.
   turnstileSecretValue: '1x0000000000000000000000000000000AA',
 });
@@ -63,6 +64,7 @@ if (prNum) {
     env, dynamoStack: prDynamoStack,
     contactEmail: 'productions.connectatlanta@gmail.com',
     ephemeral: true,
+    stripeSecretMode: 'importDev',
     // Cloudflare's published always-pass Turnstile dummy secret key — no manual setup needed.
     turnstileSecretValue: '1x0000000000000000000000000000000AA',
   });
