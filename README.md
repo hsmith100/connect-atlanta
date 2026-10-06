@@ -106,6 +106,8 @@ BASE_URL=https://connectevents.co npx playwright test smoke.spec.ts
 
 See **[docs/testing/E2E-TESTING.md](docs/testing/E2E-TESTING.md)** for full reference.
 
+New public pages, user flows, navigation changes and payment flows require e2e coverage — see constitution Principle X (End-to-End Tests).
+
 ---
 
 ## Documentation

@@ -10,6 +10,8 @@ description: "Task list template for feature implementation"
 
 **Tests**: Per Principle X of the constitution, unit tests are REQUIRED for all new handler
 functions, lib utilities, and components with logic. Include test tasks for any such code.
+Per Principle X (End-to-End Tests), new or renamed public pages, new user flows, navigation
+changes, and payment flows also REQUIRE Playwright tasks in `e2e/` (see constitution for rules).
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
@@ -155,6 +157,8 @@ Examples of foundational tasks (adjust based on your project):
 - [ ] TXXX Code cleanup and refactoring
 - [ ] TXXX Performance optimization across all stories
 - [ ] TXXX [P] Unit tests for any new logic not yet covered (Principle X)
+- [ ] TXXX [P] E2E coverage (Principle X): new/renamed pages in `e2e/types/pages.ts`, regression
+      tests for new user flows and nav changes, test-mode purchase test for payment flows
 - [ ] TXXX Security hardening
 - [ ] TXXX Run quickstart.md validation
 - [ ] TXXX Pre-PR validation gate (Principle XIII): run `npm test -- --ci`, `npm run lint`, and

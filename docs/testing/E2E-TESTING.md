@@ -74,6 +74,21 @@ quality-checks → synth + build-frontend → deploy-staging → regression-test
 
 Regression gates the production deploy. Smoke runs after and is informational (does not block a rollback).
 
+## When E2E Tests Are Required
+
+Per constitution Principle X (End-to-End Tests):
+
+| Change | Required e2e work |
+|---|---|
+| New or renamed public page | Add to `CORE_PAGES` in `e2e/types/pages.ts` (covers regression + smoke); pages that need query params get a regression test of their missing/invalid-param state |
+| New user flow | At least one happy-path test in `regression.spec.ts` |
+| Navigation change | Update the navigation test in the same PR |
+| Payment / money-moving flow | Full test-mode purchase test on PR environments; never prod, never live keys |
+| Admin-only screens, purely visual changes | Exempt (unit tests cover admin) |
+
+Regression tests must pass on an empty PR environment and on staging (assert data-or-empty-state, or
+seed via a script that refuses to run outside PR environments). The smoke suite must stay read-only.
+
 ## Adding Tests to Regression
 
 Add new `test()` blocks to `e2e/regression.spec.ts`. Keep `smoke.spec.ts` minimal — only add to smoke if you want every prod deploy verified against that page.
