@@ -3,7 +3,8 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocumentClient } from '@aws-sdk/lib-dynamodb';
 import { S3Client } from '@aws-sdk/client-s3';
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
-import type { APIGatewayProxyEventV2 } from 'aws-lambda';
+import type { APIGatewayProxyEventV2, APIGatewayProxyResultV2 } from 'aws-lambda';
+import { CORS_HEADERS } from './photoShared';
 
 export const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}), {
   marshallOptions: { removeUndefinedValues: true },
@@ -80,6 +81,34 @@ export function parseJson<T>(event: APIGatewayProxyEventV2): T {
   if (!event.body) throw new Error('Missing request body');
   const raw = event.isBase64Encoded ? Buffer.from(event.body, 'base64').toString('utf8') : event.body;
   return JSON.parse(raw) as T;
+}
+
+// Returns null for a missing or malformed body so handlers can respond 400 instead of 500.
+export function readBody<T>(event: APIGatewayProxyEventV2): T | null {
+  try {
+    return parseJson<T>(event);
+  } catch {
+    return null;
+  }
+}
+
+export function json(statusCode: number, body: object): APIGatewayProxyResultV2 {
+  return { statusCode, headers: CORS_HEADERS, body: JSON.stringify(body) };
+}
+
+export function created(body: object): APIGatewayProxyResultV2 {
+  return json(201, body);
+}
+
+// Accepts integers or numbers with at most two decimal places within [0, 100].
+export function isValidPct(value: unknown): value is number {
+  return typeof value === 'number' && Number.isFinite(value) && value >= 0 && value <= 100
+    && Math.abs(Math.round(value * 100) - value * 100) < 1e-9;
+}
+
+// Stripe's minimum charge is 50 cents.
+export function isValidPriceCents(value: unknown): value is number {
+  return typeof value === 'number' && Number.isInteger(value) && value >= 50;
 }
 
 // Rethrows on failure — callers decide whether an email failure is fatal.

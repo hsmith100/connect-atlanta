@@ -4,6 +4,7 @@ import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses';
 import type { APIGatewayProxyEventV2 } from 'aws-lambda';
 import {
   generateToken, hashTokenSecret, isAllowedSiteUrl, isValidEmail, parseJson, sendEmail, mediaUrl,
+  readBody, isValidPct, isValidPriceCents,
 } from './storeShared';
 
 const sesMock = mockClient(SESClient);
@@ -121,4 +122,25 @@ describe('mediaUrl', () => {
   it('builds a media CloudFront URL', () => {
     expect(mediaUrl('store/thumbs/p1-1.jpg')).toBe('https://media.test/store/thumbs/p1-1.jpg');
   });
+});
+
+describe('readBody', () => {
+  it('returns parsed JSON', () => {
+    expect(readBody<{ a: number }>({ body: '{"a":1}' } as APIGatewayProxyEventV2)).toEqual({ a: 1 });
+  });
+
+  it('returns null instead of throwing', () => {
+    expect(readBody({ body: '{bad' } as APIGatewayProxyEventV2)).toBeNull();
+    expect(readBody({} as APIGatewayProxyEventV2)).toBeNull();
+  });
+});
+
+describe('isValidPct', () => {
+  it.each([0, 40, 12.5, 33.33, 0.29, 57.07, 100])('accepts %p', (v) => expect(isValidPct(v)).toBe(true));
+  it.each([-1, 100.01, 33.333, NaN, '40', null])('rejects %p', (v) => expect(isValidPct(v)).toBe(false));
+});
+
+describe('isValidPriceCents', () => {
+  it.each([50, 1500, 100000])('accepts %p', (v) => expect(isValidPriceCents(v)).toBe(true));
+  it.each([49, 0, 15.5, -100, '1500', null])('rejects %p', (v) => expect(isValidPriceCents(v)).toBe(false));
 });
