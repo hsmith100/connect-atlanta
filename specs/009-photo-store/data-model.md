@@ -1,37 +1,41 @@
 # Data Model: Event Photo Store
 
-**Feature**: 009-photo-store | **Date**: 2026-10-05
+**Feature**: 009-photo-store | **Date**: 2026-10-05 (revised 2026-10-06: single photo library)
 
 Four new DynamoDB tables, all `PAY_PER_REQUEST`, defined in `DynamoStack` with the standard `connect-{prefix}` naming (Principle IV). Prod names are shown; staging, dev and PR environments add their prefix (e.g. `connect-staging-store-orders`). TypeScript types live in `shared/types/store.ts` (Principle IX).
+
+The first two tables form the **photo library**, shared by the gallery and the store (spec FR-000). The other two are store-only. The legacy gallery table `connect-photos` is retired after the one-time migration (research R13).
 
 All money is stored as **integer cents (USD)**. All timestamps are ISO-8601 strings.
 
 ```text
-Event (existing) 1───1 StoreCollection 1───* StorePhoto *───1 Photographer ───1 Stripe Express account
-                                                  │                 │
-                                                  │ snapshotted in  │ paid via
-                                                  ▼                 ▼
+Event (existing) 1───1 PhotoCollection 1───* LibraryPhoto *───0..1 Photographer ───1 Stripe Express account
+                                                  │  ├─ inGallery → public Gallery (clean web version)
+                                                  │  └─ forSale   → Shop (watermarked preview)
+                                                  │ snapshotted in        │ paid via
+                                                  ▼                       ▼
                               StoreOrder 1───* OrderLine     StoreOrder 1───* PhotographerTransfer
 ```
 
 ---
 
-## StoreCollection — `connect-store-collections`
+## PhotoCollection — `connect-photo-collections`
 
-One for-sale collection per event.
+All library photos for one event. The collection's `status` controls only its **store listing**; gallery visibility is per photo.
 
 | Field | Type | Notes |
 |---|---|---|
 | `id` | string (PK) | UUID |
 | `entity` | `'COLLECTION'` | GSI partition key |
-| `eventId` | string | FK to `connect-events.id`; at most one collection per event (enforced in create) |
-| `title` | string | Defaults to the event name |
+| `eventId` | string | FK to `connect-events.id`; exactly one collection per event (enforced in create; also created by migration) |
+| `title` | string | Defaults to the event title |
 | `eventDate` | string | Copied from the event for sorting; GSI sort key |
-| `status` | `'draft' \| 'published'` | Only `published` collections are visible publicly (FR-005) |
-| `defaultPriceCents` | number | > 0, required before publish (FR-004) |
+| `status` | `'draft' \| 'published'` | Store listing only: only `published` collections appear in the Shop (FR-005) |
+| `defaultPriceCents` | number | ≥ 50, required before publish (FR-004). Collections created by migration start at 1500 |
 | `defaultPhotographerId` | string \| null | Pre-fills the photographer for new uploads |
-| `coverPhotoId` | string \| null | Falls back to the first photo by `sortOrder` (FR-006) |
-| `photoCount` | number | Count of `forSale` photos, maintained on photo create/update/delete |
+| `coverPhotoId` | string \| null | Falls back to the first for-sale photo by `sortOrder` (FR-006) |
+| `photoCount` | number | Library photos not removed |
+| `forSaleCount` | number | Photos with `forSale && !removed`; shown in the Shop |
 | `createdAt`, `updatedAt` | string | |
 
 **GSI `byEventDate`**: PK `entity`, SK `eventDate` (descending query gives newest first, FR-009).
@@ -43,37 +47,49 @@ One for-sale collection per event.
 | `id` | `'SETTINGS'` | Fixed key |
 | `discountTiers` | `{ minQty: number; pctOff: number }[]` | Default `[{3,15},{5,25},{10,35}]`. Validation: `minQty` ≥ 2 and strictly increasing, `pctOff` 1–90 and strictly increasing. |
 
-**State transitions**: `draft → published` requires `defaultPriceCents > 0`, at least one `forSale` photo, every `forSale` photo having a `photographerId`, and each of those photographers having `payoutsReady = true` (FR-029a). `published → draft` is always allowed.
+**State transitions**: `draft → published` requires `defaultPriceCents ≥ 50`, at least one for-sale photo, every for-sale photo having a `photographerId`, and each of those photographers having `payoutsReady = true` (FR-029a). `published → draft` is always allowed and does not affect the gallery.
 
 ---
 
-## StorePhoto — `connect-store-photos`
+## LibraryPhoto — `connect-photo-library`
 
-One record links a private original to its public watermarked versions (FR-003a).
+One record links a private original to all of its public versions (FR-003a).
 
 | Field | Type | Notes |
 |---|---|---|
-| `id` | string (PK) | UUID, generated in the browser before upload |
-| `collectionId` | string | GSI partition key |
-| `sortOrder` | number | GSI sort key |
+| `id` | string (PK) | UUID, generated in the browser before upload (migration reuses the legacy photo id) |
+| `collectionId` | string | GSI `byCollection` partition key; required (spec clarification: every photo has an event) |
+| `sortOrder` | number | Order within the collection; GSI `byCollection` sort key |
 | `originalKey` | string | `originals/{id}.{ext}` in **StoreOriginalsBucket** (private, never returned by public APIs) |
 | `originalFilename` | string | Used as the download filename |
 | `originalBytes` | number | |
 | `width`, `height` | number | Of the original |
 | `contentHash` | string | SHA-256 hex; duplicate detection within the collection |
-| `previewUrl` | string | Media CloudFront URL, `store/previews/{id}-{ts}.jpg` |
-| `thumbnailUrl` | string | Media CloudFront URL, `store/thumbs/{id}-{ts}.jpg` |
-| `photographerId` | string | Required (FR-025) |
+| `webUrl` | string | Clean (unwatermarked) version, 2000px long edge, `library/web/{id}-{ts}.jpg`. Used by the Gallery full-size view |
+| `webThumbUrl` | string | Clean thumbnail, 600px wide, `library/web-thumbs/{id}-{ts}.jpg`. Used by the Gallery grid |
+| `previewUrl` | string | Watermarked, 1600px long edge, `library/previews/{id}-{ts}.jpg`. Used by the Shop detail view |
+| `thumbnailUrl` | string | Watermarked, 600px wide, `library/thumbs/{id}-{ts}.jpg`. Used by the Shop grid and admin |
+| `photographerId` | string \| null | Required to mark a photo for sale (FR-025). Migrated photos start with `null` |
 | `priceOverrideCents` | number \| null | Effective price = `priceOverrideCents ?? collection.defaultPriceCents` |
-| `status` | `'forSale' \| 'hidden' \| 'removed'` | `hidden` = admin-hidden (FR-006); `removed` = takedown (FR-005, US6). Only `forSale` photos are public and purchasable. |
+| `forSale` | boolean | Store switch (FR-003b) |
+| `inGallery` | boolean | Gallery switch (FR-003b) |
+| `removed` | boolean | Takedown (US6): hides the photo from both the gallery and the store, and keeps the record for past buyers |
+| `gallerySortOrder` | number | Order in the public Gallery across all events (FR-003c) |
+| `galleryKey` | `'GALLERY'` \| absent | Set only while `inGallery && !removed`; partition key of the **sparse** GSI `byGallery` |
 | `createdAt`, `updatedAt` | string | |
 
 **GSI `byCollection`**: PK `collectionId`, SK `sortOrder` (NUMBER).
+**GSI `byGallery`** (sparse): PK `galleryKey`, SK `gallerySortOrder` (NUMBER). The public Gallery is one query on this index.
 
 **Rules**:
-- Public APIs project only `id, thumbnailUrl, previewUrl, priceCents, width, height, photographerName`. `originalKey` never leaves the Lambda.
-- **Replace original**: overwrite `originalKey` in place, write new `previewUrl`/`thumbnailUrl` with a new `{ts}`, then delete the old preview and thumbnail objects.
-- **Delete** (admin, only for photos never sold): deletes the original, preview, thumbnail and record together. Photos that appear on any paid order can only be set to `removed`, so past buyers keep download access.
+- **Public projections:**
+  - Shop APIs return only `id, thumbnailUrl, previewUrl, priceCents, width, height, photographerName`.
+  - The Gallery API returns `id, url (= webUrl), thumbnailUrl (= webThumbUrl), eventId, sortOrder`, keeping the existing Gallery response shape.
+  - `originalKey` never leaves the Lambda.
+- **Shop visibility:** `forSale && !removed` and the collection is `published`.
+- **Gallery visibility:** `inGallery && !removed`. Writes keep `galleryKey` in sync with these flags, and the collection's `photoCount` and `forSaleCount` stay correct.
+- **Replace original:** overwrite `originalKey` in place, write all four public versions with a new `{ts}`, then delete the old public objects.
+- **Delete** (admin, only for photos never sold): deletes the original, all four public versions and the record together. Photos that appear on any paid order can only be set to `removed`, so past buyers keep download access.
 
 ---
 
