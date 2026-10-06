@@ -279,6 +279,7 @@ export interface StorePhotoReplaceRequest {
 }
 
 export interface StorePhotoReplaceComplete {
+  originalKey: string;
   previewUrl: string;
   thumbnailUrl: string;
   width: number;

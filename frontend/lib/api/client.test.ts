@@ -1,4 +1,4 @@
-import { fetchAPI, adminHeaders } from './client';
+import { fetchAPI, adminHeaders, ApiError } from './client';
 
 beforeEach(() => {
   global.fetch = jest.fn();
@@ -87,5 +87,19 @@ describe('fetchAPI', () => {
 describe('adminHeaders', () => {
   it('returns the x-admin-key header', () => {
     expect(adminHeaders('my-secret-key')).toEqual({ 'x-admin-key': 'my-secret-key' });
+  });
+});
+
+describe('ApiError', () => {
+  it('exposes status and the parsed error body on non-OK responses', async () => {
+    (global.fetch as jest.Mock).mockResolvedValue({
+      ok: false,
+      status: 422,
+      json: () => Promise.resolve({ error: 'Not ready', problems: ['Add a photo'] }),
+    });
+    const err = await fetchAPI('/api/test').catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(ApiError);
+    expect(err).toBeInstanceOf(Error);
+    expect(err).toMatchObject({ message: 'Not ready', status: 422, data: { problems: ['Add a photo'] } });
   });
 });

@@ -105,7 +105,7 @@ export default function AdminPage() {
           emailSignups={emailSignups}
         />
       )}
-      {activeTab === 'store' && <StoreTab adminKey={adminKey} />}
+      {activeTab === 'store' && <StoreTab adminKey={adminKey} events={events} />}
     </div>
   )
 }

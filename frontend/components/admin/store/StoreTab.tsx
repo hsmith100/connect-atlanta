@@ -1,4 +1,11 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import { Loader2 } from 'lucide-react'
+import type { Event } from '@shared/types/events'
+import type { Photographer, StoreCollection } from '@shared/types/store'
+import { getPhotographers, getStoreCollections } from '../../../lib/api/adminStore'
+import { CollectionsSection } from './CollectionsSection'
+import { PhotographersSection } from './PhotographersSection'
+import { UploadSection } from './UploadSection'
 
 type SubTab = 'collections' | 'upload' | 'orders' | 'photographers' | 'settings'
 
@@ -12,12 +19,26 @@ const SUB_TABS: { id: SubTab; label: string }[] = [
 
 interface Props {
   adminKey: string
+  events: Event[]
 }
 
-// Each sub-section is filled in by its user story phase (specs/009-photo-store/tasks.md).
-export function StoreTab({ adminKey: _adminKey }: Props) {
+export function StoreTab({ adminKey, events }: Props) {
   const [activeSubTab, setActiveSubTab] = useState<SubTab>('collections')
-  const activeLabel = SUB_TABS.find((t) => t.id === activeSubTab)?.label
+  const [photographers, setPhotographers] = useState<Photographer[]>([])
+  const [collections, setCollections] = useState<StoreCollection[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
+
+  const reloadCollections = useCallback(async () => {
+    setCollections(await getStoreCollections(adminKey))
+  }, [adminKey])
+
+  useEffect(() => {
+    Promise.all([getPhotographers(adminKey), getStoreCollections(adminKey)])
+      .then(([p, c]) => { setPhotographers(p); setCollections(c) })
+      .catch(() => setError('Could not load the store. Refresh to try again.'))
+      .finally(() => setLoading(false))
+  }, [adminKey])
 
   return (
     <div className="max-w-5xl mx-auto">
@@ -39,9 +60,40 @@ export function StoreTab({ adminKey: _adminKey }: Props) {
       </div>
 
       <div className="p-6">
-        <p data-testid={`store-${activeSubTab}`} className="text-gray-400 text-sm">
-          {activeLabel} — coming soon.
-        </p>
+        {loading ? (
+          <p className="flex items-center gap-2 text-sm text-gray-400"><Loader2 size={14} className="animate-spin" /> Loading store…</p>
+        ) : error ? (
+          <p role="alert" className="text-sm text-red-400">{error}</p>
+        ) : (
+          <>
+            {activeSubTab === 'collections' && (
+              <CollectionsSection
+                adminKey={adminKey}
+                events={events}
+                photographers={photographers}
+                collections={collections}
+                setCollections={setCollections}
+                reloadCollections={reloadCollections}
+              />
+            )}
+            {activeSubTab === 'upload' && (
+              <UploadSection
+                adminKey={adminKey}
+                collections={collections}
+                photographers={photographers}
+                onUploaded={() => void reloadCollections()}
+              />
+            )}
+            {activeSubTab === 'photographers' && (
+              <PhotographersSection adminKey={adminKey} photographers={photographers} setPhotographers={setPhotographers} />
+            )}
+            {(activeSubTab === 'orders' || activeSubTab === 'settings') && (
+              <p data-testid={`store-${activeSubTab}`} className="text-gray-400 text-sm">
+                {activeSubTab === 'orders' ? 'Orders' : 'Settings'} — coming soon.
+              </p>
+            )}
+          </>
+        )}
       </div>
     </div>
   )
