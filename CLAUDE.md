@@ -13,6 +13,8 @@ Auto-generated from all feature plans. Last updated: 2026-04-22
 - TypeScript 5.x / TSX (Next.js static export) + Next.js, React, Tailwind CSS (007-sponsor-updates)
 - N/A — logo PNGs already committed to `public/images/Sponsor Logos 2026/` (007-sponsor-updates)
 - TypeScript 5.x / TSX — Next.js 16.x (static export) + Tailwind CSS v4 (CSS-first config via `@config`), DaisyUI v5, Next.js static expor (001-rebrand-colors-fonts)
+- TypeScript 5.x: Lambda on Node.js 22.x (ARM64), Next.js 16 static export (TSX), CDK v2 + Existing: `aws-cdk-lib`, `@aws-sdk/client-s3`, `@aws-sdk/s3-request-presigner`, `@aws-sdk/lib-dynamodb`, `@aws-sdk/client-ses`, `@aws-sdk/client-secrets-manager`, Next.js, React, Tailwind v4, DaisyUI v5. **New**: `stripe` (Lambda only). (009-photo-store)
+- DynamoDB, 4 new tables (`store-collections`, `store-photos`, `store-photographers`, `store-orders`). S3: new private `StoreOriginalsBucket`; existing `MediaBucket` under the `store/` prefix for previews and thumbnails. (009-photo-store)
 
 - TypeScript 5.x / TSX + Next.js (static export), React, Tailwind CSS (001-show-merch-tab)
 
@@ -32,11 +34,9 @@ npm test && npm run lint
 TypeScript 5.x / TSX: Follow standard conventions
 
 ## Recent Changes
+- 009-photo-store: Added TypeScript 5.x: Lambda on Node.js 22.x (ARM64), Next.js 16 static export (TSX), CDK v2 + Existing: `aws-cdk-lib`, `@aws-sdk/client-s3`, `@aws-sdk/s3-request-presigner`, `@aws-sdk/lib-dynamodb`, `@aws-sdk/client-ses`, `@aws-sdk/client-secrets-manager`, Next.js, React, Tailwind v4, DaisyUI v5. **New**: `stripe` (Lambda only).
 - 001-rebrand-colors-fonts: Added TypeScript 5.x / TSX — Next.js 16.x (static export) + Tailwind CSS v4 (CSS-first config via `@config`), DaisyUI v5, Next.js static expor
 - 007-sponsor-updates: Added TypeScript 5.x / TSX (Next.js static export) + Next.js, React, Tailwind CSS
-- 006-secret-lineup: Added TypeScript 5.x / TSX (Next.js) + Next.js (static export), React, Tailwind CSS — all existing
-- 005-switch-email-domain: Added TypeScript 5.x (CDK infrastructure) / TypeScript 5.x (Lambda Node.js 20.x) + `aws-cdk-lib` v2 — `aws_ses.EmailIdentity`, `aws_route53` record types; `@aws-sdk/client-ses` (Lambda, no code changes)
-- 004-domain-rebrand: Added TypeScript 5.x (CDK infrastructure only) + `aws-cdk-lib` v2 — `aws_route53.HostedZone`, `aws_acm.Certificate`, `aws_cloudfront.Distribution`, `aws_cloudfront.Function`
 
 
 <!-- MANUAL ADDITIONS START -->

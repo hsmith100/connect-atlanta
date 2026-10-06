@@ -34,3 +34,4 @@
 - All 3 clarifications resolved 2026-10-05: digital-only (FR-019), outside photographers with commission (FR-025–FR-030, User Story 5), per-photo + volume discount tiers (FR-031–FR-034). All items pass.
 - FR-014 references PCI compliance as a security/compliance requirement, not an implementation choice.
 - Storage location ("where do the pictures live") is specified as a requirement (private originals + public watermarked previews, FR-002/FR-003); the concrete storage choice is deferred to `/speckit.plan`.
+- 2026-10-05 update: photographer payments changed from manual (recorded in admin) to automatic per sale (FR-029–FR-030, User Story 5 rewritten, clarification recorded). Re-validated; all items still pass.
