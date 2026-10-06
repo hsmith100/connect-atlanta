@@ -33,9 +33,9 @@ description: "Task list for 009-photo-store"
 
 **Purpose**: Dependencies and shared type definitions
 
-- [ ] T001 Add `stripe` (latest major) to `dependencies` in `lambda/package.json` and run `npm install` in `lambda/` to update `lambda/package-lock.json`
-- [ ] T002 [P] Create `shared/types/store.ts` with every type in data-model.md: `StoreCollection`, `CollectionStatus`, `DiscountTier`, `StoreSettings`, `StorePhoto`, `StorePhotoStatus`, `Photographer`, `StoreOrder`, `OrderStatus`, `OrderLine`, `PhotographerTransfer`, `TransferStatus`. Also add every request/response payload in contracts/store-api.md, including `PublicCollection` (with `eventId`), `PublicCollectionPage`, `PublicPhoto`, `CartQuoteRequest`, `CartQuote`, `CheckoutRequest` (including `turnstileToken`), `CheckoutResponse`, `OrderStatusResponse`, `DownloadsResponse`, `ResendRequest`, `StorePresignRequest`, `StorePresignResponse`, `StorePhotoCreatePayload`, `StorePhotoUpdatePayload`, `PhotographerEarnings`, `EarningsResponse`, `AdminOrdersResponse`. Exclude `originalKey`, `downloadTokenHashes` and `setupTokenHash` from public/admin response types where the contract says they're never returned.
-- [ ] T003 [P] Create `frontend/lib/store/formatMoney.ts` (`formatMoney(cents: number): string` → `"$15.00"`) with `frontend/lib/store/formatMoney.test.ts`
+- [X] T001 Add `stripe` (latest major) to `dependencies` in `lambda/package.json` and run `npm install` in `lambda/` to update `lambda/package-lock.json`
+- [X] T002 [P] Create `shared/types/store.ts` with every type in data-model.md: `StoreCollection`, `CollectionStatus`, `DiscountTier`, `StoreSettings`, `StorePhoto`, `StorePhotoStatus`, `Photographer`, `StoreOrder`, `OrderStatus`, `OrderLine`, `PhotographerTransfer`, `TransferStatus`. Also add every request/response payload in contracts/store-api.md, including `PublicCollection` (with `eventId`), `PublicCollectionPage`, `PublicPhoto`, `CartQuoteRequest`, `CartQuote`, `CheckoutRequest` (including `turnstileToken`), `CheckoutResponse`, `OrderStatusResponse`, `DownloadsResponse`, `ResendRequest`, `StorePresignRequest`, `StorePresignResponse`, `StorePhotoCreatePayload`, `StorePhotoUpdatePayload`, `PhotographerEarnings`, `EarningsResponse`, `AdminOrdersResponse`. Exclude `originalKey`, `downloadTokenHashes` and `setupTokenHash` from public/admin response types where the contract says they're never returned.
+- [X] T003 [P] Create `frontend/lib/store/formatMoney.ts` (`formatMoney(cents: number): string` → `"$15.00"`) with `frontend/lib/store/formatMoney.test.ts`
 
 ---
 
