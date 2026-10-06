@@ -69,7 +69,7 @@ A visitor adds one or more photos to a cart, reviews the cart, and checks out by
 3. **Given** a valid payment, **When** checkout completes, **Then** the visitor sees an order confirmation and receives a confirmation email within 5 minutes containing download links for every purchased photo.
 4. **Given** a declined payment, **When** checkout is attempted, **Then** no order is fulfilled, no download access is granted, and the visitor sees a clear message and can retry.
 5. **Given** a purchase download link, **When** it is opened, **Then** the visitor receives the full-resolution, unwatermarked original.
-6. **Given** a buyer lost their email, **When** they request their downloads be re-sent using their order email, **Then** a new email with valid download links is sent to that address only.
+6. **Given** a buyer lost their email, **When** they click "Lost your download link?" in the Shop page's Event Photos section and enter their order email, **Then** a new email with valid download links is sent to that address only.
 
 ---
 

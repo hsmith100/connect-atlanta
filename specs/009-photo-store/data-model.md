@@ -120,7 +120,7 @@ Order lines are embedded (bounded by cart size; well under the 400 KB item limit
 | `transfers` | `PhotographerTransfer[]` | One per photographer in the order; see below |
 | `transferProblems` | boolean | True while any transfer is `failed` or `reversal_failed`; drives the admin warning badge |
 | `siteUrl` | string | Validated origin, used for email links (research R9) |
-| `downloadTokenHash` | string \| null | SHA-256 of the token secret; set on fulfillment and rotated on re-send |
+| `downloadTokenHashes` | string[] | SHA-256 hashes of valid download-token secrets (max 5, newest last). Fulfillment sets `[emailToken]`; the confirmation page may **append** one; re-send **replaces** the list with `[newToken]`; refund **clears** it |
 | `downloadExpiresAt` | string \| null | Fulfillment or re-send time + 7 days |
 | `createdAt` | string | Checkout start; GSI sort key |
 | `paidAt` | string \| null | |

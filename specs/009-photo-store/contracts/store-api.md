@@ -60,11 +60,11 @@ Creates a pending order and a Stripe Checkout Session (FR-013, FR-015).
 **Request**
 ```json
 { "photoIds": ["p1", "p2", "p3"], "email": "buyer@example.com",
-  "siteUrl": "https://beatsontheblockfest.com", "acceptedLicense": true }
+  "siteUrl": "https://beatsontheblockfest.com", "acceptedLicense": true, "turnstileToken": "..." }
 ```
 **200**: `{ "checkoutUrl": "https://checkout.stripe.com/c/pay/cs_..." }`. The browser redirects to it.
 **409**: `{ "error": "Some photos are no longer available", "unavailablePhotoIds": ["p9"] }`. The client removes them, shows a notice, and the buyer re-submits (US6 scenario 2).
-**400**: invalid email, empty cart, `acceptedLicense` not true, or `siteUrl` not on the allowlist.
+**400**: invalid email, empty cart, `acceptedLicense` not true, `siteUrl` not on the allowlist, or Turnstile verification failed ("Please complete the verification and try again"). Turnstile is verified before any DynamoDB or Stripe write.
 **503**: Stripe secret not configured for this environment.
 
 Stripe session settings: `mode: payment`, `payment_method_types: ['card']`, `payment_intent_data.transfer_group = orderId`, `customer_email`, `client_reference_id = orderId`, one line item per photo at list price (product name = collection title + photo number, image = thumbnail), plus a one-off coupon for the discount; `success_url = {siteUrl}/shop/order?id={orderId}&session_id={CHECKOUT_SESSION_ID}`; `cancel_url = {siteUrl}/shop/cart`.
@@ -77,7 +77,7 @@ Confirmation page polling and reconcile path (research R4). `session_id` must ma
 { "status": "paid", "email": "buyer@example.com", "totalCents": 3825, "discountCents": 675,
   "lineCount": 3, "downloadToken": "o1.Zm9v..." }
 ```
-`downloadToken` is present only when `status === 'paid'` and the order was fulfilled within the last 15 minutes. After that, buyers use the email link or re-send, so a leaked session URL does not grant downloads indefinitely. `status: "pending"` tells the client to poll again in 2 seconds (up to 30 seconds), then show "We're confirming your payment — you'll get an email shortly."
+`downloadToken` is present only when `status === 'paid'` and `paidAt` is within the last 15 minutes. If this call didn't create the token itself (the webhook fulfilled first), it generates a new token and **appends** its hash to `downloadTokenHashes` (keeping the newest 5), so the emailed link stays valid. After that, buyers use the email link or re-send, so a leaked session URL does not grant downloads indefinitely. `status: "pending"` tells the client to poll again in 2 seconds (up to 30 seconds), then show "We're confirming your payment — you'll get an email shortly."
 
 ### `GET /api/store/downloads/{token}`
 Download page data (FR-016, FR-017).
@@ -89,11 +89,11 @@ Download page data (FR-016, FR-017).
                "downloadUrl": "https://<private-bucket>.s3...&X-Amz-Expires=900" } ] }
 ```
 **410**: `{ "error": "This download link has expired. Request a new one below." }` when the token is valid but past `downloadExpiresAt`.
-**404**: invalid token, rotated token, or refunded order.
+**404**: invalid token (hash not in `downloadTokenHashes`), replaced token, or refunded order.
 
 ### `POST /api/store/orders/resend`
 **Request**: `{ "email": "buyer@example.com", "turnstileToken": "..." }`
-**200**: always `{ "ok": true }` (no enumeration). For each paid order with that email, the Lambda rotates the token, sets expiry to +7 days, and emails the links.
+**200**: always `{ "ok": true }` (no enumeration). For each paid order with that email, the Lambda replaces `downloadTokenHashes` with one new token, sets expiry to +7 days, and emails the links.
 **400**: Turnstile verification failed.
 
 ### `POST /api/store/stripe-webhook`
@@ -143,9 +143,9 @@ Handles `checkout.session.completed`: `fulfillOrder(client_reference_id)`, which
 ### Orders
 | Method & path | Body | Response |
 |---|---|---|
-| `GET /api/admin/store/orders?from&to&collectionId` | | `{ orders: StoreOrder[], totalRevenueCents }` (paid and refunded, newest first; never includes `downloadTokenHash`) |
-| `POST /api/admin/store/orders/{id}/resend` | | `200 { ok: true }`; rotates the token and emails the buyer (FR-021) |
-| `POST /api/admin/store/orders/{id}/refund` | | `200 StoreOrder`. Full refund: creates the Stripe refund on `stripeChargeId`, reverses each `sent` transfer (any shortfall goes to `photographer.owedCents`, status `reversal_failed`), clears `downloadTokenHash`, and sets `status: refunded`. Idempotent: Stripe idempotency key `refund:{orderId}`, and the order-status condition. |
+| `GET /api/admin/store/orders?from&to&collectionId` | | `{ orders: StoreOrder[], totalRevenueCents }` (paid and refunded, newest first; never includes `downloadTokenHashes`) |
+| `POST /api/admin/store/orders/{id}/resend` | | `200 { ok: true }`; replaces `downloadTokenHashes` with one new token and emails the buyer (FR-021) |
+| `POST /api/admin/store/orders/{id}/refund` | | `200 StoreOrder`. Full refund: creates the Stripe refund on `stripeChargeId`, reverses each `sent` transfer (any shortfall goes to `photographer.owedCents`, status `reversal_failed`), clears `downloadTokenHashes`, and sets `status: refunded`. Idempotent: Stripe idempotency key `refund:{orderId}`, and the order-status condition. |
 | `POST /api/admin/store/orders/{id}/retry-transfers` | | `200 StoreOrder`; retries every `failed` transfer (same idempotency keys) |
 
 ### Settings

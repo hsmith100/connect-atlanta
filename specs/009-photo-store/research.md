@@ -93,11 +93,11 @@ Checkout is limited to `payment_method_types: ['card']` (Apple Pay and Google Pa
 
 ## R5. Download links that last 7 days (FR-017)
 
-**Decision**: The email and confirmation page link to `/shop/download?token={orderId}.{secret}`. `secret` is 32 random bytes (base64url); only its SHA-256 hash and `downloadExpiresAt` are stored on the order. `GET /api/store/downloads/{token}` validates the hash, expiry and `status === 'paid'`, then returns a 15-minute pre-signed S3 GET URL per photo with `Content-Disposition: attachment`.
+**Decision**: The email and confirmation page link to `/shop/download?token={orderId}.{secret}`. `secret` is 32 random bytes (base64url); only SHA-256 hashes (`downloadTokenHashes`, max 5) and `downloadExpiresAt` are stored on the order. `GET /api/store/downloads/{token}` validates the hash, expiry and `status === 'paid'`, then returns a 15-minute pre-signed S3 GET URL per photo with `Content-Disposition: attachment`.
 
 **Rationale**: S3 pre-signed URLs signed with Lambda role credentials expire when the role session does (hours), so they cannot be used as 7-day links directly. A token we control also makes revocation on refund (FR-021) and rotation on re-send immediate.
 
-**Re-send (US3 scenario 6)**: `POST /api/store/orders/resend {email, turnstileToken}` rotates the token on every paid order for that email, extends the expiry 7 days, and emails the links. It always returns 200 to prevent email enumeration, and is protected by the existing Turnstile verification (`lib/turnstile.ts`) against email bombing.
+**Re-send (US3 scenario 6)**: `POST /api/store/orders/resend {email, turnstileToken}` replaces the token list with one new token on every paid order for that email, extends the expiry 7 days, and emails the links. It always returns 200 to prevent email enumeration, and is protected by the existing Turnstile verification (`lib/turnstile.ts`) against email bombing.
 
 ---
 
