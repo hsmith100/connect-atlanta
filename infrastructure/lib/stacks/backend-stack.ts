@@ -27,6 +27,12 @@ interface BackendStackProps extends cdk.StackProps {
   // secret key) instead of auto-generating a placeholder. Used for dev/PR environments
   // so they work out of the box with no manual Secrets Manager write.
   turnstileSecretValue?: string;
+  // Which site origins the photo store accepts for redirects and email links.
+  // 'prod' = the four production domains only; 'any-cloudfront' also allows *.cloudfront.net and localhost.
+  siteOriginMode?: 'prod' | 'any-cloudfront';
+  // Stripe secret ownership: 'own' creates one per stack (prod/staging), 'devShared' creates the
+  // named connect-dev-stripe secret (dev), 'importDev' reuses it (ephemeral PR environments).
+  stripeSecretMode?: 'own' | 'devShared' | 'importDev';
 }
 
 export class BackendStack extends cdk.Stack {
@@ -38,7 +44,10 @@ export class BackendStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: BackendStackProps) {
     super(scope, id, props);
 
-    const { dynamoStack, contactEmail = 'info@beatsontheblockfest.com', alertEmail = 'productions.connectatlanta@gmail.com', ephemeral = false, turnstileSecretValue } = props;
+    const {
+      dynamoStack, contactEmail = 'info@beatsontheblockfest.com', alertEmail = 'productions.connectatlanta@gmail.com',
+      ephemeral = false, turnstileSecretValue, siteOriginMode = 'any-cloudfront', stripeSecretMode = 'own',
+    } = props;
     const lambdaDir = path.join(__dirname, '../../../lambda/src/handlers');
 
     // ── Media S3 Bucket ───────────────────────────────────────────────────────
@@ -73,6 +82,27 @@ export class BackendStack extends cdk.Stack {
     });
     this.mediaDistributionDomain = mediaDistribution.distributionDomainName;
 
+    // ── Store originals bucket ────────────────────────────────────────────────
+    // Full-quality photos for sale. Private: no CloudFront distribution, no public
+    // policy. Only StoreLambda can read it, issuing short-lived pre-signed GET URLs
+    // to buyers with a valid download token.
+    const storeOriginalsBucket = new s3.Bucket(this, 'StoreOriginalsBucket', {
+      blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
+      enforceSSL: true,
+      removalPolicy: ephemeral ? cdk.RemovalPolicy.DESTROY : cdk.RemovalPolicy.RETAIN,
+      autoDeleteObjects: ephemeral,
+      cors: [{
+        allowedMethods: [s3.HttpMethods.PUT],
+        // Presigned URL provides auth — allow * so admin browser uploads work from any origin
+        allowedOrigins: ['*'],
+        allowedHeaders: ['*'],
+        exposedHeaders: ['ETag'],
+      }],
+      lifecycleRules: [{
+        transitions: [{ storageClass: s3.StorageClass.INTELLIGENT_TIERING, transitionAfter: cdk.Duration.days(30) }],
+      }],
+    });
+
     // ── Admin key secret ──────────────────────────────────────────────────────
     // Auto-generated 32-char key. Retrieve with:
     //   aws secretsmanager get-secret-value --secret-id <arn> --query SecretString --output text
@@ -90,6 +120,17 @@ export class BackendStack extends cdk.Stack {
       secretStringValue: turnstileSecretValue ? cdk.SecretValue.unsafePlainText(turnstileSecretValue) : undefined,
       generateSecretString: turnstileSecretValue ? undefined : { excludePunctuation: true, passwordLength: 32 },
     });
+
+    // ── Stripe secret ─────────────────────────────────────────────────────────
+    // JSON {"secretKey":"sk_...","webhookSecret":"whsec_..."}, written manually after deploy:
+    //   aws secretsmanager put-secret-value --secret-id <arn> --secret-string '{"secretKey":"sk_...","webhookSecret":"whsec_..."}'
+    // Until written, the generated placeholder makes checkout return 503 (browsing still works).
+    const stripeSecret: secretsmanager.ISecret = stripeSecretMode === 'importDev'
+      ? secretsmanager.Secret.fromSecretNameV2(this, 'StripeSecret', 'connect-dev-stripe')
+      : new secretsmanager.Secret(this, 'StripeSecret', {
+        secretName: stripeSecretMode === 'devShared' ? 'connect-dev-stripe' : undefined,
+        generateSecretString: { excludePunctuation: true, passwordLength: 32 },
+      });
 
     // ── Events Lambda ─────────────────────────────────────────────────────────
     const eventsLambda = new NodejsFunction(this, 'EventsLambda', {
@@ -171,6 +212,50 @@ export class BackendStack extends cdk.Stack {
     mediaBucket.grantReadWrite(photosLambda);
     adminKeySecret.grantRead(photosLambda);
 
+    // ── Store Lambda ──────────────────────────────────────────────────────────
+    // Photo store: public browsing/checkout/downloads, Stripe webhook, and admin store routes.
+    // Separate from PhotosLambda so only store code can read originals and the Stripe secret.
+    const storeLambda = new NodejsFunction(this, 'StoreLambda', {
+      entry: path.join(lambdaDir, 'store.ts'),
+      handler: 'handler',
+      runtime: lambda.Runtime.NODEJS_22_X,
+      architecture: lambda.Architecture.ARM_64,
+      memorySize: 512,
+      timeout: cdk.Duration.seconds(30),
+      depsLockFilePath: path.join(__dirname, '../../../lambda/package-lock.json'),
+      environment: {
+        STORE_COLLECTIONS_TABLE: dynamoStack.storeCollectionsTable.tableName,
+        STORE_PHOTOS_TABLE: dynamoStack.storePhotosTable.tableName,
+        STORE_PHOTOGRAPHERS_TABLE: dynamoStack.storePhotographersTable.tableName,
+        STORE_ORDERS_TABLE: dynamoStack.storeOrdersTable.tableName,
+        EVENTS_TABLE: dynamoStack.eventsTable.tableName,
+        MEDIA_BUCKET: mediaBucket.bucketName,
+        CLOUDFRONT_DOMAIN: mediaDistribution.distributionDomainName,
+        ORIGINALS_BUCKET: storeOriginalsBucket.bucketName,
+        ADMIN_SECRET_ARN: adminKeySecret.secretArn,
+        STRIPE_SECRET_ARN: stripeSecret.secretArn,
+        TURNSTILE_SECRET_ARN: turnstileSecret.secretArn,
+        CONTACT_EMAIL: contactEmail,
+        FROM_EMAIL: 'noreply@beatsontheblockfest.com',
+        SITE_ORIGIN_MODE: siteOriginMode,
+      },
+    });
+
+    dynamoStack.storeCollectionsTable.grantReadWriteData(storeLambda);
+    dynamoStack.storePhotosTable.grantReadWriteData(storeLambda);
+    dynamoStack.storePhotographersTable.grantReadWriteData(storeLambda);
+    dynamoStack.storeOrdersTable.grantReadWriteData(storeLambda);
+    dynamoStack.eventsTable.grantReadData(storeLambda);
+    mediaBucket.grantReadWrite(storeLambda);
+    storeOriginalsBucket.grantReadWrite(storeLambda);
+    adminKeySecret.grantRead(storeLambda);
+    stripeSecret.grantRead(storeLambda);
+    turnstileSecret.grantRead(storeLambda);
+    storeLambda.addToRolePolicy(new iam.PolicyStatement({
+      actions: ['ses:SendEmail', 'ses:SendRawEmail'],
+      resources: ['*'],
+    }));
+
     // ── HTTP API Gateway ──────────────────────────────────────────────────────
     const api = new apigateway.HttpApi(this, 'Api', {
       apiName: 'connect-api',
@@ -180,6 +265,7 @@ export class BackendStack extends cdk.Stack {
           apigateway.CorsHttpMethod.GET,
           apigateway.CorsHttpMethod.POST,
           apigateway.CorsHttpMethod.PATCH,
+          apigateway.CorsHttpMethod.PUT,
           apigateway.CorsHttpMethod.DELETE,
           apigateway.CorsHttpMethod.OPTIONS,
         ],
@@ -192,6 +278,7 @@ export class BackendStack extends cdk.Stack {
     const eventsIntegration = new HttpLambdaIntegration('EventsIntegration', eventsLambda);
     const formsIntegration = new HttpLambdaIntegration('FormsIntegration', formsLambda);
     const photosIntegration = new HttpLambdaIntegration('PhotosIntegration', photosLambda);
+    const storeIntegration = new HttpLambdaIntegration('StoreIntegration', storeLambda);
 
     api.addRoutes({ path: '/api/events', methods: [apigateway.HttpMethod.GET], integration: eventsIntegration });
     api.addRoutes({ path: '/api/events/{id}', methods: [apigateway.HttpMethod.GET], integration: eventsIntegration });
@@ -211,6 +298,8 @@ export class BackendStack extends cdk.Stack {
     api.addRoutes({ path: '/api/admin/hero-cards', methods: [apigateway.HttpMethod.GET, apigateway.HttpMethod.POST], integration: photosIntegration });
     api.addRoutes({ path: '/api/admin/hero-cards/presign', methods: [apigateway.HttpMethod.POST], integration: photosIntegration });
     api.addRoutes({ path: '/api/admin/hero-cards/{id}', methods: [apigateway.HttpMethod.PATCH, apigateway.HttpMethod.DELETE], integration: photosIntegration });
+    api.addRoutes({ path: '/api/store/{proxy+}', methods: [apigateway.HttpMethod.GET, apigateway.HttpMethod.POST], integration: storeIntegration });
+    api.addRoutes({ path: '/api/admin/store/{proxy+}', methods: [apigateway.HttpMethod.GET, apigateway.HttpMethod.POST, apigateway.HttpMethod.PATCH, apigateway.HttpMethod.PUT, apigateway.HttpMethod.DELETE], integration: storeIntegration });
 
     // ── Access logging ────────────────────────────────────────────────────────
     const accessLogGroup = new logs.LogGroup(this, 'ApiAccessLogs', {
@@ -282,6 +371,14 @@ export class BackendStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'AdminKeySecretArn', {
       value: adminKeySecret.secretArn,
       description: 'Retrieve admin key: aws secretsmanager get-secret-value --secret-id <arn> --query SecretString --output text',
+    });
+    new cdk.CfnOutput(this, 'StoreOriginalsBucketName', {
+      value: storeOriginalsBucket.bucketName,
+      description: 'Private S3 bucket for full-quality store photos (no public access)',
+    });
+    new cdk.CfnOutput(this, 'StripeSecretArn', {
+      value: stripeSecret.secretArn,
+      description: `aws secretsmanager put-secret-value --secret-id <arn> --secret-string '{"secretKey":"sk_...","webhookSecret":"whsec_..."}'`,
     });
     new cdk.CfnOutput(this, 'TurnstileSecretArn', {
       value: turnstileSecret.secretArn,
