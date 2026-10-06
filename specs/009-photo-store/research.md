@@ -8,12 +8,13 @@ All Technical Context unknowns are resolved below. Each entry: Decision / Ration
 
 ## R1. Where the photos are stored
 
-**Decision**: Two storage locations per photo, linked by one `StorePhoto` record (FR-003a):
+**Decision** (revised 2026-10-06 for the single photo library): two storage locations per photo, linked by one `LibraryPhoto` record (FR-003a):
 
 | Version | Location | Access |
 |---|---|---|
 | Full-quality original | **New** private S3 bucket `StoreOriginalsBucket` (BackendStack), key `originals/{photoId}.{ext}` | No CloudFront, `BLOCK_ALL`, `RETAIN`. Readable only by StoreLambda, which issues 15-minute pre-signed GET URLs to buyers holding a valid download token. |
-| Watermarked preview (1600px) + thumbnail (600px) | Existing `MediaBucket`, keys `store/previews/{photoId}-{ts}.jpg` and `store/thumbs/{photoId}-{ts}.jpg` | Public through the existing media CloudFront distribution (Principle XII). |
+| Clean web version (2000px) + clean thumbnail (600px), for the Gallery | Existing `MediaBucket`, keys `library/web/{photoId}-{ts}.jpg` and `library/web-thumbs/{photoId}-{ts}.jpg` | Public through the existing media CloudFront distribution (Principle XII). |
+| Watermarked preview (1600px) + thumbnail (600px), for the Shop | Existing `MediaBucket`, keys `library/previews/{photoId}-{ts}.jpg` and `library/thumbs/{photoId}-{ts}.jpg` | Public through the existing media CloudFront distribution (Principle XII). |
 
 **Rationale**: The existing media bucket grants its CloudFront OAI read access to the *whole* bucket, so any object there is publicly fetchable. Putting originals in a separate bucket with no distribution makes the "originals are never public" guarantee (FR-002, FR-011, SC-004) structural rather than dependent on key secrecy. The `-{ts}` suffix on previews busts the CloudFront cache when an original is replaced (same pattern as flyers).
 
@@ -25,7 +26,9 @@ All Technical Context unknowns are resolved below. Each entry: Decision / Ration
 
 ---
 
-## R2. How the watermarked version is generated (FR-003)
+## R2. How the watermarked and web versions are generated (FR-003)
+
+*Revised 2026-10-06:* the browser now produces **four** public versions per photo in the same pass: clean web (2000px long edge, JPEG 0.85), clean thumbnail (600px wide), watermarked preview (1600px) and watermarked thumbnail (600px). All four come from one decoded bitmap, so the extra two add little time. Everything else below is unchanged.
 
 **Decision**: Generated in the **admin's browser** during upload using the Canvas API, extending the existing `frontend/lib/generateThumbnail.ts` pattern. For each file the admin page:
 
@@ -193,3 +196,35 @@ When the secret still holds the CDK-generated placeholder (no `sk_` prefix), che
 - *Connect webhook for `account.updated`*: unnecessary at this scale; on-demand sync covers it.
 
 **Sources**: docs.stripe.com/connect/separate-charges-and-transfers; stripe.com/connect/pricing.
+
+---
+
+## R13. Single photo library and migrating the existing gallery (FR-000, FR-007a, US7)
+
+**Decision**: The gallery and the store share one library: `connect-photo-collections` (one per event) and `connect-photo-library` (one record per photo, with `inGallery` and `forSale` switches). StoreLambda serves the admin library routes (`/api/admin/library/*`) and takes over `GET /api/gallery` from PhotosLambda, keeping the same response shape so the Gallery page's data code doesn't change. The Gallery reads the sparse `byGallery` index.
+
+**Migration** of the legacy `connect-photos` gallery (prod 43, staging 14, dev 14 photos) is a one-time local script, `infrastructure/scripts/migrate-gallery.ts`, run with `npx tsx` against one environment at a time (dev → staging → prod):
+
+1. **Plan mode** (`--plan`): lists every legacy photo with its thumbnail URL and current `eventId` into `gallery-migration-<env>.csv`. The organizer fills in an event for each blank row.
+2. **Run mode** (`--run --map gallery-migration-<env>.csv`). It refuses to start unless every photo has a valid event. For each legacy photo:
+   - ensure a `PhotoCollection` exists for its event (created as draft at $15.00)
+   - copy the public original `photos/{id}.{ext}` to the private bucket as `originals/{id}.{ext}`
+   - generate the four public versions with **sharp**, using the same sizes and an SVG watermark tiled the same way as the browser version
+   - write a `LibraryPhoto` with the same id, `inGallery = visible`, `gallerySortOrder = sortOrder`, `forSale = false` and `photographerId = null`
+
+   It is idempotent: photos that already exist in the library are skipped.
+3. **Verify mode** (`--verify`): counts match, every library photo's public versions return 200, and the Gallery API returns the same ids in the same order as before.
+4. **Cleanup mode** (`--cleanup`, run only after the organizer checks the Gallery): deletes the legacy public `photos/*` and `photos/thumbs/*` objects and the legacy records. Afterwards a CDK change removes PhotosLambda's legacy photo routes and the `PhotosTable` from `DynamoStack`, using the two-step cross-stack export removal (BackendStack `--exclusively` first). The prod table has a `RETAIN` policy, so it stays in AWS until deleted by hand.
+
+**Rationale**:
+- Every legacy original is already in the media bucket, so nothing has to be re-uploaded.
+- Reusing legacy ids keeps any shared links to gallery photos meaningful.
+- sharp runs fine locally on macOS, where no Docker is needed because it isn't Lambda.
+- The plan/run/verify/cleanup split lets the organizer check each environment before anything public is deleted.
+
+**Alternatives considered**:
+- *Re-upload the 43 photos through the new admin uploader*: simplest code, but manual, it loses the gallery order, and it needs the original files to be available locally. Rejected.
+- *Server-side migration Lambda*: needs sharp bundled for Lambda, which requires Docker. Rejected.
+- *Keep the legacy gallery alongside the library* (spec Q: rejected by organizer): two systems, and the full-resolution files stay public.
+
+**Watermark parity**: the sharp SVG uses the same text, angle, opacity and tile spacing as `generateWatermarked.ts`. If the Anton font isn't installed locally, it falls back to Impact or Arial Black. A slight font difference on the 43 migrated previews is acceptable.

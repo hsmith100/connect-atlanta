@@ -13,8 +13,19 @@ All routes are served by the new **StoreLambda** (`lambda/src/handlers/store.ts`
 
 ## Public routes
 
+### `GET /api/gallery`
+*Moved from PhotosLambda to StoreLambda (research R13); same response shape as today.* Photos with `inGallery && !removed`, in `gallerySortOrder`, from the sparse `byGallery` index.
+
+**200**
+```json
+{ "photos": [ { "id": "p1", "url": "https://media.../library/web/p1-171.jpg",
+                "thumbnailUrl": "https://media.../library/web-thumbs/p1-171.jpg",
+                "eventId": "e1", "sortOrder": 10, "visible": true } ] }
+```
+`url` is the clean ~2000px web version, never the original.
+
 ### `GET /api/store/collections`
-Published collections, newest event first (FR-009). Used by the Shop page's Event Photos section and by the Gallery lightbox to map `eventId` to a collection (FR-008b).
+Published collections, newest event first (FR-009). `photoCount` here is the collection's `forSaleCount`. Used by the Shop page's Event Photos section and by the Gallery lightbox to map `eventId` to a collection (FR-008b).
 
 **200**
 ```json
@@ -26,7 +37,7 @@ Published collections, newest event first (FR-009). Used by the Shop page's Even
 ```
 
 ### `GET /api/store/collections/{id}?cursor=<opaque>`
-One published collection page of 60 `forSale` photos in `sortOrder` (FR-010).
+One published collection page of 60 for-sale photos (`forSale && !removed`) in `sortOrder` (FR-010).
 
 **200**
 ```json
@@ -52,7 +63,7 @@ Server-authoritative pricing for the cart page (FR-032–FR-034).
   "subtotalCents": 4500, "discountPct": 15, "discountCents": 675, "totalCents": 3825,
   "nextTier": { "photosNeeded": 2, "pctOff": 25 } }
 ```
-`nextTier` is `null` when the highest tier already applies. Unavailable photos (removed, hidden or unpublished) are excluded from all totals.
+`nextTier` is `null` when the highest tier already applies. Unavailable photos (removed, not for sale, or in an unpublished collection) are excluded from all totals.
 
 ### `POST /api/store/checkout`
 Creates a pending order and a Stripe Checkout Session (FR-013, FR-015).
@@ -105,24 +116,27 @@ Handles `checkout.session.completed`: `fulfillOrder(client_reference_id)`, which
 
 ## Admin routes (`x-admin-key` required)
 
-### Collections
-| Method & path | Body | Response |
-|---|---|---|
-| `GET /api/admin/store/collections` | | `{ collections: StoreCollection[] }` (all statuses) |
-| `POST /api/admin/store/collections` | `{ eventId, defaultPriceCents, defaultPhotographerId? }` | `201 StoreCollection`; `409` if the event already has one |
-| `PATCH /api/admin/store/collections/{id}` | any of `{ title, defaultPriceCents, defaultPhotographerId, coverPhotoId, status }` | `200 StoreCollection`; `422 { error, problems: string[] }` when publish preconditions fail |
-| `DELETE /api/admin/store/collections/{id}` | | `204`; `409` if any photo in it has been sold |
+### Photo library: collections (one per event)
+Served by StoreLambda under `/api/admin/library/*` (research R13). These screens live in the admin **Photos** tab.
 
-### Photos
 | Method & path | Body | Response |
 |---|---|---|
-| `GET /api/admin/store/collections/{id}/photos` | | `{ photos: StorePhoto[] }` (all statuses; full list, no paging) |
-| `POST /api/admin/store/photos/presign` | `[{ id, filename, contentType, bytes }]` (≤ 50 per call) | `[{ id, originalUploadUrl, previewUploadUrl, thumbUploadUrl, previewUrl, thumbnailUrl, originalKey }]`, PUT URLs valid 15 min |
-| `POST /api/admin/store/photos` | `[{ id, collectionId, originalKey, originalFilename, originalBytes, width, height, contentHash, previewUrl, thumbnailUrl, photographerId, sortOrder }]` | `201 { created: n }`. Validates that the original object exists (`HeadObject`) before writing (FR-003a). |
-| `PATCH /api/admin/store/photos` | `[{ id, sortOrder?, status?, priceOverrideCents?, photographerId? }]` | `200 { updated: n }` |
-| `POST /api/admin/store/photos/{id}/replace` | `{ filename, contentType, bytes }` | Presigned URLs as above for the same `id` |
-| `PATCH /api/admin/store/photos/{id}/replace` | `{ previewUrl, thumbnailUrl, width, height, contentHash, originalFilename, originalBytes }` | `200 StorePhoto`; deletes old preview and thumbnail objects |
-| `DELETE /api/admin/store/photos` | `{ ids: string[] }` | `200 { deleted: n, skipped: [{ id, reason: "sold" }] }` |
+| `GET /api/admin/library/collections` | | `{ collections: PhotoCollection[] }` (all statuses) |
+| `POST /api/admin/library/collections` | `{ eventId, defaultPriceCents, defaultPhotographerId? }` | `201 PhotoCollection`; `409` if the event already has one |
+| `PATCH /api/admin/library/collections/{id}` | any of `{ title, defaultPriceCents, defaultPhotographerId, coverPhotoId, status }` | `200 PhotoCollection`; `422 { error, problems: string[] }` when store-publish preconditions fail |
+| `DELETE /api/admin/library/collections/{id}` | | `200 { deleted: true }`; `409` while the collection still has photos |
+
+### Photo library: photos
+| Method & path | Body | Response |
+|---|---|---|
+| `GET /api/admin/library/collections/{id}/photos` | | `{ photos: LibraryPhoto[] }` (including removed; full list, no paging) |
+| `GET /api/admin/library/gallery` | | `{ photos: LibraryPhoto[] }`: all photos currently in the Gallery, in gallery order, for the gallery-order view |
+| `POST /api/admin/library/photos/presign` | `[{ id, filename, contentType, bytes }]` (≤ 50 per call) | `[{ id, originalUploadUrl, webUploadUrl, webThumbUploadUrl, previewUploadUrl, thumbUploadUrl, webUrl, webThumbUrl, previewUrl, thumbnailUrl, originalKey }]`, PUT URLs valid 15 min |
+| `POST /api/admin/library/photos` | `[{ id, collectionId, originalKey, originalFilename, originalBytes, width, height, contentHash, webUrl, webThumbUrl, previewUrl, thumbnailUrl, photographerId, sortOrder, forSale, inGallery }]` | `201 { created: n }`. Validates that the original object exists (`HeadObject`) before writing (FR-003a). `photographerId` is required when `forSale` is true. New gallery photos go to the end of the gallery order. |
+| `PATCH /api/admin/library/photos` | `[{ id, sortOrder?, gallerySortOrder?, forSale?, inGallery?, removed?, priceOverrideCents?, photographerId? }]` | `200 { updated: n }`. Keeps `galleryKey`, `photoCount` and `forSaleCount` in sync; `400` if `forSale: true` on a photo with no photographer |
+| `POST /api/admin/library/photos/{id}/replace` | `{ filename, contentType, bytes }` | Presigned URLs as above for the same `id` |
+| `PATCH /api/admin/library/photos/{id}/replace` | `{ originalKey, webUrl, webThumbUrl, previewUrl, thumbnailUrl, width, height, contentHash, originalFilename, originalBytes }` | `200 LibraryPhoto`; deletes superseded public objects |
+| `DELETE /api/admin/library/photos` | `{ ids: string[] }` | `200 { deleted: n, skipped: [{ id, reason: "sold" }] }` |
 
 ### Photographers and earnings
 | Method & path | Body | Response |

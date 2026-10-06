@@ -5,13 +5,14 @@ import { PhotosTab } from '../components/admin/PhotosTab'
 import { EventsTab } from '../components/admin/EventsTab'
 import { SubmissionsTab } from '../components/admin/SubmissionsTab'
 import { HeroCardsTab } from '../components/admin/HeroCardsTab'
+import { StoreTab } from '../components/admin/store/StoreTab'
 import type { Photo } from '@shared/types/photos'
 import type { Event } from '@shared/types/events'
 import type { HeroCard } from '@shared/types/heroCards'
 
 const STORAGE_KEY = 'connect_admin_key'
 
-type Tab = 'photos' | 'events' | 'hero-cards' | 'submissions'
+type Tab = 'photos' | 'events' | 'hero-cards' | 'submissions' | 'store'
 
 export default function AdminPage() {
   const [adminKey, setAdminKey] = useState<string | null>(null)
@@ -70,6 +71,7 @@ export default function AdminPage() {
           { id: 'photos', label: 'Photos' },
           { id: 'events', label: 'Events' },
           { id: 'submissions', label: 'Submissions' },
+          { id: 'store', label: 'Store' },
         ] as { id: Tab; label: string }[]).map(({ id, label }) => (
           <button
             key={id}
@@ -103,6 +105,7 @@ export default function AdminPage() {
           emailSignups={emailSignups}
         />
       )}
+      {activeTab === 'store' && <StoreTab adminKey={adminKey} events={events} />}
     </div>
   )
 }
