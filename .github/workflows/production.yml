@@ -59,7 +59,7 @@ jobs:
       - run: npm run build --prefix frontend
         env:
           NEXT_PUBLIC_TURNSTILE_SITE_KEY: ${{ vars.TURNSTILE_SITE_KEY }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: frontend-out
           path: frontend/out/
