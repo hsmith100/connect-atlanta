@@ -45,7 +45,7 @@ jobs:
         env:
           # Cloudflare's published always-pass Turnstile test sitekey — not a secret.
           NEXT_PUBLIC_TURNSTILE_SITE_KEY: 1x00000000000000000000AA
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: frontend-out
           path: frontend/out/
