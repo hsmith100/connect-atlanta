@@ -174,7 +174,7 @@ exports[`matches snapshot 1`] = `
         <a
           aria-label="YouTube"
           class="btn btn-circle btn-outline btn-primary hover:btn-primary"
-          href="https://www.youtube.com/@Connect_Atlanta"
+          href="https://www.youtube.com/@BeatsOnTheBlockFest"
           rel="noopener noreferrer"
           target="_blank"
         >
