@@ -32,7 +32,7 @@ export const organizationSchema = {
   "sameAs": [
     "https://www.instagram.com/connect__atlanta",
     "https://www.facebook.com/profile.php?id=61573559046886",
-    "https://www.youtube.com/@Connect_Atlanta",
+    "https://www.youtube.com/@BeatsOnTheBlockFest",
     "https://www.tiktok.com/@connect__atlanta"
   ],
   "foundingDate": "2024",

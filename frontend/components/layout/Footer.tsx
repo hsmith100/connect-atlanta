@@ -39,7 +39,7 @@ export default function Footer() {
               </svg>
             </a>
             <a
-              href="https://www.youtube.com/@Connect_Atlanta"
+              href="https://www.youtube.com/@BeatsOnTheBlockFest"
               target="_blank"
               rel="noopener noreferrer"
               className="btn btn-circle btn-outline border-white hover:bg-white hover:text-brand-header text-white"
