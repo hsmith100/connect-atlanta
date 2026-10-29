@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
 import { Loader2, Calendar } from 'lucide-react'
 import type { HeroCard } from '@shared/types/heroCards'
@@ -55,11 +55,11 @@ export default function HeroSection({
   eventsLoading,
   onOpenModal,
 }: HeroSectionProps) {
-  const [activeEventId, setActiveEventId] = useState<string | null>(null)
-
-  useEffect(() => {
-    setActiveEventId(getDefaultActiveId(upcomingEvents))
-  }, [upcomingEvents])
+  // Only the user's explicit choice is state; otherwise fall back to the default event.
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
+  const activeEventId = selectedEventId && upcomingEvents.some(e => e.id === selectedEventId)
+    ? selectedEventId
+    : getDefaultActiveId(upcomingEvents)
 
   const activeEvent = upcomingEvents.find(e => e.id === activeEventId) ?? upcomingEvents[0]
 
@@ -78,7 +78,7 @@ export default function HeroSection({
           <EventTabBar
             events={upcomingEvents}
             activeEventId={activeEventId}
-            onSelect={setActiveEventId}
+            onSelect={setSelectedEventId}
           />
           {activeEvent && <UpcomingEventCard key={activeEvent.id} event={activeEvent} />}
           {heroCardsLoading ? (

@@ -33,6 +33,29 @@ describe('visibility', () => {
   });
 });
 
+// ── reset on open ─────────────────────────────────────────────────────────────
+
+describe('reset on open', () => {
+  it('clears what was typed when the modal is closed and reopened', async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(<ConnectModal isOpen={true} onClose={onClose} />);
+    await user.type(screen.getByLabelText(/name \*/i), 'Alice');
+    expect(screen.getByLabelText(/name \*/i)).toHaveValue('Alice');
+
+    rerender(<ConnectModal isOpen={false} onClose={onClose} />);
+    rerender(<ConnectModal isOpen={true} onClose={onClose} />);
+    expect(screen.getByLabelText(/name \*/i)).toHaveValue('');
+  });
+
+  it('keeps what was typed while the modal stays open', async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(<ConnectModal isOpen={true} onClose={onClose} />);
+    await user.type(screen.getByLabelText(/name \*/i), 'Alice');
+    rerender(<ConnectModal isOpen={true} onClose={onClose} />);
+    expect(screen.getByLabelText(/name \*/i)).toHaveValue('Alice');
+  });
+});
+
 // ── closing ───────────────────────────────────────────────────────────────────
 
 describe('closing', () => {

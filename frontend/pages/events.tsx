@@ -1,5 +1,4 @@
 import { useState, useEffect, useMemo } from 'react'
-import { useRouter } from 'next/router'
 import SEO from '../components/shared/SEO'
 import Header from '../components/layout/Header'
 import Footer from '../components/layout/Footer'
@@ -19,7 +18,6 @@ import EventTabBar from '../components/events/EventTabBar'
 type EventGalleryData = { photos: Photo[] };
 
 export default function Events() {
-    const router = useRouter()
     const [isModalOpen, setIsModalOpen] = useState(false)
     const [selectedEvent, setSelectedEvent] = useState<string | null>(null)
     const [galleryData, setGalleryData] = useState<EventGalleryData | null>(null)
@@ -41,30 +39,6 @@ export default function Events() {
             ...upcomingEvents.map(e => createEventSchema({ title: e.title, date: e.date, flyerUrl: e.flyerUrl, artists: e.artists, description: e.description ?? undefined })),
         ],
     }), [upcomingEvents])
-
-    // Load events on mount — split using time-aware logic
-    useEffect(() => {
-        async function loadEvents() {
-            try {
-                const events = await getEvents()
-                const now = new Date()
-                // Upcoming = not yet ended; past = end time has passed
-                const upcoming = events
-                    .filter(e => now < getEventDatetimes(e).end)
-                    .sort((a, b) => getEventDatetimes(a).start.getTime() - getEventDatetimes(b).start.getTime())
-                const past = events.filter(e => now >= getEventDatetimes(e).end)
-                setUpcomingEvents(upcoming)
-                setPastEvents(past)
-                setActiveEventId(getDefaultActiveId(upcoming))
-            } catch (err) {
-                console.error('Failed to load events:', err)
-                setError('Failed to load events. Please try again later.')
-            } finally {
-                setLoading(false)
-            }
-        }
-        loadEvents()
-    }, [])
 
     const handleEventClick = async (eventId: string) => {
         setSelectedEvent(eventId)
@@ -89,6 +63,34 @@ export default function Events() {
         }
     }
 
+    // Load events on mount — split using time-aware logic
+    useEffect(() => {
+        async function loadEvents() {
+            try {
+                const events = await getEvents()
+                const now = new Date()
+                // Upcoming = not yet ended; past = end time has passed
+                const upcoming = events
+                    .filter(e => now < getEventDatetimes(e).end)
+                    .sort((a, b) => getEventDatetimes(a).start.getTime() - getEventDatetimes(b).start.getTime())
+                const past = events.filter(e => now >= getEventDatetimes(e).end)
+                setUpcomingEvents(upcoming)
+                setPastEvents(past)
+                setActiveEventId(getDefaultActiveId(upcoming))
+
+                // Deep link: /events?eventId=<id> opens that past event's gallery
+                const linkedId = new URLSearchParams(window.location.search).get('eventId')
+                if (linkedId && past.some(e => e.id === linkedId)) void handleEventClick(linkedId)
+            } catch (err) {
+                console.error('Failed to load events:', err)
+                setError('Failed to load events. Please try again later.')
+            } finally {
+                setLoading(false)
+            }
+        }
+        loadEvents()
+    }, [])
+
     const handleCloseGallery = () => {
         setSelectedEvent(null)
         // Scroll back to past events section
@@ -100,13 +102,19 @@ export default function Events() {
     // Image modal handlers
     const openImageModal = (index: number) => {
         setSelectedImageIndex(index)
-        document.body.style.overflow = 'hidden' // Prevent background scroll
     }
 
     const closeImageModal = () => {
         setSelectedImageIndex(null)
-        document.body.style.overflow = 'unset'
     }
+
+    // Prevent background scroll while the image modal is open (also restored on unmount)
+    const imageModalOpen = selectedImageIndex !== null
+    useEffect(() => {
+        if (!imageModalOpen) return
+        document.body.style.overflow = 'hidden'
+        return () => { document.body.style.overflow = 'unset' }
+    }, [imageModalOpen])
 
     const nextImage = () => {
         if (galleryData && selectedImageIndex !== null) {
@@ -133,16 +141,6 @@ export default function Events() {
         window.addEventListener('keydown', handleKeyDown)
         return () => window.removeEventListener('keydown', handleKeyDown)
     }, [selectedImageIndex, galleryData])
-
-    // Check for eventId in URL query params and auto-select event
-    useEffect(() => {
-        if (router.isReady && router.query.eventId && pastEvents.length > 0) {
-            const eventId = router.query.eventId as string
-            if (pastEvents.find(e => e.id === eventId)) {
-                handleEventClick(eventId)
-            }
-        }
-    }, [router.isReady, router.query.eventId, pastEvents.length])
 
     return (
         <>

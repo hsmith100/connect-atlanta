@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { Calendar, Loader2 } from 'lucide-react'
 import type { Event } from '@shared/types/events'
 import { getDefaultActiveId } from '../../lib/formatters'
@@ -12,11 +12,11 @@ interface UpcomingEventsSectionProps {
 }
 
 export default function UpcomingEventsSection({ events, loading, onOpenModal }: UpcomingEventsSectionProps) {
-  const [activeEventId, setActiveEventId] = useState<string | null>(null)
-
-  useEffect(() => {
-    setActiveEventId(getDefaultActiveId(events))
-  }, [events])
+  // Only the user's explicit choice is state; otherwise fall back to the default event.
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null)
+  const activeEventId = selectedEventId && events.some(e => e.id === selectedEventId)
+    ? selectedEventId
+    : getDefaultActiveId(events)
 
   return (
     <section id="events" className="py-6 md:py-10 bg-brand-bg">
@@ -47,7 +47,7 @@ export default function UpcomingEventsSection({ events, loading, onOpenModal }: 
             <EventTabBar
               events={events}
               activeEventId={activeEventId}
-              onSelect={setActiveEventId}
+              onSelect={setSelectedEventId}
             />
             {(() => {
               const active = events.find(e => e.id === activeEventId) ?? events[0]

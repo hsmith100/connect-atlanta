@@ -12,16 +12,29 @@ interface ModalFormData {
   marketingConsent: boolean;
 }
 
+const EMPTY_FORM: ModalFormData = {
+  name: '',
+  email: '',
+  phone: '',
+  marketingConsent: false,
+}
+
 export default function ConnectModal({ isOpen, onClose }: ConnectModalProps) {
     const formRef = useRef<HTMLFormElement>(null)
-    const [formData, setFormData] = useState<ModalFormData>({
-        name: '',
-        email: '',
-        phone: '',
-        marketingConsent: false
-    })
+    const [formData, setFormData] = useState<ModalFormData>(EMPTY_FORM)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [submitStatus, setSubmitStatus] = useState<'success' | 'error' | null>(null)
+
+    // Reset the form each time the modal opens. Done during render by comparing with the
+    // previous value (React's recommended pattern), rather than setState inside an effect.
+    const [wasOpen, setWasOpen] = useState(isOpen)
+    if (isOpen !== wasOpen) {
+        setWasOpen(isOpen)
+        if (isOpen) {
+            setFormData(EMPTY_FORM)
+            setSubmitStatus(null)
+        }
+    }
 
     // Close modal on ESC key press
     useEffect(() => {
@@ -42,19 +55,6 @@ export default function ConnectModal({ isOpen, onClose }: ConnectModalProps) {
             document.body.style.overflow = 'unset'
         }
     }, [isOpen, onClose])
-
-    // Reset form when modal opens
-    useEffect(() => {
-        if (isOpen) {
-            setFormData({
-                name: '',
-                email: '',
-                phone: '',
-                marketingConsent: false
-            })
-            setSubmitStatus(null)
-        }
-    }, [isOpen])
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = e.target
