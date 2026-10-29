@@ -17,8 +17,8 @@ export class DynamoStack extends cdk.Stack {
   public readonly sponsorInquiriesTable: dynamodb.Table;
   public readonly photosTable: dynamodb.Table;
   public readonly heroCardsTable: dynamodb.Table;
-  public readonly storeCollectionsTable: dynamodb.Table;
-  public readonly storePhotosTable: dynamodb.Table;
+  public readonly photoCollectionsTable: dynamodb.Table;
+  public readonly photoLibraryTable: dynamodb.Table;
   public readonly storePhotographersTable: dynamodb.Table;
   public readonly storeOrdersTable: dynamodb.Table;
 
@@ -108,33 +108,40 @@ export class DynamoStack extends cdk.Stack {
       sortKey: { name: 'sortOrder', type: dynamodb.AttributeType.NUMBER },
     });
 
-    // ── Photo store ─────────────────────────────────────────────────────────
-    // Collections — one per event; also holds the SETTINGS item (no entity, so not in the GSI)
+    // ── Photo library (shared by the Gallery and the photo store) ───────────
+    // Collections — one per event; also holds the store SETTINGS item (no entity, so not in the GSI)
     // GSI byEventDate: lists collections newest event first
-    this.storeCollectionsTable = new dynamodb.Table(this, 'StoreCollectionsTable', {
-      tableName: `connect-${p}store-collections`,
+    this.photoCollectionsTable = new dynamodb.Table(this, 'PhotoCollectionsTable', {
+      tableName: `connect-${p}photo-collections`,
       partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
       removalPolicy,
     });
-    this.storeCollectionsTable.addGlobalSecondaryIndex({
+    this.photoCollectionsTable.addGlobalSecondaryIndex({
       indexName: 'byEventDate',
       partitionKey: { name: 'entity', type: dynamodb.AttributeType.STRING },
       sortKey: { name: 'eventDate', type: dynamodb.AttributeType.STRING },
     });
 
-    // Store photos — each links a private original to its public watermarked preview
-    // GSI byCollection: lists a collection's photos in display order
-    this.storePhotosTable = new dynamodb.Table(this, 'StorePhotosTable', {
-      tableName: `connect-${p}store-photos`,
+    // Library photos — each links a private original to its public web (gallery) and
+    // watermarked (store) versions, with inGallery / forSale switches.
+    // GSI byCollection: a collection's photos in display order
+    // GSI byGallery (sparse): galleryKey is set only while a photo is in the Gallery
+    this.photoLibraryTable = new dynamodb.Table(this, 'PhotoLibraryTable', {
+      tableName: `connect-${p}photo-library`,
       partitionKey: { name: 'id', type: dynamodb.AttributeType.STRING },
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
       removalPolicy,
     });
-    this.storePhotosTable.addGlobalSecondaryIndex({
+    this.photoLibraryTable.addGlobalSecondaryIndex({
       indexName: 'byCollection',
       partitionKey: { name: 'collectionId', type: dynamodb.AttributeType.STRING },
       sortKey: { name: 'sortOrder', type: dynamodb.AttributeType.NUMBER },
+    });
+    this.photoLibraryTable.addGlobalSecondaryIndex({
+      indexName: 'byGallery',
+      partitionKey: { name: 'galleryKey', type: dynamodb.AttributeType.STRING },
+      sortKey: { name: 'gallerySortOrder', type: dynamodb.AttributeType.NUMBER },
     });
 
     // Photographers — small table, listed with Scan
@@ -173,8 +180,8 @@ export class DynamoStack extends cdk.Stack {
     new cdk.CfnOutput(this, 'SponsorInquiriesTableName', { value: this.sponsorInquiriesTable.tableName });
     new cdk.CfnOutput(this, 'PhotosTableName', { value: this.photosTable.tableName });
     new cdk.CfnOutput(this, 'HeroCardsTableName', { value: this.heroCardsTable.tableName });
-    new cdk.CfnOutput(this, 'StoreCollectionsTableName', { value: this.storeCollectionsTable.tableName });
-    new cdk.CfnOutput(this, 'StorePhotosTableName', { value: this.storePhotosTable.tableName });
+    new cdk.CfnOutput(this, 'PhotoCollectionsTableName', { value: this.photoCollectionsTable.tableName });
+    new cdk.CfnOutput(this, 'PhotoLibraryTableName', { value: this.photoLibraryTable.tableName });
     new cdk.CfnOutput(this, 'StorePhotographersTableName', { value: this.storePhotographersTable.tableName });
     new cdk.CfnOutput(this, 'StoreOrdersTableName', { value: this.storeOrdersTable.tableName });
   }

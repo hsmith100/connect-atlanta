@@ -1,17 +1,17 @@
 import React from 'react'
 import { render, screen, fireEvent, waitFor, within } from '@testing-library/react'
-import type { Photographer, StoreCollection, StorePhoto } from '@shared/types/store'
+import type { Photographer, PhotoCollection, LibraryPhoto } from '@shared/types/store'
 import { CollectionDetail, dollarsToCents } from './CollectionDetail'
 import {
-  getCollectionPhotos, updateStoreCollection, updateStorePhotos, deleteStorePhotos,
-} from '../../../lib/api/adminStore'
+  getCollectionPhotos, updatePhotoCollection, updateLibraryPhotos, deleteLibraryPhotos,
+} from '../../../lib/api/adminLibrary'
 import { ApiError } from '../../../lib/api/client'
-import { replaceStorePhoto } from '../../../lib/store/uploadStorePhoto'
+import { replaceLibraryPhoto } from '../../../lib/library/uploadLibraryPhoto'
 
-jest.mock('../../../lib/api/adminStore')
-jest.mock('../../../lib/store/uploadStorePhoto')
-jest.mock('./StoreUploader', () => ({
-  StoreUploader: ({ onUploaded }: { onUploaded: () => void }) => <button onClick={onUploaded}>mock-upload-done</button>,
+jest.mock('../../../lib/api/adminLibrary')
+jest.mock('../../../lib/library/uploadLibraryPhoto')
+jest.mock('./PhotoUploader', () => ({
+  PhotoUploader: ({ onUploaded }: { onUploaded: () => void }) => <button onClick={onUploaded}>mock-upload-done</button>,
 }))
 
 const jay: Photographer = {
@@ -19,15 +19,16 @@ const jay: Photographer = {
   stripeAccountId: null, payoutsReady: false, owedCents: 0, createdAt: '', updatedAt: '',
 }
 const maria: Photographer = { ...jay, id: 'ph2', name: 'Maria' }
-const collection: StoreCollection = {
+const collection: PhotoCollection = {
   id: 'c1', entity: 'COLLECTION', eventId: 'e1', title: 'Aug 2026', eventDate: '2026-08-15', status: 'draft',
-  defaultPriceCents: 1500, defaultPhotographerId: 'ph1', coverPhotoId: null, photoCount: 2, createdAt: '', updatedAt: '',
+  defaultPriceCents: 1500, defaultPhotographerId: 'ph1', coverPhotoId: null, photoCount: 2, forSaleCount: 2, createdAt: '', updatedAt: '',
 }
-function photo(id: string, sortOrder: number, extra: Partial<StorePhoto> = {}): StorePhoto {
+function photo(id: string, sortOrder: number, extra: Partial<LibraryPhoto> = {}): LibraryPhoto {
   return {
     id, collectionId: 'c1', sortOrder, originalKey: `originals/${id}.jpg`, originalFilename: `${id}.jpg`,
-    originalBytes: 1, width: 1, height: 1, contentHash: `h-${id}`, previewUrl: '', thumbnailUrl: `https://m/${id}.jpg`,
-    photographerId: 'ph1', priceOverrideCents: null, status: 'forSale', createdAt: '', updatedAt: '', ...extra,
+    originalBytes: 1, width: 1, height: 1, contentHash: `h-${id}`, webUrl: '', webThumbUrl: '', previewUrl: '', thumbnailUrl: `https://m/${id}.jpg`,
+    photographerId: 'ph1', priceOverrideCents: null, forSale: true, inGallery: false, removed: false, gallerySortOrder: 0,
+    createdAt: '', updatedAt: '', ...extra,
   }
 }
 
@@ -44,7 +45,7 @@ function setup(photos = [photo('a', 10), photo('b', 20)], col = collection) {
 
 beforeEach(() => {
   jest.resetAllMocks()
-  jest.mocked(updateStorePhotos).mockResolvedValue()
+  jest.mocked(updateLibraryPhotos).mockResolvedValue()
 })
 
 describe('dollarsToCents', () => {
@@ -67,35 +68,35 @@ it('shows an empty state', async () => {
 })
 
 it('does not show removed photos', async () => {
-  setup([photo('a', 10), photo('gone', 20, { status: 'removed' })])
+  setup([photo('a', 10), photo('gone', 20, { removed: true })])
   await screen.findByText('a.jpg')
   expect(screen.queryByText('gone.jpg')).not.toBeInTheDocument()
 })
 
 it('lists publish problems from a 422', async () => {
-  jest.mocked(updateStoreCollection).mockRejectedValue(new ApiError('Not ready', 422, { problems: ['Add at least one photo for sale'] }))
+  jest.mocked(updatePhotoCollection).mockRejectedValue(new ApiError('Not ready', 422, { problems: ['Add at least one photo for sale'] }))
   setup()
   await screen.findByText('a.jpg')
-  fireEvent.click(screen.getByRole('button', { name: 'Publish' }))
+  fireEvent.click(screen.getByRole('button', { name: 'Publish store listing' }))
   expect(await screen.findByText('Add at least one photo for sale')).toBeInTheDocument()
 })
 
 it('publishes and reports success', async () => {
-  jest.mocked(updateStoreCollection).mockResolvedValue({ ...collection, status: 'published' })
+  jest.mocked(updatePhotoCollection).mockResolvedValue({ ...collection, status: 'published' })
   const { onChange } = setup()
   await screen.findByText('a.jpg')
-  fireEvent.click(screen.getByRole('button', { name: 'Publish' }))
+  fireEvent.click(screen.getByRole('button', { name: 'Publish store listing' }))
   await waitFor(() => expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ status: 'published' })))
-  expect(updateStoreCollection).toHaveBeenCalledWith('k', 'c1', { status: 'published' })
+  expect(updatePhotoCollection).toHaveBeenCalledWith('k', 'c1', { status: 'published' })
 })
 
 it('saves settings with the price converted to cents', async () => {
-  jest.mocked(updateStoreCollection).mockResolvedValue(collection)
+  jest.mocked(updatePhotoCollection).mockResolvedValue(collection)
   setup()
   await screen.findByText('a.jpg')
   fireEvent.change(screen.getByLabelText('Default price ($)'), { target: { value: '12.5' } })
   fireEvent.click(screen.getByRole('button', { name: 'Save settings' }))
-  await waitFor(() => expect(updateStoreCollection).toHaveBeenCalledWith('k', 'c1', {
+  await waitFor(() => expect(updatePhotoCollection).toHaveBeenCalledWith('k', 'c1', {
     title: 'Aug 2026', defaultPriceCents: 1250, defaultPhotographerId: 'ph1',
   }))
 })
@@ -106,7 +107,7 @@ it('rejects a default price under $0.50 without calling the API', async () => {
   fireEvent.change(screen.getByLabelText('Default price ($)'), { target: { value: '0.10' } })
   fireEvent.click(screen.getByRole('button', { name: 'Save settings' }))
   expect(screen.getByRole('alert')).toHaveTextContent('at least $0.50')
-  expect(updateStoreCollection).not.toHaveBeenCalled()
+  expect(updatePhotoCollection).not.toHaveBeenCalled()
 })
 
 it('applies a price override to the selected photos', async () => {
@@ -115,17 +116,44 @@ it('applies a price override to the selected photos', async () => {
   fireEvent.click(screen.getByLabelText('Select a.jpg'))
   fireEvent.change(screen.getByLabelText('Price override ($)'), { target: { value: '20' } })
   fireEvent.click(screen.getByRole('button', { name: 'Set price' }))
-  await waitFor(() => expect(updateStorePhotos).toHaveBeenCalledWith('k', [{ id: 'a', priceOverrideCents: 2000 }]))
+  await waitFor(() => expect(updateLibraryPhotos).toHaveBeenCalledWith('k', [{ id: 'a', priceOverrideCents: 2000 }]))
 })
 
-it('hides selected photos and refreshes the collection count', async () => {
+it('takes selected photos off sale and refreshes the collection counts', async () => {
   const { onRefresh } = setup()
   await screen.findByText('a.jpg')
   fireEvent.click(screen.getByLabelText('Select a.jpg'))
   fireEvent.click(screen.getByLabelText('Select b.jpg'))
-  fireEvent.click(screen.getByRole('button', { name: 'Hide' }))
-  await waitFor(() => expect(updateStorePhotos).toHaveBeenCalledWith('k', [{ id: 'a', status: 'hidden' }, { id: 'b', status: 'hidden' }]))
+  fireEvent.click(screen.getByRole('button', { name: 'Take off sale' }))
+  await waitFor(() => expect(updateLibraryPhotos).toHaveBeenCalledWith('k', [{ id: 'a', forSale: false }, { id: 'b', forSale: false }]))
   expect(onRefresh).toHaveBeenCalled()
+})
+
+it('adds selected photos to the gallery and shows the badge', async () => {
+  const { onRefresh } = setup()
+  await screen.findByText('a.jpg')
+  fireEvent.click(screen.getByLabelText('Select a.jpg'))
+  fireEvent.click(screen.getByRole('button', { name: 'Show in gallery' }))
+  await waitFor(() => expect(updateLibraryPhotos).toHaveBeenCalledWith('k', [{ id: 'a', inGallery: true }]))
+  expect(await screen.findByText('In gallery')).toBeInTheDocument()
+  expect(onRefresh).not.toHaveBeenCalled()
+})
+
+it('shows the API reason when putting a photo without a photographer on sale', async () => {
+  jest.mocked(updateLibraryPhotos).mockRejectedValue(new Error('Assign a photographer to a.jpg before putting it on sale'))
+  setup([photo('a', 10, { forSale: false, photographerId: null })])
+  await screen.findByText('a.jpg')
+  fireEvent.click(screen.getByLabelText('Select a.jpg'))
+  fireEvent.click(screen.getByRole('button', { name: 'Put on sale' }))
+  expect(await screen.findByRole('alert')).toHaveTextContent('Assign a photographer to a.jpg')
+})
+
+it('shows badges and dims photos that are neither for sale nor in the gallery', async () => {
+  setup([photo('a', 10, { inGallery: true }), photo('b', 20, { forSale: false })])
+  await screen.findByText('a.jpg')
+  expect(screen.getByText('In gallery')).toBeInTheDocument()
+  expect(screen.getAllByText('For sale')).toHaveLength(1)
+  expect(screen.getByAltText('b.jpg')).toHaveClass('opacity-40')
 })
 
 it('assigns a photographer to selected photos', async () => {
@@ -134,11 +162,11 @@ it('assigns a photographer to selected photos', async () => {
   fireEvent.click(screen.getByLabelText('Select a.jpg'))
   fireEvent.change(screen.getByLabelText('Assign photographer'), { target: { value: 'ph2' } })
   fireEvent.click(screen.getByRole('button', { name: 'Assign' }))
-  await waitFor(() => expect(updateStorePhotos).toHaveBeenCalledWith('k', [{ id: 'a', photographerId: 'ph2' }]))
+  await waitFor(() => expect(updateLibraryPhotos).toHaveBeenCalledWith('k', [{ id: 'a', photographerId: 'ph2' }]))
 })
 
 it('sets a single selected photo as cover', async () => {
-  jest.mocked(updateStoreCollection).mockResolvedValue({ ...collection, coverPhotoId: 'b' })
+  jest.mocked(updatePhotoCollection).mockResolvedValue({ ...collection, coverPhotoId: 'b' })
   const { onChange } = setup()
   await screen.findByText('a.jpg')
   fireEvent.click(screen.getByLabelText('Select b.jpg'))
@@ -148,12 +176,12 @@ it('sets a single selected photo as cover', async () => {
 
 it('deletes selected photos after confirmation', async () => {
   jest.spyOn(window, 'confirm').mockReturnValue(true)
-  jest.mocked(deleteStorePhotos).mockResolvedValue({ deleted: 1, skipped: [] })
+  jest.mocked(deleteLibraryPhotos).mockResolvedValue({ deleted: 1, skipped: [] })
   const { onRefresh } = setup()
   await screen.findByText('a.jpg')
   fireEvent.click(screen.getByLabelText('Select a.jpg'))
   fireEvent.click(screen.getByRole('button', { name: 'Delete' }))
-  await waitFor(() => expect(deleteStorePhotos).toHaveBeenCalledWith('k', ['a']))
+  await waitFor(() => expect(deleteLibraryPhotos).toHaveBeenCalledWith('k', ['a']))
   expect(onRefresh).toHaveBeenCalled()
 })
 
@@ -161,18 +189,18 @@ it('swaps sort order when moving a photo later', async () => {
   setup()
   await screen.findByText('a.jpg')
   fireEvent.click(screen.getByLabelText('Move a.jpg later'))
-  await waitFor(() => expect(updateStorePhotos).toHaveBeenCalledWith('k', [{ id: 'a', sortOrder: 20 }, { id: 'b', sortOrder: 10 }]))
+  await waitFor(() => expect(updateLibraryPhotos).toHaveBeenCalledWith('k', [{ id: 'a', sortOrder: 20 }, { id: 'b', sortOrder: 10 }]))
 })
 
 it('replaces a photo file', async () => {
-  jest.mocked(replaceStorePhoto).mockResolvedValue(photo('a', 10, { originalFilename: 'new.jpg' }))
+  jest.mocked(replaceLibraryPhoto).mockResolvedValue(photo('a', 10, { originalFilename: 'new.jpg' }))
   setup()
   await screen.findByText('a.jpg')
   fireEvent.click(screen.getAllByRole('button', { name: 'Replace file' })[0])
   const file = new File(['x'], 'new.jpg', { type: 'image/jpeg' })
   fireEvent.change(screen.getByLabelText('Replacement file'), { target: { files: [file] } })
   expect(await screen.findByText('new.jpg')).toBeInTheDocument()
-  expect(replaceStorePhoto).toHaveBeenCalledWith(file, 'a', 'k')
+  expect(replaceLibraryPhoto).toHaveBeenCalledWith(file, 'a', 'k')
 })
 
 it('reloads photos and refreshes after an upload', async () => {

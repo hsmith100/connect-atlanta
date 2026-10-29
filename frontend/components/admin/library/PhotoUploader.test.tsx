@@ -1,12 +1,12 @@
 import React from 'react'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
-import type { Photographer, StoreCollection } from '@shared/types/store'
-import { StoreUploader } from './StoreUploader'
-import { hashFile } from '../../../lib/store/hashFile'
-import { uploadStorePhoto } from '../../../lib/store/uploadStorePhoto'
+import type { Photographer, PhotoCollection } from '@shared/types/store'
+import { PhotoUploader } from './PhotoUploader'
+import { hashFile } from '../../../lib/library/hashFile'
+import { uploadLibraryPhoto } from '../../../lib/library/uploadLibraryPhoto'
 
-jest.mock('../../../lib/store/hashFile')
-jest.mock('../../../lib/store/uploadStorePhoto')
+jest.mock('../../../lib/library/hashFile')
+jest.mock('../../../lib/library/uploadLibraryPhoto')
 
 const jay: Photographer = {
   id: 'ph1', name: 'Jay', email: 'j@x.com', commissionPct: 40, active: true,
@@ -14,7 +14,7 @@ const jay: Photographer = {
 }
 const collection = {
   id: 'c1', defaultPhotographerId: 'ph1', defaultPriceCents: 1500,
-} as StoreCollection
+} as PhotoCollection
 
 function jpg(name: string) {
   return new File([name], name, { type: 'image/jpeg' })
@@ -23,7 +23,7 @@ function jpg(name: string) {
 function setup(existingHashes: string[] = []) {
   const onUploaded = jest.fn()
   render(
-    <StoreUploader
+    <PhotoUploader
       adminKey="k"
       collection={collection}
       photographers={[jay, { ...jay, id: 'ph2', name: 'Gone', active: false }]}
@@ -39,7 +39,7 @@ function setup(existingHashes: string[] = []) {
 beforeEach(() => {
   jest.resetAllMocks()
   jest.mocked(hashFile).mockImplementation(async (f) => `hash-${(f as File).name}`)
-  jest.mocked(uploadStorePhoto).mockResolvedValue()
+  jest.mocked(uploadLibraryPhoto).mockResolvedValue()
 })
 
 it('defaults to the collection photographer and only lists active photographers', () => {
@@ -55,9 +55,9 @@ it('uploads each file with increasing sort order and reports progress', async ()
 
   await waitFor(() => expect(screen.getByText(/2 \/ 2 uploaded/)).toBeInTheDocument())
   expect(screen.getAllByText('Done')).toHaveLength(2)
-  const orders = jest.mocked(uploadStorePhoto).mock.calls.map((c) => c[2].sortOrder).sort()
+  const orders = jest.mocked(uploadLibraryPhoto).mock.calls.map((c) => c[2].sortOrder).sort()
   expect(orders).toEqual([110, 120])
-  expect(jest.mocked(uploadStorePhoto).mock.calls[0][2]).toMatchObject({ adminKey: 'k', collectionId: 'c1', photographerId: 'ph1' })
+  expect(jest.mocked(uploadLibraryPhoto).mock.calls[0][2]).toMatchObject({ adminKey: 'k', collectionId: 'c1', photographerId: 'ph1', forSale: true, inGallery: false })
   expect(onUploaded).toHaveBeenCalledTimes(1)
 })
 
@@ -66,11 +66,11 @@ it('flags duplicates of existing photos and lets the admin upload anyway', async
   choose([jpg('a.jpg')])
 
   expect(await screen.findByText('Duplicate')).toBeInTheDocument()
-  expect(uploadStorePhoto).not.toHaveBeenCalled()
+  expect(uploadLibraryPhoto).not.toHaveBeenCalled()
 
   fireEvent.click(screen.getByRole('button', { name: 'Upload anyway' }))
   await waitFor(() => expect(screen.getByText('Done')).toBeInTheDocument())
-  expect(uploadStorePhoto).toHaveBeenCalledTimes(1)
+  expect(uploadLibraryPhoto).toHaveBeenCalledTimes(1)
 })
 
 it('flags duplicates within the same batch', async () => {
@@ -78,11 +78,11 @@ it('flags duplicates within the same batch', async () => {
   const { choose } = setup()
   choose([jpg('a.jpg'), jpg('a-copy.jpg')])
   await waitFor(() => expect(screen.getByText('Duplicate')).toBeInTheDocument())
-  expect(uploadStorePhoto).toHaveBeenCalledTimes(1)
+  expect(uploadLibraryPhoto).toHaveBeenCalledTimes(1)
 })
 
 it('shows the failure reason and retries just that file', async () => {
-  jest.mocked(uploadStorePhoto).mockRejectedValueOnce(new Error('This file could not be read as an image'))
+  jest.mocked(uploadLibraryPhoto).mockRejectedValueOnce(new Error('This file could not be read as an image'))
   const { choose, onUploaded } = setup()
   choose([jpg('bad.jpg')])
 
@@ -105,7 +105,7 @@ it('ignores files that are not JPEG or PNG', async () => {
 
 it('requires a photographer before accepting files', () => {
   render(
-    <StoreUploader
+    <PhotoUploader
       adminKey="k"
       collection={{ ...collection, defaultPhotographerId: null }}
       photographers={[jay]}
@@ -115,5 +115,30 @@ it('requires a photographer before accepting files', () => {
     />,
   )
   expect(screen.getByText('Choose a photographer first')).toBeInTheDocument()
+  expect(screen.getByLabelText('Choose photos to upload')).toBeDisabled()
+})
+
+it('allows gallery-only uploads without a photographer', async () => {
+  render(
+    <PhotoUploader
+      adminKey="k"
+      collection={{ ...collection, defaultPhotographerId: null }}
+      photographers={[jay]}
+      existingHashes={new Set()}
+      nextSortOrder={0}
+      onUploaded={jest.fn()}
+    />,
+  )
+  fireEvent.click(screen.getByLabelText('For sale'))
+  fireEvent.click(screen.getByLabelText('Show in gallery'))
+  fireEvent.change(screen.getByLabelText('Choose photos to upload'), { target: { files: [jpg('g.jpg')] } })
+  await waitFor(() => expect(screen.getByText('Done')).toBeInTheDocument())
+  expect(jest.mocked(uploadLibraryPhoto).mock.calls[0][2]).toMatchObject({ photographerId: null, forSale: false, inGallery: true })
+})
+
+it('requires at least one destination', () => {
+  setup()
+  fireEvent.click(screen.getByLabelText('For sale'))
+  expect(screen.getByText('Choose at least one: for sale or show in gallery')).toBeInTheDocument()
   expect(screen.getByLabelText('Choose photos to upload')).toBeDisabled()
 })

@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react'
 import { Upload, Loader2, RotateCcw } from 'lucide-react'
-import type { Photographer, StoreCollection } from '@shared/types/store'
-import { hashFile } from '../../../lib/store/hashFile'
-import { uploadStorePhoto } from '../../../lib/store/uploadStorePhoto'
+import type { Photographer, PhotoCollection } from '@shared/types/store'
+import { hashFile } from '../../../lib/library/hashFile'
+import { uploadLibraryPhoto } from '../../../lib/library/uploadLibraryPhoto'
 
 const CONCURRENCY = 3
 const SORT_STEP = 10
@@ -18,7 +18,7 @@ interface Row {
 
 interface Props {
   adminKey: string
-  collection: StoreCollection
+  collection: PhotoCollection
   photographers: Photographer[]
   existingHashes: Set<string>
   nextSortOrder: number
@@ -41,13 +41,15 @@ const STATUS_CLASS: Record<RowStatus, string> = {
   duplicate: 'text-yellow-400',
 }
 
-export function StoreUploader({ adminKey, collection, photographers, existingHashes, nextSortOrder, onUploaded }: Props) {
+export function PhotoUploader({ adminKey, collection, photographers, existingHashes, nextSortOrder, onUploaded }: Props) {
   const active = photographers.filter((p) => p.active)
   const [photographerId, setPhotographerId] = useState(
     collection.defaultPhotographerId && active.some((p) => p.id === collection.defaultPhotographerId)
       ? collection.defaultPhotographerId
       : '',
   )
+  const [forSale, setForSale] = useState(true)
+  const [inGallery, setInGallery] = useState(false)
   const [rows, setRows] = useState<Row[]>([])
   const [running, setRunning] = useState(false)
   const [dragOver, setDragOver] = useState(false)
@@ -73,8 +75,8 @@ export function StoreUploader({ adminKey, collection, photographers, existingHas
       }
       inFlightHashes.current.add(hash)
       sortRef.current += SORT_STEP
-      await uploadStorePhoto(row.file, hash, {
-        adminKey, collectionId: collection.id, photographerId, sortOrder: sortRef.current,
+      await uploadLibraryPhoto(row.file, hash, {
+        adminKey, collectionId: collection.id, photographerId: photographerId || null, sortOrder: sortRef.current, forSale, inGallery,
       })
       seenHashes.current.add(hash)
       update(row.key, { status: 'done' })
@@ -104,27 +106,43 @@ export function StoreUploader({ adminKey, collection, photographers, existingHas
 
   function addFiles(list: FileList | null) {
     const files = Array.from(list ?? []).filter((f) => f.type === 'image/jpeg' || f.type === 'image/png' || /\.(jpe?g|png)$/i.test(f.name))
-    if (files.length === 0 || !photographerId) return
+    if (files.length === 0 || !ready) return
     const newRows = files.map((file) => ({ key: ++keyRef.current, file, status: 'queued' as RowStatus }))
     setRows((prev) => [...prev, ...newRows])
     void run(newRows)
     if (inputRef.current) inputRef.current.value = ''
   }
 
+  // A photographer is only required for photos that go on sale (they're paid a share).
+  const ready = (forSale || inGallery) && (!forSale || !!photographerId)
+  const blocker = !forSale && !inGallery
+    ? 'Choose at least one: for sale or show in gallery'
+    : 'Choose a photographer first'
   const done = rows.filter((r) => r.status === 'done').length
   const finished = rows.filter((r) => r.status === 'done' || r.status === 'failed' || r.status === 'duplicate').length
 
   return (
     <div className="space-y-4">
+      <div className="flex flex-wrap gap-4 text-sm text-gray-200">
+        <label className="flex items-center gap-2">
+          <input type="checkbox" checked={forSale} onChange={(e) => setForSale(e.target.checked)} disabled={running} />
+          For sale
+        </label>
+        <label className="flex items-center gap-2">
+          <input type="checkbox" checked={inGallery} onChange={(e) => setInGallery(e.target.checked)} disabled={running} />
+          Show in gallery
+        </label>
+      </div>
+
       <label className="block text-xs text-gray-400 space-y-1 max-w-xs">
-        <span>Photographer for this batch</span>
+        <span>Photographer for this batch{forSale ? '' : ' (optional)'}</span>
         <select
           value={photographerId}
           onChange={(e) => setPhotographerId(e.target.value)}
           disabled={running}
           className="bg-gray-800 text-white rounded-lg px-3 py-1.5 text-sm border border-gray-700 w-full"
         >
-          <option value="">Choose a photographer…</option>
+          <option value="">{forSale ? 'Choose a photographer…' : 'None'}</option>
           {active.map((p) => <option key={p.id} value={p.id}>{p.name} ({p.commissionPct}%)</option>)}
         </select>
       </label>
@@ -135,13 +153,13 @@ export function StoreUploader({ adminKey, collection, photographers, existingHas
         onDrop={(e) => { e.preventDefault(); setDragOver(false); addFiles(e.dataTransfer.files) }}
         className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors ${
           dragOver ? 'border-brand-pink bg-gray-900' : 'border-gray-700'
-        } ${photographerId ? '' : 'opacity-50'}`}
+        } ${ready ? '' : 'opacity-50'}`}
       >
         <Upload className="mx-auto mb-2 text-gray-400" size={28} />
         <p className="text-sm text-gray-300 mb-3">
-          {photographerId ? 'Drag full-quality JPEG or PNG photos here' : 'Choose a photographer first'}
+          {ready ? 'Drag full-quality JPEG or PNG photos here' : blocker}
         </p>
-        <label className={`inline-flex items-center gap-2 bg-brand-primary text-white rounded-lg px-4 py-1.5 text-sm font-semibold ${photographerId ? 'cursor-pointer hover:bg-brand-primary/90' : 'pointer-events-none'}`}>
+        <label className={`inline-flex items-center gap-2 bg-brand-primary text-white rounded-lg px-4 py-1.5 text-sm font-semibold ${ready ? 'cursor-pointer hover:bg-brand-primary/90' : 'pointer-events-none'}`}>
           Choose files
           <input
             ref={inputRef}
@@ -149,12 +167,12 @@ export function StoreUploader({ adminKey, collection, photographers, existingHas
             multiple
             accept="image/jpeg,image/png"
             className="hidden"
-            disabled={!photographerId}
+            disabled={!ready}
             onChange={(e) => addFiles(e.target.files)}
             aria-label="Choose photos to upload"
           />
         </label>
-        <p className="text-xs text-gray-500 mt-3">Watermarked previews are created automatically. Originals stay private.</p>
+        <p className="text-xs text-gray-500 mt-3">Gallery and watermarked store versions are created automatically. Originals stay private.</p>
       </div>
 
       {rows.length > 0 && (

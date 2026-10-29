@@ -1,11 +1,13 @@
-// Photo store types — see specs/009-photo-store/data-model.md and contracts/store-api.md.
+// Photo library + photo store types — see specs/009-photo-store/data-model.md and contracts/store-api.md.
+// The library (collections + photos) is shared by the public Gallery and the store.
 // All money values are integer cents (USD). All timestamps are ISO-8601 strings.
 
 // ── Stored entities ───────────────────────────────────────────────────────────
 
 export type CollectionStatus = 'draft' | 'published';
 
-export interface StoreCollection {
+// One per event. `status` controls only the collection's store listing.
+export interface PhotoCollection {
   id: string;
   entity: 'COLLECTION';
   eventId: string;
@@ -15,7 +17,10 @@ export interface StoreCollection {
   defaultPriceCents: number;
   defaultPhotographerId: string | null;
   coverPhotoId: string | null;
+  // Photos not removed
   photoCount: number;
+  // Photos with forSale && !removed
+  forSaleCount: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -29,9 +34,7 @@ export interface StoreSettings {
   discountTiers: DiscountTier[];
 }
 
-export type StorePhotoStatus = 'forSale' | 'hidden' | 'removed';
-
-export interface StorePhoto {
+export interface LibraryPhoto {
   id: string;
   collectionId: string;
   sortOrder: number;
@@ -41,11 +44,20 @@ export interface StorePhoto {
   width: number;
   height: number;
   contentHash: string;
+  // Clean (unwatermarked) versions for the Gallery
+  webUrl: string;
+  webThumbUrl: string;
+  // Watermarked versions for the store
   previewUrl: string;
   thumbnailUrl: string;
-  photographerId: string;
+  // Required before the photo can be put on sale
+  photographerId: string | null;
   priceOverrideCents: number | null;
-  status: StorePhotoStatus;
+  forSale: boolean;
+  inGallery: boolean;
+  // Takedown: hidden from both the Gallery and the store; kept for past buyers
+  removed: boolean;
+  gallerySortOrder: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -232,24 +244,28 @@ export interface PublishProblemsResponse {
   problems: string[];
 }
 
-export interface StorePresignRequest {
+export interface LibraryPresignRequest {
   id: string;
   filename: string;
   contentType: string;
   bytes: number;
 }
 
-export interface StorePresignResponse {
+export interface LibraryPresignResponse {
   id: string;
   originalUploadUrl: string;
+  webUploadUrl: string;
+  webThumbUploadUrl: string;
   previewUploadUrl: string;
   thumbUploadUrl: string;
+  webUrl: string;
+  webThumbUrl: string;
   previewUrl: string;
   thumbnailUrl: string;
   originalKey: string;
 }
 
-export interface StorePhotoCreatePayload {
+export interface LibraryPhotoCreatePayload {
   id: string;
   collectionId: string;
   originalKey: string;
@@ -258,28 +274,37 @@ export interface StorePhotoCreatePayload {
   width: number;
   height: number;
   contentHash: string;
+  webUrl: string;
+  webThumbUrl: string;
   previewUrl: string;
   thumbnailUrl: string;
-  photographerId: string;
+  photographerId: string | null;
   sortOrder: number;
+  forSale: boolean;
+  inGallery: boolean;
 }
 
-export interface StorePhotoUpdatePayload {
+export interface LibraryPhotoUpdatePayload {
   id: string;
   sortOrder?: number;
-  status?: StorePhotoStatus;
+  gallerySortOrder?: number;
+  forSale?: boolean;
+  inGallery?: boolean;
+  removed?: boolean;
   priceOverrideCents?: number | null;
   photographerId?: string;
 }
 
-export interface StorePhotoReplaceRequest {
+export interface LibraryPhotoReplaceRequest {
   filename: string;
   contentType: string;
   bytes: number;
 }
 
-export interface StorePhotoReplaceComplete {
+export interface LibraryPhotoReplaceComplete {
   originalKey: string;
+  webUrl: string;
+  webThumbUrl: string;
   previewUrl: string;
   thumbnailUrl: string;
   width: number;
@@ -289,7 +314,7 @@ export interface StorePhotoReplaceComplete {
   originalBytes: number;
 }
 
-export interface StorePhotoDeleteResponse {
+export interface LibraryPhotoDeleteResponse {
   deleted: number;
   skipped: { id: string; reason: 'sold' }[];
 }

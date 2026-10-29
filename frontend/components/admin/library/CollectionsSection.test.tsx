@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import type { Event } from '@shared/types/events'
-import type { StoreCollection } from '@shared/types/store'
+import type { PhotoCollection } from '@shared/types/store'
 import { CollectionsSection } from './CollectionsSection'
-import { createStoreCollection } from '../../../lib/api/adminStore'
+import { createPhotoCollection } from '../../../lib/api/adminLibrary'
 
-jest.mock('../../../lib/api/adminStore')
+jest.mock('../../../lib/api/adminLibrary')
 jest.mock('./CollectionDetail', () => ({
   ...jest.requireActual('./CollectionDetail'),
-  CollectionDetail: ({ collection, onBack }: { collection: StoreCollection; onBack: () => void }) => (
+  CollectionDetail: ({ collection, onBack }: { collection: PhotoCollection; onBack: () => void }) => (
     <div>
       <p>detail:{collection.title}</p>
       <button onClick={onBack}>back</button>
@@ -20,12 +20,12 @@ const events = [
   { id: 'e1', title: 'Aug Fest', date: '2026-08-15' },
   { id: 'e2', title: 'June Fest', date: '2026-06-10' },
 ] as Event[]
-const existing: StoreCollection = {
+const existing: PhotoCollection = {
   id: 'c2', entity: 'COLLECTION', eventId: 'e2', title: 'June Fest', eventDate: '2026-06-10', status: 'published',
-  defaultPriceCents: 1500, defaultPhotographerId: null, coverPhotoId: null, photoCount: 12, createdAt: '', updatedAt: '',
+  defaultPriceCents: 1500, defaultPhotographerId: null, coverPhotoId: null, photoCount: 20, forSaleCount: 12, createdAt: '', updatedAt: '',
 }
 
-function Harness({ initial }: { initial: StoreCollection[] }) {
+function Harness({ initial }: { initial: PhotoCollection[] }) {
   const [collections, setCollections] = useState(initial)
   return (
     <CollectionsSection
@@ -45,8 +45,8 @@ it('shows an empty state', () => {
 it('lists collections with status, count and price', () => {
   render(<Harness initial={[existing]} />)
   expect(screen.getByText('June Fest')).toBeInTheDocument()
-  expect(screen.getByText('12 for sale')).toBeInTheDocument()
-  expect(screen.getByText('Published')).toBeInTheDocument()
+  expect(screen.getByText('20 photos · 12 for sale')).toBeInTheDocument()
+  expect(screen.getByText('In store')).toBeInTheDocument()
   expect(screen.getByText(/\$15\.00 each/)).toBeInTheDocument()
 })
 
@@ -57,20 +57,20 @@ it('only offers events without a collection', () => {
 })
 
 it('creates a collection and opens it', async () => {
-  jest.mocked(createStoreCollection).mockResolvedValue({ ...existing, id: 'c1', eventId: 'e1', title: 'Aug Fest', status: 'draft' })
+  jest.mocked(createPhotoCollection).mockResolvedValue({ ...existing, id: 'c1', eventId: 'e1', title: 'Aug Fest', status: 'draft' })
   render(<Harness initial={[existing]} />)
   fireEvent.change(screen.getByLabelText('Event'), { target: { value: 'e1' } })
   fireEvent.change(screen.getByLabelText('Default price ($)'), { target: { value: '20' } })
   fireEvent.click(screen.getByRole('button', { name: /new collection/i }))
   expect(await screen.findByText('detail:Aug Fest')).toBeInTheDocument()
-  expect(createStoreCollection).toHaveBeenCalledWith('k', { eventId: 'e1', defaultPriceCents: 2000 })
+  expect(createPhotoCollection).toHaveBeenCalledWith('k', { eventId: 'e1', defaultPriceCents: 2000 })
 })
 
 it('validates before creating', () => {
   render(<Harness initial={[]} />)
   fireEvent.click(screen.getByRole('button', { name: /new collection/i }))
   expect(screen.getByRole('alert')).toHaveTextContent('Choose an event')
-  expect(createStoreCollection).not.toHaveBeenCalled()
+  expect(createPhotoCollection).not.toHaveBeenCalled()
 })
 
 it('opens a collection and returns to the list', () => {
@@ -78,5 +78,5 @@ it('opens a collection and returns to the list', () => {
   fireEvent.click(screen.getByText('June Fest'))
   expect(screen.getByText('detail:June Fest')).toBeInTheDocument()
   fireEvent.click(screen.getByRole('button', { name: 'back' }))
-  expect(screen.getByText('12 for sale')).toBeInTheDocument()
+  expect(screen.getByText('20 photos · 12 for sale')).toBeInTheDocument()
 })

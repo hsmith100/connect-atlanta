@@ -1,17 +1,12 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Loader2 } from 'lucide-react'
-import type { Event } from '@shared/types/events'
-import type { Photographer, StoreCollection } from '@shared/types/store'
-import { getPhotographers, getStoreCollections } from '../../../lib/api/adminStore'
-import { CollectionsSection } from './CollectionsSection'
+import type { Photographer } from '@shared/types/store'
+import { getPhotographers } from '../../../lib/api/adminStore'
 import { PhotographersSection } from './PhotographersSection'
-import { UploadSection } from './UploadSection'
 
-type SubTab = 'collections' | 'upload' | 'orders' | 'photographers' | 'settings'
+type SubTab = 'orders' | 'photographers' | 'settings'
 
 const SUB_TABS: { id: SubTab; label: string }[] = [
-  { id: 'collections',   label: 'Collections' },
-  { id: 'upload',        label: 'Upload' },
   { id: 'orders',        label: 'Orders' },
   { id: 'photographers', label: 'Photographers' },
   { id: 'settings',      label: 'Settings' },
@@ -19,30 +14,24 @@ const SUB_TABS: { id: SubTab; label: string }[] = [
 
 interface Props {
   adminKey: string
-  events: Event[]
 }
 
-export function StoreTab({ adminKey, events }: Props) {
-  const [activeSubTab, setActiveSubTab] = useState<SubTab>('collections')
+// Selling only. Photos themselves (gallery and for-sale) are managed in the Photos tab.
+export function StoreTab({ adminKey }: Props) {
+  const [activeSubTab, setActiveSubTab] = useState<SubTab>('orders')
   const [photographers, setPhotographers] = useState<Photographer[]>([])
-  const [collections, setCollections] = useState<StoreCollection[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  const reloadCollections = useCallback(async () => {
-    setCollections(await getStoreCollections(adminKey))
-  }, [adminKey])
-
   useEffect(() => {
-    Promise.all([getPhotographers(adminKey), getStoreCollections(adminKey)])
-      .then(([p, c]) => { setPhotographers(p); setCollections(c) })
+    getPhotographers(adminKey)
+      .then(setPhotographers)
       .catch(() => setError('Could not load the store. Refresh to try again.'))
       .finally(() => setLoading(false))
   }, [adminKey])
 
   return (
     <div className="max-w-5xl mx-auto">
-      {/* Sub-tab nav */}
       <div className="flex gap-1 px-6 border-b border-gray-800 overflow-x-auto">
         {SUB_TABS.map((tab) => (
           <button
@@ -64,35 +53,12 @@ export function StoreTab({ adminKey, events }: Props) {
           <p className="flex items-center gap-2 text-sm text-gray-400"><Loader2 size={14} className="animate-spin" /> Loading store…</p>
         ) : error ? (
           <p role="alert" className="text-sm text-red-400">{error}</p>
+        ) : activeSubTab === 'photographers' ? (
+          <PhotographersSection adminKey={adminKey} photographers={photographers} setPhotographers={setPhotographers} />
         ) : (
-          <>
-            {activeSubTab === 'collections' && (
-              <CollectionsSection
-                adminKey={adminKey}
-                events={events}
-                photographers={photographers}
-                collections={collections}
-                setCollections={setCollections}
-                reloadCollections={reloadCollections}
-              />
-            )}
-            {activeSubTab === 'upload' && (
-              <UploadSection
-                adminKey={adminKey}
-                collections={collections}
-                photographers={photographers}
-                onUploaded={() => void reloadCollections()}
-              />
-            )}
-            {activeSubTab === 'photographers' && (
-              <PhotographersSection adminKey={adminKey} photographers={photographers} setPhotographers={setPhotographers} />
-            )}
-            {(activeSubTab === 'orders' || activeSubTab === 'settings') && (
-              <p data-testid={`store-${activeSubTab}`} className="text-gray-400 text-sm">
-                {activeSubTab === 'orders' ? 'Orders' : 'Settings'} — coming soon.
-              </p>
-            )}
-          </>
+          <p data-testid={`store-${activeSubTab}`} className="text-gray-400 text-sm">
+            {activeSubTab === 'orders' ? 'Orders' : 'Settings'} — coming soon.
+          </p>
         )}
       </div>
     </div>

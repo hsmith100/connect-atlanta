@@ -213,7 +213,8 @@ export class BackendStack extends cdk.Stack {
     adminKeySecret.grantRead(photosLambda);
 
     // ── Store Lambda ──────────────────────────────────────────────────────────
-    // Photo store: public browsing/checkout/downloads, Stripe webhook, and admin store routes.
+    // Photo library (admin) and photo store: public browsing/checkout/downloads,
+    // Stripe webhook, admin library and store routes.
     // Separate from PhotosLambda so only store code can read originals and the Stripe secret.
     const storeLambda = new NodejsFunction(this, 'StoreLambda', {
       entry: path.join(lambdaDir, 'store.ts'),
@@ -224,8 +225,8 @@ export class BackendStack extends cdk.Stack {
       timeout: cdk.Duration.seconds(30),
       depsLockFilePath: path.join(__dirname, '../../../lambda/package-lock.json'),
       environment: {
-        STORE_COLLECTIONS_TABLE: dynamoStack.storeCollectionsTable.tableName,
-        STORE_PHOTOS_TABLE: dynamoStack.storePhotosTable.tableName,
+        PHOTO_COLLECTIONS_TABLE: dynamoStack.photoCollectionsTable.tableName,
+        PHOTO_LIBRARY_TABLE: dynamoStack.photoLibraryTable.tableName,
         STORE_PHOTOGRAPHERS_TABLE: dynamoStack.storePhotographersTable.tableName,
         STORE_ORDERS_TABLE: dynamoStack.storeOrdersTable.tableName,
         EVENTS_TABLE: dynamoStack.eventsTable.tableName,
@@ -241,8 +242,8 @@ export class BackendStack extends cdk.Stack {
       },
     });
 
-    dynamoStack.storeCollectionsTable.grantReadWriteData(storeLambda);
-    dynamoStack.storePhotosTable.grantReadWriteData(storeLambda);
+    dynamoStack.photoCollectionsTable.grantReadWriteData(storeLambda);
+    dynamoStack.photoLibraryTable.grantReadWriteData(storeLambda);
     dynamoStack.storePhotographersTable.grantReadWriteData(storeLambda);
     dynamoStack.storeOrdersTable.grantReadWriteData(storeLambda);
     dynamoStack.eventsTable.grantReadData(storeLambda);
@@ -299,6 +300,7 @@ export class BackendStack extends cdk.Stack {
     api.addRoutes({ path: '/api/admin/hero-cards/presign', methods: [apigateway.HttpMethod.POST], integration: photosIntegration });
     api.addRoutes({ path: '/api/admin/hero-cards/{id}', methods: [apigateway.HttpMethod.PATCH, apigateway.HttpMethod.DELETE], integration: photosIntegration });
     api.addRoutes({ path: '/api/store/{proxy+}', methods: [apigateway.HttpMethod.GET, apigateway.HttpMethod.POST], integration: storeIntegration });
+    api.addRoutes({ path: '/api/admin/library/{proxy+}', methods: [apigateway.HttpMethod.GET, apigateway.HttpMethod.POST, apigateway.HttpMethod.PATCH, apigateway.HttpMethod.DELETE], integration: storeIntegration });
     api.addRoutes({ path: '/api/admin/store/{proxy+}', methods: [apigateway.HttpMethod.GET, apigateway.HttpMethod.POST, apigateway.HttpMethod.PATCH, apigateway.HttpMethod.PUT, apigateway.HttpMethod.DELETE], integration: storeIntegration });
 
     // ── Access logging ────────────────────────────────────────────────────────

@@ -12,8 +12,8 @@ export const ddb = DynamoDBDocumentClient.from(new DynamoDBClient({}), {
 export const s3 = new S3Client({});
 export const ses = new SESClient({ region: 'us-east-1' });
 
-export const STORE_COLLECTIONS_TABLE = process.env.STORE_COLLECTIONS_TABLE!;
-export const STORE_PHOTOS_TABLE = process.env.STORE_PHOTOS_TABLE!;
+export const PHOTO_COLLECTIONS_TABLE = process.env.PHOTO_COLLECTIONS_TABLE!;
+export const PHOTO_LIBRARY_TABLE = process.env.PHOTO_LIBRARY_TABLE!;
 export const STORE_PHOTOGRAPHERS_TABLE = process.env.STORE_PHOTOGRAPHERS_TABLE!;
 export const STORE_ORDERS_TABLE = process.env.STORE_ORDERS_TABLE!;
 export const EVENTS_TABLE = process.env.EVENTS_TABLE!;

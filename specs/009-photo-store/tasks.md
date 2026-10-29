@@ -177,7 +177,7 @@ description: "Task list for 009-photo-store"
 
 The organizer chose one photo library for both the gallery and the store (spec Session 2026-10-06, research R13). The tasks below convert the Phase 3 code. Dev store tables hold only test data, so they are replaced.
 
-- [ ] T026 [US1] In `infrastructure/lib/stacks/dynamo-stack.ts`:
+- [X] T026 [US1] In `infrastructure/lib/stacks/dynamo-stack.ts`:
   - Rename `storeCollectionsTable` → `photoCollectionsTable` (`connect-${p}photo-collections`, construct id `PhotoCollectionsTable`) and `storePhotosTable` → `photoLibraryTable` (`connect-${p}photo-library`, construct id `PhotoLibraryTable`), keeping their GSIs
   - Add a sparse GSI `byGallery` to `photoLibraryTable` (PK `galleryKey` S, SK `gallerySortOrder` N)
   - Update the `CfnOutput`s
@@ -185,12 +185,14 @@ The organizer chose one photo library for both the gallery and the store (spec S
   - Update `lambda/src/test-setup.ts` and `lambda/src/lib/storeShared.ts` constants
 
   In dev, `cdk diff` will show the two old store tables replaced; review that before deploying.
-- [ ] T027 [P] [US1] In `shared/types/store.ts`:
+
+  *(Implemented note: renaming the tables removes exports that BackendStack still imported, so dev was deployed in three steps: a temporary uncommitted patch kept the old tables exported → Backend switched → patch reverted and Dynamo redeployed. The orphaned dev tables and test objects were then deleted, and the `ConnectPR1373` environment was destroyed so CI rebuilds it. Staging and prod never had the old tables, so a normal deploy works there.)*
+- [X] T027 [P] [US1] In `shared/types/store.ts`:
   - Rename `StoreCollection` → `PhotoCollection` (add `forSaleCount`) and `StorePhoto` → `LibraryPhoto`
   - Replace `status: StorePhotoStatus` with `forSale: boolean`, `inGallery: boolean`, `removed: boolean`, and add `gallerySortOrder: number`, `webUrl`, `webThumbUrl`; `photographerId` becomes `string | null`
   - Update `StorePresignResponse` (add `webUploadUrl`, `webThumbUploadUrl`, `webUrl`, `webThumbUrl`), the photo create/update/replace payloads (per contracts/store-api.md "Photo library") and the collection payload names
   - Remove `StorePhotoStatus`
-- [ ] T028 [US1] Rename `lambda/src/handlers/adminStoreCatalog.ts` → `adminLibrary.ts` (and its test), then:
+- [X] T028 [US1] Rename `lambda/src/handlers/adminStoreCatalog.ts` → `adminLibrary.ts` (and its test), then:
   - Presign returns 5 URLs, with keys under `library/web/`, `library/web-thumbs/`, `library/previews/` and `library/thumbs/`
   - Create validates all four media URLs per folder, requires `photographerId` when `forSale`, and sets `galleryKey` and `gallerySortOrder` (end of the gallery: current max + 10) when `inGallery`
   - Update handles `forSale`, `inGallery`, `removed` and `gallerySortOrder`, keeping `galleryKey` set exactly when `inGallery && !removed`; 400 for `forSale: true` without a photographer; maintains `photoCount` (not removed) and `forSaleCount` (`forSale && !removed`)
@@ -199,17 +201,17 @@ The organizer chose one photo library for both the gallery and the store (spec S
   - Publish preconditions count `forSale && !removed`
 
   Update tests accordingly, including the `galleryKey` sync matrix and both counts.
-- [ ] T029 [US1] In `lambda/src/handlers/store.ts` move the collection and photo routes from `/api/admin/store/...` to `/api/admin/library/...`, add `GET /api/admin/library/gallery`, and update `store.test.ts`. In `backend-stack.ts` add the route `/api/admin/library/{proxy+}` (GET, POST, PATCH, DELETE) to StoreLambda.
-- [ ] T030 [P] [US1] Rename `frontend/lib/store/generateWatermarked.ts` → `generatePhotoVersions.ts` returning `{ web, webThumb, preview, thumbnail, width, height }`: clean 2000px long edge (JPEG 0.85), clean 600px wide, and watermarked 1600px and 600px, all from one decoded bitmap. Update the tests (four canvases; the watermark drawn only on the two watermarked ones).
-- [ ] T031 [US1] Split `frontend/lib/api/adminStore.ts`: move the collection and photo functions to a new `frontend/lib/api/adminLibrary.ts` on `/api/admin/library` (`getPhotoCollections`, `createPhotoCollection`, `updatePhotoCollection`, `deletePhotoCollection`, `getCollectionPhotos`, `getGalleryPhotos`, `presignLibraryPhotos`, `createLibraryPhotos`, `updateLibraryPhotos`, `deleteLibraryPhotos`, `presignReplace`, `completeReplace`); photographer functions stay in `adminStore.ts`. Rename `lib/store/uploadStorePhoto.ts` → `lib/library/uploadLibraryPhoto.ts` (uploads all five objects; context adds `forSale` and `inGallery`; `photographerId` optional) and move `hashFile`/`generatePhotoVersions` to `lib/library/`. Update the re-exports in `lib/api/index.ts` and all tests.
-- [ ] T032 [US1] Move `CollectionsSection`, `CollectionDetail` and `StoreUploader` to `frontend/components/admin/library/` (rename `StoreUploader` → `PhotoUploader`) and delete `UploadSection`:
+- [X] T029 [US1] In `lambda/src/handlers/store.ts` move the collection and photo routes from `/api/admin/store/...` to `/api/admin/library/...`, add `GET /api/admin/library/gallery`, and update `store.test.ts`. In `backend-stack.ts` add the route `/api/admin/library/{proxy+}` (GET, POST, PATCH, DELETE) to StoreLambda.
+- [X] T030 [P] [US1] Rename `frontend/lib/store/generateWatermarked.ts` → `generatePhotoVersions.ts` returning `{ web, webThumb, preview, thumbnail, width, height }`: clean 2000px long edge (JPEG 0.85), clean 600px wide, and watermarked 1600px and 600px, all from one decoded bitmap. Update the tests (four canvases; the watermark drawn only on the two watermarked ones).
+- [X] T031 [US1] Split `frontend/lib/api/adminStore.ts`: move the collection and photo functions to a new `frontend/lib/api/adminLibrary.ts` on `/api/admin/library` (`getPhotoCollections`, `createPhotoCollection`, `updatePhotoCollection`, `deletePhotoCollection`, `getCollectionPhotos`, `getGalleryPhotos`, `presignLibraryPhotos`, `createLibraryPhotos`, `updateLibraryPhotos`, `deleteLibraryPhotos`, `presignReplace`, `completeReplace`); photographer functions stay in `adminStore.ts`. Rename `lib/store/uploadStorePhoto.ts` → `lib/library/uploadLibraryPhoto.ts` (uploads all five objects; context adds `forSale` and `inGallery`; `photographerId` optional) and move `hashFile`/`generatePhotoVersions` to `lib/library/`. Update the re-exports in `lib/api/index.ts` and all tests.
+- [X] T032 [US1] Move `CollectionsSection`, `CollectionDetail` and `StoreUploader` to `frontend/components/admin/library/` (rename `StoreUploader` → `PhotoUploader`) and delete `UploadSection`:
   - `PhotoUploader` gets per-batch toggles "Show in gallery" (default off) and "For sale" (default on); the photographer is required only when "For sale" is on
   - `CollectionDetail` grid shows **In gallery** / **For sale** badges and greys out photos that are neither; bulk actions become Show in gallery, Remove from gallery, Put on sale, Take off sale (replacing Hide/Unhide), plus the existing price, photographer, cover and delete actions; "Put on sale" on photos with no photographer shows the API's error
   - `CollectionsSection` rows show both photo count and for-sale count
 
   Update all tests.
-- [ ] T033 [US1] Create `frontend/components/admin/library/GalleryOrderSection.tsx` with `GalleryOrderSection.test.tsx`: loads `getGalleryPhotos`, shows clean thumbnails (`webThumbUrl`) with event title, up/down reorder and **Save order** (`updateLibraryPhotos` with `gallerySortOrder` = index × 10), and **Remove from gallery**. Loading, empty and error states.
-- [ ] T034 [US1] Create `frontend/components/admin/library/LibraryTab.tsx` with `LibraryTab.test.tsx`: sub-navigation **Collections** and **Gallery order** (SubmissionsTab pattern); loads collections and photographers in parallel. In `frontend/pages/admin.tsx` the **Photos** tab renders `LibraryTab` (the old `PhotosTab` is no longer rendered; it is deleted in US7). Trim `frontend/components/admin/store/StoreTab.tsx` to **Orders**, **Photographers** and **Settings** and update its test.
+- [X] T033 [US1] Create `frontend/components/admin/library/GalleryOrderSection.tsx` with `GalleryOrderSection.test.tsx`: loads `getGalleryPhotos`, shows clean thumbnails (`webThumbUrl`) with event title, up/down reorder and **Save order** (`updateLibraryPhotos` with `gallerySortOrder` = index × 10), and **Remove from gallery**. Loading, empty and error states.
+- [X] T034 [US1] Create `frontend/components/admin/library/LibraryTab.tsx` with `LibraryTab.test.tsx`: sub-navigation **Collections** and **Gallery order** (SubmissionsTab pattern); loads collections and photographers in parallel. In `frontend/pages/admin.tsx` the **Photos** tab renders `LibraryTab` (the old `PhotosTab` is no longer rendered; it is deleted in US7). Trim `frontend/components/admin/store/StoreTab.tsx` to **Orders**, **Photographers** and **Settings** and update its test.
 - [ ] T035 [US1] Deploy the rework to dev (review `cdk diff`: two tables replaced, one route added, StoreLambda code/env changed). Re-run quickstart steps 1–8 using the Photos tab, including steps that toggle gallery/for-sale.
 
 **Checkpoint**: one Photos tab manages every photo; the Store tab handles selling only.

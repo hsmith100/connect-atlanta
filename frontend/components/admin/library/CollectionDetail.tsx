@@ -1,20 +1,20 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowLeft, ArrowUp, ArrowDown, Loader2, Star } from 'lucide-react'
-import type { Photographer, StoreCollection, StorePhoto, StorePhotoUpdatePayload } from '@shared/types/store'
+import type { Photographer, PhotoCollection, LibraryPhoto, LibraryPhotoUpdatePayload } from '@shared/types/store'
 import {
-  getCollectionPhotos, updateStoreCollection, updateStorePhotos, deleteStorePhotos,
-} from '../../../lib/api/adminStore'
+  getCollectionPhotos, updatePhotoCollection, updateLibraryPhotos, deleteLibraryPhotos,
+} from '../../../lib/api/adminLibrary'
 import { ApiError } from '../../../lib/api/client'
 import { formatMoney } from '../../../lib/store/formatMoney'
-import { replaceStorePhoto } from '../../../lib/store/uploadStorePhoto'
-import { StoreUploader } from './StoreUploader'
+import { replaceLibraryPhoto } from '../../../lib/library/uploadLibraryPhoto'
+import { PhotoUploader } from './PhotoUploader'
 
 interface Props {
   adminKey: string
-  collection: StoreCollection
+  collection: PhotoCollection
   photographers: Photographer[]
-  onChange: (collection: StoreCollection) => void
-  // Reload the collection from the server (photoCount changes after uploads, hides and deletes).
+  onChange: (collection: PhotoCollection) => void
+  // Reload the collection from the server (counts change after uploads, switches and deletes).
   onRefresh: () => void
   onBack: () => void
 }
@@ -28,7 +28,7 @@ export function dollarsToCents(value: string): number | null {
 }
 
 export function CollectionDetail({ adminKey, collection, photographers, onChange, onRefresh, onBack }: Props) {
-  const [photos, setPhotos] = useState<StorePhoto[]>([])
+  const [photos, setPhotos] = useState<LibraryPhoto[]>([])
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [busy, setBusy] = useState(false)
@@ -46,7 +46,7 @@ export function CollectionDetail({ adminKey, collection, photographers, onChange
 
   const photographerName = useMemo(() => new Map(photographers.map((p) => [p.id, p.name])), [photographers])
   const activePhotographers = photographers.filter((p) => p.active)
-  const visible = photos.filter((p) => p.status !== 'removed')
+  const visible = photos.filter((p) => !p.removed)
 
   const loadPhotos = useCallback(async () => {
     setLoading(true)
@@ -80,7 +80,7 @@ export function CollectionDetail({ adminKey, collection, photographers, onChange
     if (cents === null) { setError('Default price must be at least $0.50.'); return }
     if (!title.trim()) { setError('Title is required.'); return }
     void run(async () => {
-      onChange(await updateStoreCollection(adminKey, collection.id, {
+      onChange(await updatePhotoCollection(adminKey, collection.id, {
         title: title.trim(), defaultPriceCents: cents, defaultPhotographerId: defaultPhotographerId || null,
       }))
     }, 'Settings saved.')
@@ -93,8 +93,8 @@ export function CollectionDetail({ adminKey, collection, photographers, onChange
     setError('')
     setStatusMsg('')
     try {
-      onChange(await updateStoreCollection(adminKey, collection.id, { status }))
-      setStatusMsg(status === 'published' ? 'Published — visible in the Shop.' : 'Unpublished — hidden from the Shop.')
+      onChange(await updatePhotoCollection(adminKey, collection.id, { status }))
+      setStatusMsg(status === 'published' ? 'Store listing published — for-sale photos are in the Shop.' : 'Store listing unpublished — hidden from the Shop (gallery unaffected).')
     } catch (err) {
       if (err instanceof ApiError && err.status === 422 && Array.isArray(err.data.problems)) {
         setProblems(err.data.problems as string[])
@@ -106,14 +106,14 @@ export function CollectionDetail({ adminKey, collection, photographers, onChange
     }
   }
 
-  function bulkUpdate(patch: Omit<StorePhotoUpdatePayload, 'id'>, success: string) {
+  function bulkUpdate(patch: Omit<LibraryPhotoUpdatePayload, 'id'>, success: string) {
     const ids = [...selected]
     if (ids.length === 0) return
     void run(async () => {
-      await updateStorePhotos(adminKey, ids.map((id) => ({ id, ...patch })))
-      setPhotos((prev) => prev.map((p) => (selected.has(p.id) ? { ...p, ...patch } as StorePhoto : p)))
+      await updateLibraryPhotos(adminKey, ids.map((id) => ({ id, ...patch })))
+      setPhotos((prev) => prev.map((p) => (selected.has(p.id) ? { ...p, ...patch } as LibraryPhoto : p)))
       setSelected(new Set())
-      if (patch.status) onRefresh()
+      if (patch.forSale !== undefined || patch.removed !== undefined) onRefresh()
     }, success)
   }
 
@@ -127,7 +127,7 @@ export function CollectionDetail({ adminKey, collection, photographers, onChange
     const ids = [...selected]
     if (ids.length === 0 || !window.confirm(`Permanently delete ${ids.length} photo(s), including their originals?`)) return
     void run(async () => {
-      const { deleted, skipped } = await deleteStorePhotos(adminKey, ids)
+      const { deleted, skipped } = await deleteLibraryPhotos(adminKey, ids)
       setSelected(new Set())
       await loadPhotos()
       onRefresh()
@@ -138,7 +138,7 @@ export function CollectionDetail({ adminKey, collection, photographers, onChange
   function setCover() {
     const [id] = [...selected]
     void run(async () => {
-      onChange(await updateStoreCollection(adminKey, collection.id, { coverPhotoId: id }))
+      onChange(await updatePhotoCollection(adminKey, collection.id, { coverPhotoId: id }))
       setSelected(new Set())
     }, 'Cover photo set.')
   }
@@ -149,7 +149,7 @@ export function CollectionDetail({ adminKey, collection, photographers, onChange
     const a = visible[index]
     const b = visible[target]
     void run(async () => {
-      await updateStorePhotos(adminKey, [{ id: a.id, sortOrder: b.sortOrder }, { id: b.id, sortOrder: a.sortOrder }])
+      await updateLibraryPhotos(adminKey, [{ id: a.id, sortOrder: b.sortOrder }, { id: b.id, sortOrder: a.sortOrder }])
       setPhotos((prev) => prev
         .map((p) => (p.id === a.id ? { ...p, sortOrder: b.sortOrder } : p.id === b.id ? { ...p, sortOrder: a.sortOrder } : p))
         .sort((x, y) => x.sortOrder - y.sortOrder))
@@ -167,7 +167,7 @@ export function CollectionDetail({ adminKey, collection, photographers, onChange
     e.target.value = ''
     if (!file || !id) return
     void run(async () => {
-      const updated = await replaceStorePhoto(file, id, adminKey)
+      const updated = await replaceLibraryPhoto(file, id, adminKey)
       setPhotos((prev) => prev.map((p) => (p.id === id ? updated : p)))
     }, 'Photo replaced.')
   }
@@ -190,7 +190,7 @@ export function CollectionDetail({ adminKey, collection, photographers, onChange
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2 className="text-lg font-bold text-white">{collection.title}</h2>
-          <p className="text-xs text-gray-400">{collection.eventDate} · {collection.photoCount} for sale</p>
+          <p className="text-xs text-gray-400">{collection.eventDate} · {collection.photoCount} photos · {collection.forSaleCount} for sale · store listing {collection.status === 'published' ? 'published' : 'draft'}</p>
         </div>
         <button
           type="button"
@@ -200,7 +200,7 @@ export function CollectionDetail({ adminKey, collection, photographers, onChange
             collection.status === 'published' ? 'bg-gray-700 text-white' : 'bg-green-700 hover:bg-green-600 text-white'
           }`}
         >
-          {collection.status === 'published' ? 'Unpublish' : 'Publish'}
+          {collection.status === 'published' ? 'Unpublish store listing' : 'Publish store listing'}
         </button>
       </div>
 
@@ -240,7 +240,7 @@ export function CollectionDetail({ adminKey, collection, photographers, onChange
         </button>
         {showUploader && (
           <div className="mt-4">
-            <StoreUploader
+            <PhotoUploader
               adminKey={adminKey}
               collection={collection}
               photographers={photographers}
@@ -270,8 +270,10 @@ export function CollectionDetail({ adminKey, collection, photographers, onChange
             {activePhotographers.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
           </select>
           <button type="button" onClick={() => bulkPhotographerId && bulkUpdate({ photographerId: bulkPhotographerId }, 'Photographer assigned.')} disabled={busy || !bulkPhotographerId} className={buttonClass}>Assign</button>
-          <button type="button" onClick={() => bulkUpdate({ status: 'hidden' }, 'Photos hidden.')} disabled={busy} className={buttonClass}>Hide</button>
-          <button type="button" onClick={() => bulkUpdate({ status: 'forSale' }, 'Photos for sale.')} disabled={busy} className={buttonClass}>Unhide</button>
+          <button type="button" onClick={() => bulkUpdate({ inGallery: true }, 'Added to the gallery.')} disabled={busy} className={buttonClass}>Show in gallery</button>
+          <button type="button" onClick={() => bulkUpdate({ inGallery: false }, 'Removed from the gallery.')} disabled={busy} className={buttonClass}>Remove from gallery</button>
+          <button type="button" onClick={() => bulkUpdate({ forSale: true }, 'Put on sale.')} disabled={busy} className={buttonClass}>Put on sale</button>
+          <button type="button" onClick={() => bulkUpdate({ forSale: false }, 'Taken off sale.')} disabled={busy} className={buttonClass}>Take off sale</button>
           <button type="button" onClick={setCover} disabled={busy || selected.size !== 1} className={buttonClass}>Set as cover</button>
           <button type="button" onClick={deleteSelected} disabled={busy} className="text-xs font-semibold rounded-lg px-3 py-1.5 bg-red-700 hover:bg-red-600 text-white disabled:opacity-50">Delete</button>
         </div>
@@ -288,16 +290,19 @@ export function CollectionDetail({ adminKey, collection, photographers, onChange
           {visible.map((p, i) => (
             <li key={p.id} className={`rounded-lg overflow-hidden border ${selected.has(p.id) ? 'border-brand-pink' : 'border-gray-800'} bg-gray-900`}>
               <button type="button" onClick={() => toggle(p.id)} aria-pressed={selected.has(p.id)} aria-label={`Select ${p.originalFilename}`} className="relative block w-full">
-                <img src={p.thumbnailUrl} alt={p.originalFilename} loading="lazy" className={`w-full aspect-[3/2] object-cover ${p.status === 'hidden' ? 'opacity-40' : ''}`} />
+                <img src={p.thumbnailUrl} alt={p.originalFilename} loading="lazy" className={`w-full aspect-[3/2] object-cover ${p.forSale || p.inGallery ? '' : 'opacity-40'}`} />
                 {collection.coverPhotoId === p.id && <Star size={16} className="absolute top-1 left-1 text-yellow-400" fill="currentColor" aria-label="Cover photo" />}
-                {p.status === 'hidden' && <span className="absolute top-1 right-1 text-[10px] bg-gray-800 text-gray-300 px-1.5 rounded">Hidden</span>}
+                <span className="absolute top-1 right-1 flex gap-1">
+                  {p.inGallery && <span className="text-[10px] bg-blue-900 text-blue-200 px-1.5 rounded">In gallery</span>}
+                  {p.forSale && <span className="text-[10px] bg-green-900 text-green-200 px-1.5 rounded">For sale</span>}
+                </span>
               </button>
               <div className="p-2 text-xs space-y-1">
                 <p className="truncate text-gray-300" title={p.originalFilename}>{p.originalFilename}</p>
                 <p className="text-gray-400">
                   {formatMoney(p.priceOverrideCents ?? collection.defaultPriceCents)}
                   {p.priceOverrideCents !== null && <span className="ml-1 text-brand-pink">custom</span>}
-                  {' · '}{photographerName.get(p.photographerId) ?? 'Unknown'}
+                  {' · '}{p.photographerId ? photographerName.get(p.photographerId) ?? 'Unknown' : 'No photographer'}
                 </p>
                 <div className="flex items-center gap-1">
                   <button type="button" onClick={() => move(i, -1)} disabled={busy || i === 0} aria-label={`Move ${p.originalFilename} earlier`} className="p-1 text-gray-400 hover:text-white disabled:opacity-30"><ArrowUp size={12} /></button>

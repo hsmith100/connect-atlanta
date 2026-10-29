@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Loader2, Plus } from 'lucide-react'
 import type { Event } from '@shared/types/events'
-import type { Photographer, StoreCollection } from '@shared/types/store'
-import { createStoreCollection } from '../../../lib/api/adminStore'
+import type { Photographer, PhotoCollection } from '@shared/types/store'
+import { createPhotoCollection } from '../../../lib/api/adminLibrary'
 import { formatMoney } from '../../../lib/store/formatMoney'
 import { CollectionDetail, dollarsToCents } from './CollectionDetail'
 
@@ -10,8 +10,8 @@ interface Props {
   adminKey: string
   events: Event[]
   photographers: Photographer[]
-  collections: StoreCollection[]
-  setCollections: React.Dispatch<React.SetStateAction<StoreCollection[]>>
+  collections: PhotoCollection[]
+  setCollections: React.Dispatch<React.SetStateAction<PhotoCollection[]>>
   reloadCollections: () => Promise<void>
 }
 
@@ -36,7 +36,7 @@ export function CollectionsSection({ adminKey, events, photographers, collection
     setCreating(true)
     setError('')
     try {
-      const created = await createStoreCollection(adminKey, { eventId, defaultPriceCents: cents })
+      const created = await createPhotoCollection(adminKey, { eventId, defaultPriceCents: cents })
       setCollections((prev) => [created, ...prev].sort((a, b) => b.eventDate.localeCompare(a.eventDate)))
       setEventId('')
       setSelectedId(created.id)
@@ -87,7 +87,7 @@ export function CollectionsSection({ adminKey, events, photographers, collection
       {error && <p role="alert" className="text-sm text-red-400">{error}</p>}
 
       {collections.length === 0 ? (
-        <p className="text-sm text-gray-400">No photo collections yet. Create one for an event to start selling photos.</p>
+        <p className="text-sm text-gray-400">No photo collections yet. Create one for an event to add photos for the gallery and the store.</p>
       ) : (
         <ul className="divide-y divide-gray-900">
           {collections.map((c) => (
@@ -101,9 +101,9 @@ export function CollectionsSection({ adminKey, events, photographers, collection
                   <span className="block text-white font-semibold">{c.title}</span>
                   <span className="block text-xs text-gray-400">{c.eventDate} · {formatMoney(c.defaultPriceCents)} each</span>
                 </span>
-                <span className="text-sm text-gray-300">{c.photoCount} for sale</span>
+                <span className="text-sm text-gray-300">{c.photoCount} photos · {c.forSaleCount} for sale</span>
                 <span className={`text-xs px-2 py-0.5 rounded-full ${c.status === 'published' ? 'bg-green-900 text-green-300' : 'bg-gray-800 text-gray-400'}`}>
-                  {c.status === 'published' ? 'Published' : 'Draft'}
+                  {c.status === 'published' ? 'In store' : 'Not in store'}
                 </span>
               </button>
             </li>

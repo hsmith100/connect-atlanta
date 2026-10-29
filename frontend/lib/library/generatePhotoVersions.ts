@@ -1,13 +1,17 @@
-// Builds the public versions of a store photo in the admin's browser: a 1600px (long edge)
-// preview and a 600px-wide thumbnail, both covered by a tiled "BEATS ON THE BLOCK" watermark.
+// Builds the four public versions of a library photo in the admin's browser:
+//   web / webThumb  — clean (no watermark), for the Gallery: 2000px long edge, 600px wide
+//   preview / thumbnail — tiled "BEATS ON THE BLOCK" watermark, for the store: 1600px, 600px wide
 // The full-quality original is uploaded untouched to the private bucket.
 
+const WEB_LONG_EDGE = 2000
 const PREVIEW_LONG_EDGE = 1600
 const THUMB_WIDTH = 600
 const WATERMARK_TEXT = 'BEATS ON THE BLOCK'
 const WATERMARK_FONT = '"Anton", Impact, "Arial Black", sans-serif'
 
-export interface WatermarkedImages {
+export interface PhotoVersions {
+  web: Blob
+  webThumb: Blob
   preview: Blob
   thumbnail: Blob
   width: number
@@ -41,24 +45,24 @@ function drawWatermark(ctx: CanvasRenderingContext2D, width: number, height: num
   ctx.restore()
 }
 
-function render(bitmap: ImageBitmap, width: number, height: number, quality: number): Promise<Blob> {
+function render(bitmap: ImageBitmap, width: number, height: number, quality: number, watermark: boolean): Promise<Blob> {
   const canvas = document.createElement('canvas')
   canvas.width = width
   canvas.height = height
   const ctx = canvas.getContext('2d')
   if (!ctx) return Promise.reject(new Error('Your browser could not create an image canvas'))
   ctx.drawImage(bitmap, 0, 0, width, height)
-  drawWatermark(ctx, width, height)
+  if (watermark) drawWatermark(ctx, width, height)
   return new Promise((resolve, reject) => {
     canvas.toBlob(
-      (blob) => (blob ? resolve(blob) : reject(new Error('Could not encode the watermarked image'))),
+      (blob) => (blob ? resolve(blob) : reject(new Error('Could not encode the image'))),
       'image/jpeg',
       quality,
     )
   })
 }
 
-export async function generateWatermarked(file: Blob): Promise<WatermarkedImages> {
+export async function generatePhotoVersions(file: Blob): Promise<PhotoVersions> {
   let bitmap: ImageBitmap
   try {
     bitmap = await createImageBitmap(file)
@@ -68,13 +72,17 @@ export async function generateWatermarked(file: Blob): Promise<WatermarkedImages
 
   try {
     const { width, height } = bitmap
-    const previewScale = Math.min(1, PREVIEW_LONG_EDGE / Math.max(width, height))
-    const thumbScale = Math.min(1, THUMB_WIDTH / width)
-    const [preview, thumbnail] = await Promise.all([
-      render(bitmap, Math.round(width * previewScale), Math.round(height * previewScale), 0.82),
-      render(bitmap, Math.round(width * thumbScale), Math.round(height * thumbScale), 0.8),
-    ])
-    return { preview, thumbnail, width, height }
+    const longEdge = Math.max(width, height)
+    const size = (scale: number): [number, number] => [Math.round(width * scale), Math.round(height * scale)]
+    const web = size(Math.min(1, WEB_LONG_EDGE / longEdge))
+    const preview = size(Math.min(1, PREVIEW_LONG_EDGE / longEdge))
+    const thumb = size(Math.min(1, THUMB_WIDTH / width))
+    // Sequential, not parallel: several full-size canvases at once can exhaust memory on 25 MB+ originals.
+    const webBlob = await render(bitmap, ...web, 0.85, false)
+    const webThumbBlob = await render(bitmap, ...thumb, 0.8, false)
+    const previewBlob = await render(bitmap, ...preview, 0.82, true)
+    const thumbBlob = await render(bitmap, ...thumb, 0.8, true)
+    return { web: webBlob, webThumb: webThumbBlob, preview: previewBlob, thumbnail: thumbBlob, width, height }
   } finally {
     bitmap.close()
   }
