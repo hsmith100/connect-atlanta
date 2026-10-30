@@ -11,6 +11,11 @@ jest.mock('../components/layout/Footer', () => ({ __esModule: true, default: () 
 jest.mock('../components/shared/SEO', () => ({ __esModule: true, default: () => null }))
 jest.mock('../components/gallery/GalleryGrid', () => ({ __esModule: true, default: () => <div data-testid="gallery-grid" /> }))
 jest.mock('../components/gallery/GalleryLightbox', () => ({ __esModule: true, default: () => null }))
+jest.mock('../lib/store/useEventCollectionMap', () => ({ useEventCollectionMap: () => ({}) }))
+jest.mock('next/link', () => ({
+  __esModule: true,
+  default: ({ href, children, ...rest }: { href: string; children: React.ReactNode }) => <a href={href} {...rest}>{children}</a>,
+}))
 
 const { getGallery, getLatestYouTubeVideoId } = jest.requireMock('../lib/api')
 
@@ -43,4 +48,13 @@ describe('YouTube latest video embed', () => {
     const iframe = await screen.findByTitle('Latest Beats on the Block video')
     expect((iframe as HTMLIFrameElement).src).toContain('youtube.com/embed/abc123')
   })
+})
+
+// ── shop entry point ───────────────────────────────────────────────────────────
+
+it('links to the event photos section of the Shop', async () => {
+  render(<Gallery />)
+  expect(screen.getByText(/See yourself\? Buy full-resolution, watermark-free photos/)).toBeInTheDocument()
+  expect(screen.getByRole('link', { name: 'Shop event photos' })).toHaveAttribute('href', '/shop#photos')
+  await waitFor(() => expect(getGallery).toHaveBeenCalled())
 })

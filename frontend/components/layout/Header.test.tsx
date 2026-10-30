@@ -1,6 +1,7 @@
 import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import Header from './Header'
+import { StoreCartProvider } from '../../lib/store/cartContext'
 
 jest.mock('next/link', () => ({
   __esModule: true,
@@ -19,7 +20,9 @@ describe('desktop nav', () => {
     expect(screen.getByText('Events')).toBeInTheDocument()
     expect(screen.getByText('Gallery')).toBeInTheDocument()
     expect(screen.getByText('Apply')).toBeInTheDocument()
-    expect(screen.getByText('Merch')).toBeInTheDocument()
+    expect(screen.getByText('Shop')).toBeInTheDocument()
+    expect(screen.getByText('Shop').closest('a')).toHaveAttribute('href', '/shop')
+    expect(screen.queryByText('Merch')).not.toBeInTheDocument()
     expect(screen.getByText('Contact')).toBeInTheDocument()
   })
 
@@ -83,5 +86,27 @@ describe('mobile dual logo', () => {
     const { container } = render(<Header />)
     const divider = container.querySelector('span.md\\:hidden.w-px')
     expect(divider).toBeInTheDocument()
+  })
+})
+
+// ── photo cart ─────────────────────────────────────────────────────────────────
+
+describe('photo cart icon', () => {
+  beforeEach(() => window.localStorage.clear())
+
+  it('is hidden when the cart is empty', () => {
+    render(<StoreCartProvider><Header /></StoreCartProvider>)
+    expect(screen.queryByLabelText(/Photo cart/)).not.toBeInTheDocument()
+  })
+
+  it('shows the count and links to the cart when photos are in it', () => {
+    window.localStorage.setItem('bob_photo_cart', JSON.stringify([
+      { photoId: 'a', collectionId: 'c1', thumbnailUrl: 't' },
+      { photoId: 'b', collectionId: 'c1', thumbnailUrl: 't' },
+    ]))
+    render(<StoreCartProvider><Header /></StoreCartProvider>)
+    const links = screen.getAllByLabelText('Photo cart, 2 photos')
+    expect(links.length).toBeGreaterThan(0)
+    links.forEach((l) => expect(l).toHaveAttribute('href', '/shop/cart'))
   })
 })

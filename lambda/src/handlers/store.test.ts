@@ -2,9 +2,11 @@ import type { APIGatewayProxyEventV2, APIGatewayProxyStructuredResultV2 } from '
 import { handler } from './store';
 import * as photographers from './adminStorePhotographers';
 import * as library from './adminLibrary';
+import * as storePublic from './storePublic';
 
 jest.mock('./adminStorePhotographers');
 jest.mock('./adminLibrary');
+jest.mock('./storePublic');
 
 const OK = { statusCode: 200, body: '{}' };
 
@@ -14,7 +16,7 @@ function makeEvent(method: string, path: string): APIGatewayProxyEventV2 {
 
 beforeEach(() => {
   jest.resetAllMocks();
-  for (const mod of [photographers, library]) {
+  for (const mod of [photographers, library, storePublic]) {
     for (const fn of Object.values(mod)) {
       if (jest.isMockFunction(fn)) fn.mockResolvedValue(OK);
     }
@@ -23,6 +25,7 @@ beforeEach(() => {
 
 describe('store router', () => {
   it.each([
+    ['GET', '/api/store/collections/c1', storePublic.getPublicCollectionPage, ['c1']],
     ['GET', '/api/admin/store/photographers', photographers.listPhotographers, []],
     ['POST', '/api/admin/store/photographers', photographers.createPhotographer, []],
     ['PATCH', '/api/admin/store/photographers/p1', photographers.updatePhotographer, ['p1']],
@@ -46,6 +49,7 @@ describe('store router', () => {
 
   it.each([
     ['GET', '/api/store/nope'],
+    ['POST', '/api/store/collections'],
     ['DELETE', '/api/admin/store/photographers/p1'],
     ['GET', '/api/admin/library/collections/c1/photos/extra'],
     ['PUT', '/api/admin/library/photos'],
@@ -54,6 +58,11 @@ describe('store router', () => {
     const res = await handler(makeEvent(method, path)) as APIGatewayProxyStructuredResultV2;
     expect(res.statusCode).toBe(404);
     expect(JSON.parse(res.body as string)).toEqual({ error: 'Not found' });
+  });
+
+  it('routes GET /api/store/collections to listPublicCollections', async () => {
+    await handler(makeEvent('GET', '/api/store/collections'));
+    expect(storePublic.listPublicCollections).toHaveBeenCalled();
   });
 
   it('returns 500 and logs when a handler throws', async () => {

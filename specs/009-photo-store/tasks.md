@@ -266,50 +266,51 @@ This order avoids an empty public gallery and keeps the staging e2e "gallery pag
 
 ### Backend (US2)
 
-- [ ] T043 [P] [US2] Create `lambda/src/handlers/storePublic.ts` with:
+- [X] T043 [P] [US2] Create `lambda/src/handlers/storePublic.ts` with:
   - `listPublicCollections`: query `byEventDate` descending, filter `status === 'published'`. Map to `PublicCollection` with `photoCount = forSaleCount`, `coverThumbnailUrl` (cover photo, else the first for-sale photo by `sortOrder`) and unique `photographerNames`, batch-getting photographers.
   - `getPublicCollectionPage(id, cursor)`: 404 unless published. Query `byCollection` with `FilterExpression forSale = true AND removed = false`, `Limit` 60 and `ExclusiveStartKey` decoded from a base64url `cursor`. Return `PublicPhoto` with `priceCents = priceOverrideCents ?? defaultPriceCents` and `photographerName`, plus `nextCursor`. Never include `originalKey`.
 
   Note that filtered queries can return fewer than 60 items; loop until 60 or the end. Add `storePublic.test.ts`, including an assertion that no response contains `originalKey`.
-- [ ] T044 [US2] Register `GET /api/store/collections` and `GET /api/store/collections/{id}` in `lambda/src/handlers/store.ts`; extend `store.test.ts`
+- [X] T044 [US2] Register `GET /api/store/collections` and `GET /api/store/collections/{id}` in `lambda/src/handlers/store.ts`; extend `store.test.ts`
 
 ### Frontend (US2)
 
-- [ ] T045 [P] [US2] Add `getPublicCollections()` and `getPublicCollectionPage(id, cursor?)` to `frontend/lib/api/store.ts` with tests
-- [ ] T046 [P] [US2] Create `frontend/lib/store/cartContext.tsx` with `cartContext.test.tsx`:
+- [X] T045 [P] [US2] Add `getPublicCollections()` and `getPublicCollectionPage(id, cursor?)` to `frontend/lib/api/store.ts` with tests
+- [X] T046 [P] [US2] Create `frontend/lib/store/cartContext.tsx` with `cartContext.test.tsx`:
   - `StoreCartProvider` and `useStoreCart()` exposing `items: { photoId, collectionId, thumbnailUrl }[]`, `add`, `remove`, `has`, `clear`, `removeMany(ids)` and `count`
   - Persist to `localStorage` key `bob_photo_cart`, with every read and write wrapped in try/catch, so it renders correctly when storage is unavailable
   - De-duplicate by `photoId`
-- [ ] T047 [US2] Wrap `<Component />` in `StoreCartProvider` in `frontend/pages/_app.tsx`
-- [ ] T048 [US2] Create `frontend/components/store/CollectionCard.tsx` (presentational: cover, title, formatted date, photo count, photographer credit, link to `/shop/photos?event={id}`)
-- [ ] T049 [US2] Create `frontend/components/store/EventPhotosSection.tsx` (`id="photos"`), which fetches `getPublicCollections` with loading, error and empty states ("No event photos are on sale right now.") and renders a `CollectionCard` grid with the caption "Download full-resolution photos. Checkout right here." Below the grid, a "Lost your download link?" link to `/shop/download`. Add `EventPhotosSection.test.tsx`.
-- [ ] T050 [US2] Create `frontend/components/store/ShopPage.tsx`: hero "Shop" (same styling as the current `frontend/pages/merch.tsx` hero), a **Merch** section rendering the existing `MerchGrid` and `MerchInfo` under the caption "Checkout on our merch store" (FR-008c), then `EventPhotosSection`. On mount, if `location.hash === '#photos'`, scroll to that section. Add `ShopPage.test.tsx` (both sections render; hash scroll is called). `frontend/pages/shop/index.tsx` is a thin wrapper: `SEO` (title "Shop") + `Header` + `<ShopPage />` + `Footer`.
-- [ ] T051 [US2] Replace `frontend/pages/merch.tsx` with a client-side redirect: `useEffect(() => router.replace('/shop'))`, a `<meta httpEquiv="refresh" content="0; url=/shop">` via `next/head`, and the visible text "Merch has moved to Shop" with a link. Update `frontend/components/merch/MerchPage.test.tsx` to test `pages/shop/index.tsx` and add a redirect test.
-- [ ] T052 [US2] In `frontend/components/layout/Header.tsx` rename both desktop and mobile "Merch" links to "Shop" with `href="/shop"`. Add a cart icon link to `/shop/cart` with a `count` badge, rendered only when `useStoreCart().count > 0`, on desktop and mobile. Update `frontend/components/layout/Header.test.tsx`.
-- [ ] T053 [P] [US2] Create `frontend/components/store/PhotoGrid.tsx` with `PhotoGrid.test.tsx`:
+- [X] T047 [US2] Wrap `<Component />` in `StoreCartProvider` in `frontend/pages/_app.tsx`
+- [X] T048 [US2] Create `frontend/components/store/CollectionCard.tsx` (presentational: cover, title, formatted date, photo count, photographer credit, link to `/shop/photos?event={id}`)
+- [X] T049 [US2] Create `frontend/components/store/EventPhotosSection.tsx` (`id="photos"`), which fetches `getPublicCollections` with loading, error and empty states ("No event photos are on sale right now.") and renders a `CollectionCard` grid with the caption "Download full-resolution photos. Checkout right here." Below the grid, a "Lost your download link?" link to `/shop/download`. Add `EventPhotosSection.test.tsx`.
+- [X] T050 [US2] Create `frontend/components/store/ShopPage.tsx`: hero "Shop" (same styling as the current `frontend/pages/merch.tsx` hero), a **Merch** section rendering the existing `MerchGrid` and `MerchInfo` under the caption "Checkout on our merch store" (FR-008c), then `EventPhotosSection`. On mount, if `location.hash === '#photos'`, scroll to that section. Add `ShopPage.test.tsx` (both sections render; hash scroll is called). `frontend/pages/shop/index.tsx` is a thin wrapper: `SEO` (title "Shop") + `Header` + `<ShopPage />` + `Footer`.
+- [X] T051 [US2] Replace `frontend/pages/merch.tsx` with a client-side redirect: `useEffect(() => router.replace('/shop'))`, a `<meta httpEquiv="refresh" content="0; url=/shop">` via `next/head`, and the visible text "Merch has moved to Shop" with a link. Update `frontend/components/merch/MerchPage.test.tsx` to test `pages/shop/index.tsx` and add a redirect test.
+- [X] T052 [US2] In `frontend/components/layout/Header.tsx` rename both desktop and mobile "Merch" links to "Shop" with `href="/shop"`. Add a cart icon link to `/shop/cart` with a `count` badge, rendered only when `useStoreCart().count > 0`, on desktop and mobile. Update `frontend/components/layout/Header.test.tsx`.
+- [X] T053 [P] [US2] Create `frontend/components/store/PhotoGrid.tsx` with `PhotoGrid.test.tsx`:
   - **Props**: `photos`, `onSelect(index)`, `hasMore`, `loadMore`, `loading`
   - Responsive thumbnail grid (2 columns at 320px, up to 5 on desktop), `loading="lazy"` images, and an in-cart check badge from `useStoreCart().has`
   - An `IntersectionObserver` sentinel calls `loadMore` when `hasMore && !loading`
-- [ ] T054 [P] [US2] Create `frontend/components/store/PhotoDetailModal.tsx` with `PhotoDetailModal.test.tsx`:
+- [X] T054 [P] [US2] Create `frontend/components/store/PhotoDetailModal.tsx` with `PhotoDetailModal.test.tsx`:
   - Full-screen modal showing `previewUrl`, `formatMoney(priceCents)`, "Photo by {photographerName}" and an Add to cart / Remove from cart toggle
   - Prev/Next buttons plus ←/→ and Escape keys; focus trap; image loading spinner
   - Modeled on `frontend/components/gallery/GalleryLightbox.tsx` interactions
-- [ ] T055 [US2] Create `frontend/components/store/EventPhotosPage.tsx` taking `collectionId: string | null`:
+- [X] T055 [US2] Create `frontend/components/store/EventPhotosPage.tsx` taking `collectionId: string | null`:
   - Loads the first page, then appends pages via `nextCursor`
   - Header with collection title, date, photo count and a back link to `/shop#photos`
   - Renders `PhotoGrid` and `PhotoDetailModal`; when the modal reaches the last loaded photo, Next triggers `loadMore`
   - 404 state: "This photo collection isn't available."
 
   Add `EventPhotosPage.test.tsx` (initial load, load more, modal triggers load more, 404). `frontend/pages/shop/photos.tsx` is a thin wrapper that reads `?event=` via `useRouter` after `router.isReady` and renders `<EventPhotosPage collectionId={…} />`.
-- [ ] T056 [US2] Gallery entry points (FR-008b):
+- [X] T056 [US2] Gallery entry points (FR-008b):
   - In `frontend/pages/gallery.tsx` add a banner below the hero: "See yourself? Buy full-resolution, watermark-free photos from our events" with a **Shop event photos** button linking to `/shop#photos`
   - Create `frontend/lib/store/useEventCollectionMap.ts`: a hook returning `Record<eventId, collectionId>` from `getPublicCollections()`, `{}` on failure, with `useEventCollectionMap.test.ts`. `pages/gallery.tsx` calls the hook (it runs in parallel with the existing gallery fetch) and passes the map to `GalleryLightbox`.
   - In `frontend/components/gallery/GalleryLightbox.tsx` show "Buy photos from this event" → `/shop/photos?event={collectionId}` when the current photo's `eventId` is in the map
   - Update `GalleryLightbox.test.tsx` for link shown and hidden
-- [ ] T057 [P] [US2] In `frontend/public/sitemap.xml` replace the `/merch` entry with `/shop`
+- [X] T057 [P] [US2] In `frontend/public/sitemap.xml` replace the `/merch` entry with `/shop`
 
-- [ ] T058 [US2] Update Playwright regression coverage for the Shop rename. All tests run on every PR environment and on staging before prod (`e2e-regression.yml`); `CORE_PAGES` is also used by the prod smoke test.
+- [X] T058 [US2] Update Playwright regression coverage for the Shop rename. All tests run on every PR environment and on staging before prod (`e2e-regression.yml`); `CORE_PAGES` is also used by the prod smoke test.
   - In `e2e/types/pages.ts` replace `{ route: '/merch', heading: 'Merch' }` with `{ route: '/shop', heading: 'Shop' }` (otherwise the existing regression and prod smoke checks fail), and add `{ route: '/shop/cart', heading: 'Your Cart' }` and `{ route: '/shop/download', heading: 'Get a new download link' }` (pages that render without query parameters, per constitution Principle X)
+  - *(Implemented note: `/shop/cart` and `/shop/download` don't exist until US3, so their `CORE_PAGES` entries and the `/shop/order` and `/shop/photographer-setup` invalid-parameter tests are added with US3/US5. The `/shop/photos` invalid-parameter test is in. Run locally against dev in desktop and mobile Chrome: 12/12 Shop checks and the full regression suite (31 passed) pass.)*
   - Add tests for pages that need query parameters: `/shop/photos` (no `event`) and `/shop/photos?event=missing` show "This photo collection isn't available."; `/shop/order` (no params) shows an error state rather than a blank page; `/shop/photographer-setup?token=bogus` shows the invalid/expired link message
   - In `e2e/regression.spec.ts` add a `shop page` describe:
     - `/merch` ends on `/shop` (`toHaveURL(/\/shop/)`)

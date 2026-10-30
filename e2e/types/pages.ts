@@ -10,6 +10,6 @@ export const CORE_PAGES: Page[] = [
   { route: '/contact', heading: 'Contact Us' },
   { route: '/gallery', heading: 'Event Gallery' },
   { route: '/sponsor-inquiries', heading: 'Sponsor Inquiries' },
-  { route: '/merch', heading: 'Merch' },
+  { route: '/shop', heading: 'Shop' },
   { route: '/about', heading: 'About Us' },
 ];

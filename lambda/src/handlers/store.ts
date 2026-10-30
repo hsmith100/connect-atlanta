@@ -5,6 +5,7 @@ import {
   listCollections, createCollection, updateCollection, deleteCollection, listCollectionPhotos, listGalleryPhotos,
   presignLibraryPhotos, createLibraryPhotos, updateLibraryPhotos, deleteLibraryPhotos, presignReplace, completeReplace,
 } from './adminLibrary';
+import { listPublicCollections, getPublicCollectionPage } from './storePublic';
 
 // Thin router for /api/store/* (public store), /api/admin/library/* (photo library)
 // and /api/admin/store/* (selling: photographers, orders, settings).
@@ -17,6 +18,13 @@ export const handler = async (event: APIGatewayProxyEventV2): Promise<APIGateway
     const path = event.rawPath;
     let m: RegExpMatchArray | null;
 
+    // ── Public store ──
+    if (method === 'GET'    && path === '/api/store/collections')                 return await listPublicCollections();
+    if ((m = path.match(/^\/api\/store\/collections\/([^/]+)$/))) {
+      if (method === 'GET') return await getPublicCollectionPage(event, m[1]);
+    }
+
+    // ── Admin ──
     if (method === 'GET'    && path === '/api/admin/store/photographers')         return await listPhotographers(event);
     if (method === 'POST'   && path === '/api/admin/store/photographers')         return await createPhotographer(event);
     if ((m = path.match(/^\/api\/admin\/store\/photographers\/([^/]+)$/))) {

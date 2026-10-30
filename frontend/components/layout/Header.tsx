@@ -1,7 +1,28 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import { ShoppingCart } from 'lucide-react'
+import { useCartCount } from '../../lib/store/cartContext'
+
+// Photo cart shortcut; only shown while the cart has photos in it.
+function CartLink({ count, onClick }: { count: number; onClick?: () => void }) {
+  if (count === 0) return null
+  return (
+    <Link
+      href="/shop/cart"
+      onClick={onClick}
+      aria-label={`Photo cart, ${count} ${count === 1 ? 'photo' : 'photos'}`}
+      className="relative inline-flex items-center text-gray-800 hover:text-brand-pink transition-colors"
+    >
+      <ShoppingCart size={22} aria-hidden="true" />
+      <span className="absolute -top-2 -right-2 min-w-[1.25rem] h-5 px-1 rounded-full bg-brand-pink text-white text-xs font-bold flex items-center justify-center">
+        {count}
+      </span>
+    </Link>
+  )
+}
 
 export default function Header() {
+  const cartCount = useCartCount()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [isHeaderVisible, setIsHeaderVisible] = useState(true)
   const [lastScrollY, setLastScrollY] = useState(0)
@@ -107,10 +128,10 @@ export default function Header() {
               Apply
             </Link>
             <Link
-              href="/merch"
+              href="/shop"
               className="text-gray-800 hover:text-brand-pink transition-colors font-medium"
             >
-              Merch
+              Shop
             </Link>
             <Link
               href="/contact"
@@ -118,10 +139,12 @@ export default function Header() {
             >
               Contact
             </Link>
+            <CartLink count={cartCount} />
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="md:hidden relative z-10">
+          <div className="md:hidden relative z-10 flex items-center gap-3">
+            <CartLink count={cartCount} onClick={closeMobileMenu} />
             <button
               onClick={toggleMobileMenu}
               className="btn btn-ghost btn-sm text-gray-800"
@@ -179,11 +202,11 @@ export default function Header() {
               Apply
             </Link>
             <Link
-              href="/merch"
+              href="/shop"
               onClick={closeMobileMenu}
               className="block text-gray-800 hover:text-brand-pink transition-colors font-medium py-2 px-4 rounded-lg hover:bg-gray-100"
             >
-              Merch
+              Shop
             </Link>
             <Link
               href="/contact"

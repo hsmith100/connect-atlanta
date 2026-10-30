@@ -68,6 +68,54 @@ test.describe('gallery page', () => {
   });
 });
 
+// ── Shop (photo store + merch) ─────────────────────────────────────────────────
+
+test.describe('shop page', () => {
+  const openNavIfMobile = async (page: import('@playwright/test').Page) => {
+    if ((page.viewportSize()?.width ?? 1280) < 768) {
+      await page.getByRole('button', { name: 'Toggle mobile menu' }).click();
+    }
+  };
+
+  test('old /merch links redirect to /shop', async ({ page }) => {
+    await page.goto('/merch');
+    await expect(page).toHaveURL(/\/shop/);
+    await expect(page.getByRole('heading', { name: 'Shop', exact: true })).toBeVisible();
+  });
+
+  test('nav shows Shop (not Merch) and routes to /shop', async ({ page }) => {
+    await page.goto('/');
+    await openNavIfMobile(page);
+    await expect(page.getByRole('link', { name: 'Merch', exact: true })).toHaveCount(0);
+    await page.getByRole('link', { name: 'Shop', exact: true }).first().click();
+    await expect(page).toHaveURL(/\/shop/);
+  });
+
+  test('shows the Merch section and the Event Photos section (cards or empty state)', async ({ page }) => {
+    await page.goto('/shop');
+    await expect(page.getByRole('heading', { name: 'Merch', exact: true })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Event Photos', exact: true })).toBeVisible();
+    // PR environments start empty; staging may have published collections.
+    const cards = page.locator('#photos a[href^="/shop/photos?event="]');
+    const empty = page.getByText('No event photos are on sale right now.');
+    await expect(cards.first().or(empty)).toBeVisible({ timeout: 15000 });
+  });
+
+  test('Gallery "Shop event photos" lands on the Event Photos section', async ({ page }) => {
+    await page.goto('/gallery');
+    await page.getByRole('link', { name: 'Shop event photos' }).click();
+    await expect(page).toHaveURL(/\/shop#photos/);
+    await expect(page.locator('#photos')).toBeVisible();
+  });
+
+  test('event photos page without a valid event says the collection is unavailable', async ({ page }) => {
+    for (const url of ['/shop/photos', '/shop/photos?event=missing']) {
+      await page.goto(url);
+      await expect(page.getByText("This photo collection isn't available.")).toBeVisible({ timeout: 15000 });
+    }
+  });
+});
+
 // ── Events page — API response ────────────────────────────────────────────────
 
 test.describe('events page', () => {

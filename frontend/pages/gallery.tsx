@@ -4,7 +4,9 @@ import Header from '../components/layout/Header'
 import Footer from '../components/layout/Footer'
 import GalleryGrid from '../components/gallery/GalleryGrid'
 import GalleryLightbox from '../components/gallery/GalleryLightbox'
+import Link from 'next/link'
 import { getGallery, getLatestYouTubeVideoId } from '../lib/api'
+import { useEventCollectionMap } from '../lib/store/useEventCollectionMap'
 import type { Photo } from '@shared/types/photos'
 
 export default function Gallery() {
@@ -13,6 +15,7 @@ export default function Gallery() {
   const [error, setError] = useState<string | null>(null)
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null)
   const [latestVideoId, setLatestVideoId] = useState<string | null>(null)
+  const collectionByEvent = useEventCollectionMap()
 
   useEffect(() => {
     getGallery()
@@ -59,6 +62,15 @@ export default function Gallery() {
               <h1 className="font-horizon text-5xl md:text-7xl lg:text-8xl font-black mb-8 uppercase text-brand-pink">
                 Event Gallery
               </h1>
+              <p className="text-lg md:text-xl text-brand-text font-semibold">
+                See yourself? Buy full-resolution, watermark-free photos from our events.
+              </p>
+              <Link
+                href="/shop#photos"
+                className="inline-block mt-4 bg-brand-header text-white hover:bg-brand-primary hover:text-brand-header font-bold px-8 py-3 rounded-lg uppercase transition-all shadow-xl"
+              >
+                Shop event photos
+              </Link>
             </div>
 
             {latestVideoId && (
@@ -87,6 +99,7 @@ export default function Gallery() {
           onClose={closeImage}
           onNext={nextImage}
           onPrev={prevImage}
+          collectionByEvent={collectionByEvent}
         />
       )}
 
