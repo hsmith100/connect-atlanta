@@ -1,6 +1,11 @@
 import React from 'react'
 import { render, screen, fireEvent } from '@testing-library/react'
 import GalleryLightbox from './GalleryLightbox'
+
+jest.mock('next/link', () => ({
+  __esModule: true,
+  default: ({ href, children, ...rest }: { href: string; children: React.ReactNode }) => <a href={href} {...rest}>{children}</a>,
+}))
 import type { Photo } from '@shared/types/photos'
 
 function makePhoto(id: string): Photo {
@@ -86,4 +91,25 @@ it('calls onPrev on ArrowLeft key', () => {
   const { onPrev } = renderLightbox()
   fireEvent.keyDown(window, { key: 'ArrowLeft' })
   expect(onPrev).toHaveBeenCalledTimes(1)
+})
+
+// ── buy link ──────────────────────────────────────────────────────────────────
+
+describe('buy photos link', () => {
+  const withEvents = [{ ...makePhoto('a'), eventId: 'e1' }, { ...makePhoto('b'), eventId: 'e2' }] as Photo[]
+
+  it("links to the event photos page when the photo's event has photos for sale", () => {
+    renderLightbox(0, { photos: withEvents, collectionByEvent: { e1: 'c1' } })
+    expect(screen.getByRole('link', { name: /Buy photos from this event/ })).toHaveAttribute('href', '/shop/photos?event=c1')
+  })
+
+  it('is hidden when the event has nothing for sale', () => {
+    renderLightbox(1, { photos: withEvents, collectionByEvent: { e1: 'c1' } })
+    expect(screen.queryByRole('link', { name: /Buy photos/ })).not.toBeInTheDocument()
+  })
+
+  it('is hidden for photos without an event', () => {
+    renderLightbox(0, { collectionByEvent: { e1: 'c1' } })
+    expect(screen.queryByRole('link', { name: /Buy photos/ })).not.toBeInTheDocument()
+  })
 })

@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
-import { X, ChevronLeft, ChevronRight } from 'lucide-react'
+import Link from 'next/link'
+import { X, ChevronLeft, ChevronRight, ShoppingCart } from 'lucide-react'
 import type { Photo } from '@shared/types/photos'
 
 interface GalleryLightboxProps {
@@ -8,9 +9,13 @@ interface GalleryLightboxProps {
   onClose: () => void
   onNext: () => void
   onPrev: () => void
+  // eventId → photo collection with photos for sale; shows a "buy" link for those events
+  collectionByEvent?: Record<string, string>
 }
 
-export default function GalleryLightbox({ photos, selectedIndex, onClose, onNext, onPrev }: GalleryLightboxProps) {
+export default function GalleryLightbox({ photos, selectedIndex, onClose, onNext, onPrev, collectionByEvent = {} }: GalleryLightboxProps) {
+  const eventId = photos[selectedIndex].eventId
+  const buyCollectionId = eventId ? collectionByEvent[eventId] : undefined
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
@@ -53,8 +58,18 @@ export default function GalleryLightbox({ photos, selectedIndex, onClose, onNext
           alt={`Gallery photo ${selectedIndex + 1}`}
           className="max-w-full max-h-full object-contain rounded-lg"
         />
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/70 text-white px-4 py-2 rounded-full text-sm">
-          {selectedIndex + 1} / {photos.length}
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex flex-col sm:flex-row items-center gap-2">
+          <span className="bg-black/70 text-white px-4 py-2 rounded-full text-sm">
+            {selectedIndex + 1} / {photos.length}
+          </span>
+          {buyCollectionId && (
+            <Link
+              href={`/shop/photos?event=${encodeURIComponent(buyCollectionId)}`}
+              className="flex items-center gap-2 bg-brand-pink text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-brand-pink/90"
+            >
+              <ShoppingCart size={16} aria-hidden="true" /> Buy photos from this event
+            </Link>
+          )}
         </div>
       </div>
 

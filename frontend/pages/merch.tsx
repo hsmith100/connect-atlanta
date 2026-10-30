@@ -1,36 +1,27 @@
-import SEO from '../components/shared/SEO'
-import Header from '../components/layout/Header'
-import Footer from '../components/layout/Footer'
-import MerchGrid from '../components/merch/MerchGrid'
-import MerchInfo from '../components/merch/MerchInfo'
+import { useEffect } from 'react'
+import Head from 'next/head'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 
-export default function Merch() {
+// Merch moved into the Shop. Client-side redirect because the beatsontheblockfest.com
+// CloudFront distribution isn't managed by CDK, so a CloudFront redirect wouldn't reach it.
+export default function MerchRedirect() {
+  const router = useRouter()
+
+  useEffect(() => {
+    void router.replace('/shop')
+  }, [router])
+
   return (
     <>
-      <SEO
-        title="Merch | Beats on the Block"
-        description="Shop official Beats on the Block merchandise, produced by Connect Atlanta. Festival apparel, accessories, and more."
-        canonicalUrl="https://beatsontheblockfest.com/merch"
-      />
-
-      <Header />
-
-      <main className="pt-28 md:pt-[3.5rem]">
-        <section className="py-8 md:py-12 relative overflow-hidden hero-gradient-gold">
-          <div className="section-container relative z-10">
-            <div className="text-center mb-12">
-              <h1 className="font-horizon text-5xl md:text-7xl lg:text-8xl font-black mb-8 uppercase text-brand-pink">
-                Merch
-              </h1>
-            </div>
-            <MerchGrid />
-          </div>
-        </section>
-
-        <MerchInfo />
+      <Head>
+        <meta httpEquiv="refresh" content="0; url=/shop" />
+        <meta name="robots" content="noindex" />
+        <link rel="canonical" href="https://beatsontheblockfest.com/shop" />
+      </Head>
+      <main className="min-h-screen flex items-center justify-center p-8 text-center">
+        <p>Merch has moved to the <Link href="/shop" className="text-brand-pink underline">Shop</Link>.</p>
       </main>
-
-      <Footer />
     </>
   )
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { getAdminPhotos } from '../../lib/api'
+import { getAdminEvents } from '../../lib/api'
 
 export function AuthGate({ onAuth }: { onAuth: (key: string) => void }) {
   const [input, setInput] = useState('')
@@ -11,7 +11,7 @@ export function AuthGate({ onAuth }: { onAuth: (key: string) => void }) {
     setLoading(true)
     setError('')
     try {
-      await getAdminPhotos(input)
+      await getAdminEvents(input)
       onAuth(input)
     } catch {
       setError('Invalid admin key.')
