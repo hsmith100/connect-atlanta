@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { ArrowLeft, ArrowUp, ArrowDown, Loader2, Star } from 'lucide-react'
+import { ArrowLeft, GripVertical, Loader2, Star } from 'lucide-react'
 import type { Photographer, PhotoCollection, LibraryPhoto, LibraryPhotoUpdatePayload } from '@shared/types/store'
 import {
   getCollectionPhotos, updatePhotoCollection, updateLibraryPhotos, deleteLibraryPhotos,
@@ -43,6 +43,10 @@ export function CollectionDetail({ adminKey, collection, photographers, onChange
   const [showUploader, setShowUploader] = useState(false)
   const replaceInputRef = useRef<HTMLInputElement>(null)
   const replaceTargetRef = useRef<string | null>(null)
+  const [draggingId, setDraggingId] = useState<string | null>(null)
+  const dragIndexRef = useRef<number | null>(null)
+  // Order when the drag started — used to detect a real move and to revert if saving fails.
+  const orderBeforeDragRef = useRef<LibraryPhoto[] | null>(null)
 
   const photographerName = useMemo(() => new Map(photographers.map((p) => [p.id, p.name])), [photographers])
   const activePhotographers = photographers.filter((p) => p.active)
@@ -151,17 +155,54 @@ export function CollectionDetail({ adminKey, collection, photographers, onChange
     }, 'Cover photo set.')
   }
 
-  function move(index: number, direction: -1 | 1) {
-    const target = index + direction
-    if (target < 0 || target >= visible.length) return
-    const a = visible[index]
-    const b = visible[target]
-    void run(async () => {
-      await updateLibraryPhotos(adminKey, [{ id: a.id, sortOrder: b.sortOrder }, { id: b.id, sortOrder: a.sortOrder }])
-      setPhotos((prev) => prev
-        .map((p) => (p.id === a.id ? { ...p, sortOrder: b.sortOrder } : p.id === b.id ? { ...p, sortOrder: a.sortOrder } : p))
-        .sort((x, y) => x.sortOrder - y.sortOrder))
-    }, 'Order saved.')
+  // Drag and drop: the grid reorders live while dragging and saves once on drop.
+  // Removed photos aren't shown, so only the visible photos are renumbered.
+  function handleDragStart(e: React.DragEvent, index: number, id: string) {
+    dragIndexRef.current = index
+    orderBeforeDragRef.current = photos
+    setDraggingId(id)
+    e.dataTransfer.effectAllowed = 'move'
+    e.dataTransfer.setData('text/plain', id) // Firefox won't start a drag without data
+  }
+
+  function handleDragOver(e: React.DragEvent, overIndex: number) {
+    e.preventDefault()
+    const from = dragIndexRef.current
+    if (from === null || from === overIndex) return
+    setPhotos((prev) => {
+      const shown = prev.filter((p) => !p.removed)
+      const [moved] = shown.splice(from, 1)
+      shown.splice(overIndex, 0, moved)
+      return [...shown, ...prev.filter((p) => p.removed)]
+    })
+    dragIndexRef.current = overIndex
+    setStatusMsg('')
+  }
+
+  function handleDragEnd() {
+    const before = orderBeforeDragRef.current
+    dragIndexRef.current = null
+    orderBeforeDragRef.current = null
+    setDraggingId(null)
+    if (!before) return
+    const beforeShown = before.filter((p) => !p.removed)
+    if (!visible.some((p, i) => p.id !== beforeShown[i]?.id)) return
+
+    const renumbered = visible.map((p, i) => ({ ...p, sortOrder: (i + 1) * 10 }))
+    setBusy(true)
+    setError('')
+    setStatusMsg('Saving…')
+    updateLibraryPhotos(adminKey, renumbered.map((p) => ({ id: p.id, sortOrder: p.sortOrder })))
+      .then(() => {
+        setPhotos((prev) => [...renumbered, ...prev.filter((p) => p.removed)])
+        setStatusMsg('Order saved.')
+      })
+      .catch((err: unknown) => {
+        setPhotos(before)
+        setStatusMsg('')
+        setError(`${err instanceof Error ? err.message : 'Could not save the order.'} The previous order was restored.`)
+      })
+      .finally(() => setBusy(false))
   }
 
   function startReplace(id: string) {
@@ -219,7 +260,12 @@ export function CollectionDetail({ adminKey, collection, photographers, onChange
         </div>
       )}
       {error && <p role="alert" className="text-sm text-red-400">{error}</p>}
-      {statusMsg && <p className="text-sm text-green-400">{statusMsg}</p>}
+      {statusMsg && (
+        <p role="status" className="flex items-center gap-2 text-sm text-green-400">
+          {busy && statusMsg === 'Saving…' && <Loader2 size={14} className="animate-spin" />}
+          {statusMsg}
+        </p>
+      )}
 
       <div className="grid gap-3 sm:grid-cols-[2fr_1fr_1fr_auto] items-end">
         <label className="text-xs text-gray-400 space-y-1">
@@ -294,11 +340,24 @@ export function CollectionDetail({ adminKey, collection, photographers, onChange
       ) : visible.length === 0 ? (
         <p className="text-sm text-gray-400">No photos yet. Use “Upload photos” to add some.</p>
       ) : (
+        <>
+        <p className="text-xs text-gray-500">Click photos to select them. Drag a photo to reorder; changes save automatically.</p>
         <ul className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
           {visible.map((p, i) => (
-            <li key={p.id} className={`rounded-lg overflow-hidden border ${selected.has(p.id) ? 'border-brand-pink' : 'border-gray-800'} bg-gray-900`}>
+            <li
+              key={p.id}
+              draggable={!busy}
+              onDragStart={(e) => handleDragStart(e, i, p.id)}
+              onDragOver={(e) => handleDragOver(e, i)}
+              onDrop={(e) => e.preventDefault()}
+              onDragEnd={handleDragEnd}
+              data-testid={`collection-item-${p.id}`}
+              className={`rounded-lg overflow-hidden border bg-gray-900 cursor-grab active:cursor-grabbing transition-opacity ${
+                draggingId === p.id ? 'opacity-40 border-brand-pink' : selected.has(p.id) ? 'border-brand-pink' : 'border-gray-800'
+              }`}
+            >
               <button type="button" onClick={() => toggle(p.id)} aria-pressed={selected.has(p.id)} aria-label={`Select ${p.originalFilename}`} className="relative block w-full">
-                <img src={p.thumbnailUrl} alt={p.originalFilename} loading="lazy" className={`w-full aspect-[3/2] object-cover ${p.forSale || p.inGallery ? '' : 'opacity-40'}`} />
+                <img src={p.thumbnailUrl} alt={p.originalFilename} loading="lazy" draggable={false} className={`w-full aspect-[3/2] object-cover ${p.forSale || p.inGallery ? '' : 'opacity-40'}`} />
                 {collection.coverPhotoId === p.id && <Star size={16} className="absolute top-1 left-1 text-yellow-400" fill="currentColor" aria-label="Cover photo" />}
                 <span className="absolute top-1 right-1 flex gap-1">
                   {p.inGallery && <span className="text-[10px] bg-blue-900 text-blue-200 px-1.5 rounded">In gallery</span>}
@@ -313,14 +372,14 @@ export function CollectionDetail({ adminKey, collection, photographers, onChange
                   {' · '}{p.photographerId ? photographerName.get(p.photographerId) ?? 'Unknown' : 'No photographer'}
                 </p>
                 <div className="flex items-center gap-1">
-                  <button type="button" onClick={() => move(i, -1)} disabled={busy || i === 0} aria-label={`Move ${p.originalFilename} earlier`} className="p-1 text-gray-400 hover:text-white disabled:opacity-30"><ArrowUp size={12} /></button>
-                  <button type="button" onClick={() => move(i, 1)} disabled={busy || i === visible.length - 1} aria-label={`Move ${p.originalFilename} later`} className="p-1 text-gray-400 hover:text-white disabled:opacity-30"><ArrowDown size={12} /></button>
+                  <GripVertical size={14} className="text-gray-500" aria-hidden="true" />
                   <button type="button" onClick={() => startReplace(p.id)} disabled={busy} className="ml-auto text-gray-400 hover:text-white">Replace file</button>
                 </div>
               </div>
             </li>
           ))}
         </ul>
+        </>
       )}
     </div>
   )

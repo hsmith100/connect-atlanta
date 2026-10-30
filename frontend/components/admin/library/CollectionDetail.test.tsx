@@ -185,11 +185,53 @@ it('deletes selected photos after confirmation', async () => {
   expect(onRefresh).toHaveBeenCalled()
 })
 
-it('swaps sort order when moving a photo later', async () => {
+function dragPhoto(fromId: string, overIds: string[]) {
+  const dt = { setData: jest.fn(), effectAllowed: '' }
+  fireEvent.dragStart(screen.getByTestId(`collection-item-${fromId}`), { dataTransfer: dt })
+  for (const id of overIds) fireEvent.dragOver(screen.getByTestId(`collection-item-${id}`), { dataTransfer: dt })
+  fireEvent.dragEnd(screen.getByTestId(`collection-item-${fromId}`), { dataTransfer: dt })
+}
+const gridOrder = () => screen.getAllByTestId(/^collection-item-/).map((el) => el.dataset.testid!.replace('collection-item-', ''))
+
+it('has no reorder arrows', async () => {
   setup()
   await screen.findByText('a.jpg')
-  fireEvent.click(screen.getByLabelText('Move a.jpg later'))
-  await waitFor(() => expect(updateLibraryPhotos).toHaveBeenCalledWith('k', [{ id: 'a', sortOrder: 20 }, { id: 'b', sortOrder: 10 }]))
+  expect(screen.queryByLabelText(/Move a.jpg/)).not.toBeInTheDocument()
+})
+
+it('reorders by dragging and saves the new order once, on drop', async () => {
+  setup([photo('a', 10), photo('b', 20), photo('c', 30)])
+  await screen.findByText('a.jpg')
+  dragPhoto('c', ['b', 'a'])
+  expect(gridOrder()).toEqual(['c', 'a', 'b'])
+  await waitFor(() => expect(updateLibraryPhotos).toHaveBeenCalledTimes(1))
+  expect(updateLibraryPhotos).toHaveBeenCalledWith('k', [
+    { id: 'c', sortOrder: 10 }, { id: 'a', sortOrder: 20 }, { id: 'b', sortOrder: 30 },
+  ])
+  expect(await screen.findByText('Order saved.')).toBeInTheDocument()
+})
+
+it('does not save when a photo is dropped where it started', async () => {
+  setup()
+  await screen.findByText('a.jpg')
+  dragPhoto('a', ['a'])
+  expect(updateLibraryPhotos).not.toHaveBeenCalled()
+})
+
+it('restores the previous order when saving fails', async () => {
+  jest.mocked(updateLibraryPhotos).mockRejectedValue(new Error('HTTP 500'))
+  setup()
+  await screen.findByText('a.jpg')
+  dragPhoto('a', ['b'])
+  expect(await screen.findByRole('alert')).toHaveTextContent('The previous order was restored.')
+  expect(gridOrder()).toEqual(['a', 'b'])
+})
+
+it('keeps removed photos out of the renumbering', async () => {
+  setup([photo('a', 10), photo('gone', 15, { removed: true }), photo('b', 20)])
+  await screen.findByText('a.jpg')
+  dragPhoto('b', ['a'])
+  await waitFor(() => expect(updateLibraryPhotos).toHaveBeenCalledWith('k', [{ id: 'b', sortOrder: 10 }, { id: 'a', sortOrder: 20 }]))
 })
 
 it('replaces a photo file', async () => {
