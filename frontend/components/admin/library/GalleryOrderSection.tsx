@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { ArrowUp, ArrowDown, Loader2 } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+import { GripVertical, Loader2 } from 'lucide-react'
 import type { LibraryPhoto, PhotoCollection } from '@shared/types/store'
 import { getGalleryPhotos, updateLibraryPhotos } from '../../../lib/api/adminLibrary'
 
@@ -13,10 +13,13 @@ const buttonClass = 'text-xs font-semibold rounded-lg px-3 py-1.5 bg-gray-800 ho
 // Order of the public Gallery across all events. Mirrors exactly what visitors see.
 export function GalleryOrderSection({ adminKey, collections }: Props) {
   const [photos, setPhotos] = useState<LibraryPhoto[] | null>(null)
-  const [dirty, setDirty] = useState(false)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
   const [statusMsg, setStatusMsg] = useState('')
+  const [draggingId, setDraggingId] = useState<string | null>(null)
+  const dragIndexRef = useRef<number | null>(null)
+  // Order when the drag started — used to detect a real move and to revert if saving fails.
+  const orderBeforeDragRef = useRef<LibraryPhoto[] | null>(null)
   const titles = new Map(collections.map((c) => [c.id, c.title]))
 
   useEffect(() => {
@@ -25,29 +28,52 @@ export function GalleryOrderSection({ adminKey, collections }: Props) {
       .catch(() => setError('Could not load the gallery. Refresh to try again.'))
   }, [adminKey])
 
-  function move(index: number, direction: -1 | 1) {
+  // Drag and drop: the grid reorders live as the dragged photo passes over others,
+  // and the new order is saved automatically when the photo is dropped.
+  function handleDragStart(e: React.DragEvent, index: number, id: string) {
+    dragIndexRef.current = index
+    orderBeforeDragRef.current = photos
+    setDraggingId(id)
+    e.dataTransfer.effectAllowed = 'move'
+    e.dataTransfer.setData('text/plain', id) // Firefox won't start a drag without data
+  }
+
+  function handleDragOver(e: React.DragEvent, overIndex: number) {
+    e.preventDefault()
+    const from = dragIndexRef.current
+    if (from === null || from === overIndex) return
     setPhotos((prev) => {
       if (!prev) return prev
-      const target = index + direction
-      if (target < 0 || target >= prev.length) return prev
       const next = [...prev]
-      ;[next[index], next[target]] = [next[target], next[index]]
+      const [moved] = next.splice(from, 1)
+      next.splice(overIndex, 0, moved)
       return next
     })
-    setDirty(true)
+    dragIndexRef.current = overIndex
     setStatusMsg('')
   }
 
-  async function save() {
-    if (!photos) return
+  function handleDragEnd() {
+    const before = orderBeforeDragRef.current
+    dragIndexRef.current = null
+    orderBeforeDragRef.current = null
+    setDraggingId(null)
+    if (!photos || !before) return
+    const moved = photos.some((p, i) => p.id !== before[i]?.id)
+    if (moved) void saveOrder(photos, before)
+  }
+
+  async function saveOrder(ordered: LibraryPhoto[], before: LibraryPhoto[]) {
     setBusy(true)
     setError('')
+    setStatusMsg('Saving…')
     try {
-      await updateLibraryPhotos(adminKey, photos.map((p, i) => ({ id: p.id, gallerySortOrder: (i + 1) * 10 })))
-      setDirty(false)
+      await updateLibraryPhotos(adminKey, ordered.map((p, i) => ({ id: p.id, gallerySortOrder: (i + 1) * 10 })))
       setStatusMsg('Gallery order saved.')
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Could not save the order.')
+      setPhotos(before)
+      setStatusMsg('')
+      setError(`${err instanceof Error ? err.message : 'Could not save the order.'} The previous order was restored.`)
     } finally {
       setBusy(false)
     }
@@ -75,25 +101,35 @@ export function GalleryOrderSection({ adminKey, collections }: Props) {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-wrap items-center gap-3">
-        <p className="text-sm text-gray-300 flex-1">{photos.length} photos in the gallery, in the order visitors see them.</p>
-        <button type="button" onClick={() => void save()} disabled={busy || !dirty} className="bg-brand-primary hover:bg-brand-primary/90 text-white rounded-lg px-4 py-1.5 text-sm font-semibold disabled:opacity-50">
-          Save order
-        </button>
-      </div>
+      <p className="text-sm text-gray-300">
+        {photos.length} photos in the gallery, in the order visitors see them. Drag a photo to reorder; changes save automatically.
+      </p>
       {error && <p role="alert" className="text-sm text-red-400">{error}</p>}
-      {statusMsg && <p className="text-sm text-green-400">{statusMsg}</p>}
+      {statusMsg && (
+        <p role="status" className="flex items-center gap-2 text-sm text-green-400">
+          {busy && <Loader2 size={14} className="animate-spin" />}
+          {statusMsg}
+        </p>
+      )}
       <ol className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
         {photos.map((p, i) => (
-          <li key={p.id} className="rounded-lg overflow-hidden border border-gray-800 bg-gray-900">
-            <img src={p.webThumbUrl} alt={p.originalFilename} loading="lazy" className="w-full aspect-[3/2] object-cover" />
-            <div className="p-2 text-xs space-y-1">
-              <p className="truncate text-gray-300">{i + 1}. {titles.get(p.collectionId) ?? 'Event'}</p>
-              <div className="flex items-center gap-1">
-                <button type="button" onClick={() => move(i, -1)} disabled={busy || i === 0} aria-label={`Move ${p.originalFilename} earlier`} className="p-1 text-gray-400 hover:text-white disabled:opacity-30"><ArrowUp size={12} /></button>
-                <button type="button" onClick={() => move(i, 1)} disabled={busy || i === photos.length - 1} aria-label={`Move ${p.originalFilename} later`} className="p-1 text-gray-400 hover:text-white disabled:opacity-30"><ArrowDown size={12} /></button>
-                <button type="button" onClick={() => void removeFromGallery(p.id)} disabled={busy} className={`ml-auto ${buttonClass} px-2 py-1`}>Remove</button>
-              </div>
+          <li
+            key={p.id}
+            draggable={!busy}
+            onDragStart={(e) => handleDragStart(e, i, p.id)}
+            onDragOver={(e) => handleDragOver(e, i)}
+            onDrop={(e) => e.preventDefault()}
+            onDragEnd={handleDragEnd}
+            data-testid={`gallery-item-${p.id}`}
+            className={`rounded-lg overflow-hidden border bg-gray-900 cursor-grab active:cursor-grabbing transition-opacity ${
+              draggingId === p.id ? 'opacity-40 border-brand-pink' : 'border-gray-800'
+            }`}
+          >
+            <img src={p.webThumbUrl} alt={p.originalFilename} loading="lazy" draggable={false} className="w-full aspect-[3/2] object-cover pointer-events-none" />
+            <div className="p-2 text-xs flex items-center gap-1">
+              <GripVertical size={14} className="text-gray-500 shrink-0" aria-hidden="true" />
+              <p className="truncate text-gray-300 flex-1">{i + 1}. {titles.get(p.collectionId) ?? 'Event'}</p>
+              <button type="button" onClick={() => void removeFromGallery(p.id)} disabled={busy} className={`${buttonClass} px-2 py-1`}>Remove</button>
             </div>
           </li>
         ))}

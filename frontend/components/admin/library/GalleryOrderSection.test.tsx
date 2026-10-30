@@ -19,20 +19,72 @@ it('shows gallery photos in order with their event titles', async () => {
   render(<GalleryOrderSection adminKey="k" collections={collections} />)
   expect(await screen.findByText('1. Aug Fest')).toBeInTheDocument()
   expect(screen.getByText('2. June Fest')).toBeInTheDocument()
-  expect(screen.getByRole('button', { name: 'Save order' })).toBeDisabled()
+  expect(screen.queryByRole('button', { name: 'Save order' })).not.toBeInTheDocument()
 })
 
-it('reorders and saves gallerySortOrder for every photo', async () => {
+const dataTransfer = () => ({ setData: jest.fn(), effectAllowed: '' })
+
+function drag(fromId: string, overId: string) {
+  const dt = dataTransfer()
+  fireEvent.dragStart(screen.getByTestId(`gallery-item-${fromId}`), { dataTransfer: dt })
+  fireEvent.dragOver(screen.getByTestId(`gallery-item-${overId}`), { dataTransfer: dt })
+  fireEvent.drop(screen.getByTestId(`gallery-item-${overId}`), { dataTransfer: dt })
+  fireEvent.dragEnd(screen.getByTestId(`gallery-item-${fromId}`), { dataTransfer: dt })
+  return dt
+}
+
+function order() {
+  return screen.getAllByTestId(/^gallery-item-/).map((el) => el.dataset.testid!.replace('gallery-item-', ''))
+}
+
+it('saves the new order automatically when a photo is dropped', async () => {
   jest.mocked(getGalleryPhotos).mockResolvedValue([photo('a', 'c1'), photo('b', 'c2')])
   render(<GalleryOrderSection adminKey="k" collections={collections} />)
   await screen.findByText('1. Aug Fest')
-  fireEvent.click(screen.getByLabelText('Move a.jpg later'))
+  const dt = drag('a', 'b')
+  expect(dt.setData).toHaveBeenCalledWith('text/plain', 'a')
   expect(screen.getByText('1. June Fest')).toBeInTheDocument()
-  fireEvent.click(screen.getByRole('button', { name: 'Save order' }))
   await waitFor(() => expect(updateLibraryPhotos).toHaveBeenCalledWith('k', [
     { id: 'b', gallerySortOrder: 10 }, { id: 'a', gallerySortOrder: 20 },
   ]))
   expect(await screen.findByText('Gallery order saved.')).toBeInTheDocument()
+})
+
+it('moves a photo from the end to the front through the items in between', async () => {
+  jest.mocked(getGalleryPhotos).mockResolvedValue([photo('a', 'c1'), photo('b', 'c1'), photo('c', 'c1')])
+  render(<GalleryOrderSection adminKey="k" collections={collections} />)
+  await screen.findByText('1. Aug Fest')
+  const dt = dataTransfer()
+  fireEvent.dragStart(screen.getByTestId('gallery-item-c'), { dataTransfer: dt })
+  fireEvent.dragOver(screen.getByTestId('gallery-item-b'), { dataTransfer: dt })
+  fireEvent.dragOver(screen.getByTestId('gallery-item-a'), { dataTransfer: dt })
+  // Hovering over items mid-drag doesn't save; only the drop does, once.
+  expect(updateLibraryPhotos).not.toHaveBeenCalled()
+  fireEvent.dragEnd(screen.getByTestId('gallery-item-c'), { dataTransfer: dt })
+  expect(order()).toEqual(['c', 'a', 'b'])
+  await waitFor(() => expect(updateLibraryPhotos).toHaveBeenCalledTimes(1))
+  expect(updateLibraryPhotos).toHaveBeenCalledWith('k', [
+    { id: 'c', gallerySortOrder: 10 }, { id: 'a', gallerySortOrder: 20 }, { id: 'b', gallerySortOrder: 30 },
+  ])
+})
+
+it('restores the previous order and explains when saving fails', async () => {
+  jest.mocked(updateLibraryPhotos).mockRejectedValue(new Error('HTTP 500'))
+  jest.mocked(getGalleryPhotos).mockResolvedValue([photo('a', 'c1'), photo('b', 'c2')])
+  render(<GalleryOrderSection adminKey="k" collections={collections} />)
+  await screen.findByText('1. Aug Fest')
+  drag('a', 'b')
+  expect(await screen.findByRole('alert')).toHaveTextContent('The previous order was restored.')
+  expect(order()).toEqual(['a', 'b'])
+})
+
+it('does nothing when a photo is dropped on itself', async () => {
+  jest.mocked(getGalleryPhotos).mockResolvedValue([photo('a', 'c1'), photo('b', 'c2')])
+  render(<GalleryOrderSection adminKey="k" collections={collections} />)
+  await screen.findByText('1. Aug Fest')
+  drag('a', 'a')
+  expect(order()).toEqual(['a', 'b'])
+  expect(updateLibraryPhotos).not.toHaveBeenCalled()
 })
 
 it('removes a photo from the gallery', async () => {

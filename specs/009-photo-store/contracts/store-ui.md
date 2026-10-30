@@ -34,7 +34,7 @@ All visitor-facing store pages live under `/shop`, which replaces `/merch` (FR-0
 | Collections list | `admin/library/LibraryTab.tsx` → `CollectionsSection.tsx` | One collection per event. Each row shows title, date, photo count, for-sale count, and a store badge (Draft/Published). "New collection" picks an event without one. |
 | Collection detail | `CollectionDetail.tsx` | Settings: default price, default photographer, Publish/Unpublish store listing (shows `problems[]` on 422). Photo grid: watermarked thumbnail with **In gallery** and **For sale** badges. Multi-select actions: Show in gallery / Remove from gallery, Put on sale / Take off sale, set or clear price override, assign photographer, set cover, delete. Also reorder arrows, Replace file, and the embedded uploader. |
 | Uploader | `StoreUploader.tsx` (→ `PhotoUploader.tsx`) | As before, plus per-batch defaults "Show in gallery" (off) and "For sale" (on). The photographer is required when "For sale" is on. Generates all four versions per file. |
-| Gallery order | `GalleryOrderSection.tsx` | All photos currently in the Gallery (clean thumbnails) across events. Drag or arrow reorder, then **Save order**. Remove from gallery here too. Mirrors what the public Gallery shows. |
+| Gallery order | `GalleryOrderSection.tsx` | All photos currently in the Gallery (clean thumbnails) across events. **Drag a photo to reorder; the order saves automatically when it's dropped** (no Save button). A failed save restores the previous order with an explanation. Remove from gallery here too. Mirrors what the public Gallery shows. Mouse/trackpad dragging only (native drag-and-drop). |
 
 The old `components/admin/PhotosTab.tsx` and its `PhotoCard` are deleted after migration (US7).
 

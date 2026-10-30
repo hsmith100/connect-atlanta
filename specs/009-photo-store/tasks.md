@@ -210,9 +210,11 @@ The organizer chose one photo library for both the gallery and the store (spec S
   - `CollectionsSection` rows show both photo count and for-sale count
 
   Update all tests.
-- [X] T033 [US1] Create `frontend/components/admin/library/GalleryOrderSection.tsx` with `GalleryOrderSection.test.tsx`: loads `getGalleryPhotos`, shows clean thumbnails (`webThumbUrl`) with event title, up/down reorder and **Save order** (`updateLibraryPhotos` with `gallerySortOrder` = index × 10), and **Remove from gallery**. Loading, empty and error states.
+- [X] T033 [US1] Create `frontend/components/admin/library/GalleryOrderSection.tsx` with `GalleryOrderSection.test.tsx`: loads `getGalleryPhotos`, shows clean thumbnails (`webThumbUrl`) with event title, **drag-and-drop reorder that saves automatically on drop** (`updateLibraryPhotos` with `gallerySortOrder` = (index + 1) × 10; one save per drop, nothing saved while hovering; on failure the previous order is restored with an error), and **Remove from gallery**. Loading, empty and error states.
+
+  *(Revised 2026-10-30 after organizer review: the original up/down arrows and Save order button were replaced by drag-and-drop with auto-save, using native HTML5 drag events like the legacy gallery screen. Touch-device dragging would need a library such as `@dnd-kit` and was not requested.)*
 - [X] T034 [US1] Create `frontend/components/admin/library/LibraryTab.tsx` with `LibraryTab.test.tsx`: sub-navigation **Collections** and **Gallery order** (SubmissionsTab pattern); loads collections and photographers in parallel. In `frontend/pages/admin.tsx` the **Photos** tab renders `LibraryTab` (the old `PhotosTab` is no longer rendered; it is deleted in US7). Trim `frontend/components/admin/store/StoreTab.tsx` to **Orders**, **Photographers** and **Settings** and update its test.
-- [ ] T035 [US1] Deploy the rework to dev (review `cdk diff`: two tables replaced, one route added, StoreLambda code/env changed). Re-run quickstart steps 1–8 using the Photos tab, including steps that toggle gallery/for-sale.
+- [X] T035 [US1] Deploy the rework to dev (review `cdk diff`: two tables replaced, one route added, StoreLambda code/env changed). Re-run quickstart steps 1–8 using the Photos tab, including steps that toggle gallery/for-sale. *(Organizer tested on dev 2026-10-30; feedback (drag-to-reorder with auto-save) incorporated in T033.)*
 
 **Checkpoint**: one Photos tab manages every photo; the Store tab handles selling only.
 
