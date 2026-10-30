@@ -68,13 +68,13 @@ stripe listen --forward-to <DevApiUrl>/api/store/stripe-webhook   # optional: ex
 
 ## 3b. Gallery migration (US7, per environment: dev → staging → prod)
 ```bash
-cd infrastructure
-npx tsx scripts/migrate-gallery.ts --env dev --plan                                 # writes gallery-migration-dev.csv
+cd lambda
+npx tsx src/scripts/migrate-gallery.ts --env dev --plan                                 # writes gallery-migration-dev.csv
 # fill in eventId for every blank row, then:
-npx tsx scripts/migrate-gallery.ts --env dev --run --map gallery-migration-dev.csv
-npx tsx scripts/migrate-gallery.ts --env dev --verify
+npx tsx src/scripts/migrate-gallery.ts --env dev --run --map gallery-migration-dev.csv
+npx tsx src/scripts/migrate-gallery.ts --env dev --verify
 # after checking /gallery looks identical (and PR B is deployed to that env):
-npx tsx scripts/migrate-gallery.ts --env dev --cleanup
+npx tsx src/scripts/migrate-gallery.ts --env dev --cleanup
 ```
 Expected: same Gallery photos and order; old `https://<media>/photos/<id>.jpg` URLs return 403/404; Photos tab shows each migrated photo under its event with "In gallery".
 

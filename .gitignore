@@ -97,3 +97,6 @@ backend/env.txt
 
 # Spam-cleanup review exports — contain PII (names, emails, phone numbers)
 data/spam-review/
+
+# Gallery migration working files (lambda/src/scripts/migrate-gallery.ts)
+gallery-migration-*.csv

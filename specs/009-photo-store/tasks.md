@@ -207,6 +207,7 @@ The organizer chose one photo library for both the gallery and the store (spec S
 - [X] T032 [US1] Move `CollectionsSection`, `CollectionDetail` and `StoreUploader` to `frontend/components/admin/library/` (rename `StoreUploader` → `PhotoUploader`) and delete `UploadSection`:
   - `PhotoUploader` gets per-batch toggles "Show in gallery" (default off) and "For sale" (default on); the photographer is required only when "For sale" is on
   - `CollectionDetail` grid shows **In gallery** / **For sale** badges and greys out photos that are neither; bulk actions become Show in gallery, Remove from gallery, Put on sale, Take off sale (replacing Hide/Unhide), plus the existing price, photographer, cover and delete actions; "Put on sale" on photos with no photographer shows the API's error
+  - Photos are reordered within the collection by **drag-and-drop that saves on drop** (no arrows), the same behavior as the Gallery order view *(revised 2026-10-30 after organizer review)*
   - `CollectionsSection` rows show both photo count and for-sale count
 
   Update all tests.
@@ -226,23 +227,26 @@ The organizer chose one photo library for both the gallery and the store (spec S
 
 **Independent Test**: spec US7 scenarios. In dev: run the migration, compare the Gallery before and after (same photos and order, web-size images), confirm the old full-res URLs no longer load, and confirm the old admin screen is gone.
 
-**Release sequencing (important)**: the gallery switch can't ship in the same deploy as the new tables, because the prod Gallery would be empty until migration runs. Use three PRs:
-- **(A)** library tables and admin; the Gallery still reads the legacy table
-- then run migration `--run` and `--verify` on staging and prod
-- **(B)** switch `GET /api/gallery` to the library and remove the legacy admin screen and routes
-- then run `--cleanup` on each environment
-- **(C)** remove the legacy `PhotosTable` from `DynamoStack` using the two-step export removal
+**Release sequencing (revised 2026-10-30, organizer decision: finish the whole feature before anything reaches prod)**:
+- **Feature PR (#1373)** stays a draft until every story is done. It merges with `GET /api/gallery` still served by PhotosLambda from the legacy table, and with the legacy admin and routes still in place (T037, T040 and T041 are held back).
+- **Right after the feature deploys**, run migration `--plan` (organizer assigns events), `--run` and `--verify` on staging, then prod.
+- **Switch PR**: T037 + T040 + T041 (point `/api/gallery` at the library, remove the legacy gallery admin and routes). This merge is small. Then run `--cleanup` per environment.
+- **Table removal PR**: T042, after cleanup everywhere.
 
-- [ ] T036 [P] [US7] Create `lambda/src/handlers/libraryGallery.ts` with `getPublicGallery`: query `byGallery` ascending across all pages, returning `{ photos: [{ id, url: webUrl, thumbnailUrl: webThumbUrl, eventId, sortOrder: gallerySortOrder, visible: true }] }` (the same shape as today's `GET /api/gallery`; `eventId` comes from each photo's collection via BatchGet). Add `libraryGallery.test.ts` (order, removed/not-in-gallery excluded via the sparse index, no `originalKey`, empty gallery).
+This order avoids an empty public gallery and keeps the staging e2e "gallery page" check (which expects photos) from blocking the prod deploy.
+
+- [X] T036 [P] [US7] Create `lambda/src/handlers/libraryGallery.ts` with `getPublicGallery`: query `byGallery` ascending across all pages, returning `{ photos: [{ id, url: webUrl, thumbnailUrl: webThumbUrl, eventId, sortOrder: gallerySortOrder, visible: true }] }` (the same shape as today's `GET /api/gallery`; `eventId` comes from each photo's collection via BatchGet). **Also supports `?eventId=<id>`**, which the Events page uses for past-event galleries (`frontend/pages/events.tsx` → `getEventGallery`): it resolves the event's collection and returns that collection's `inGallery && !removed` photos in gallery order (an empty list if the event has no collection). Add `libraryGallery.test.ts` (order, removed/not-in-gallery excluded via the sparse index, the eventId filter, no `originalKey`, empty gallery).
 - [ ] T037 [US7] *(PR B)* Register `GET /api/gallery` in `lambda/src/handlers/store.ts`. In `backend-stack.ts` point the `/api/gallery` route at `storeIntegration` instead of `photosIntegration`. Extend `store.test.ts`.
-- [ ] T038 [P] [US7] Create `infrastructure/scripts/migrate-gallery.ts` (run with `npx tsx scripts/migrate-gallery.ts --env dev|staging|prod <mode>`; add `sharp` and `tsx` to `infrastructure` devDependencies). It resolves table and bucket names from the environment's stack outputs. Modes per research R13:
+- [X] T038 [P] [US7] Create `infrastructure/scripts/migrate-gallery.ts` (run with `npx tsx scripts/migrate-gallery.ts --env dev|staging|prod <mode>`; add `sharp` and `tsx` to `infrastructure` devDependencies). It resolves table and bucket names from the environment's stack outputs. Modes per research R13:
   - `--plan` writes `gallery-migration-<env>.csv` (legacyId, thumbnailUrl, eventId, eventTitle), blank where unknown
   - `--run --map <csv>` refuses to start if any row lacks a valid event. Per photo: ensure the collection exists (draft, $15.00); copy `photos/{id}.{ext}` to `originals/{id}.{ext}` in the originals bucket; generate the four versions with sharp (same sizes and quality as `generatePhotoVersions`, watermark as an SVG overlay with the same text, angle, opacity and spacing); upload them to `library/...`; put the `LibraryPhoto` with the same id, `inGallery = visible`, `gallerySortOrder = sortOrder`, `forSale = false` and `photographerId = null`, with condition `attribute_not_exists(id)`. Skips photos already migrated and prints a summary.
   - `--verify` checks counts, that every public version returns 200, and that the new Gallery query's ids and order match the legacy visible photos
   - `--cleanup` requires typing the env name to confirm, then deletes legacy `photos/*` and `photos/thumbs/*` objects and legacy records
 
   Keep the pure helpers (CSV parse and validate, watermark SVG builder, size math) in `infrastructure/scripts/migrateGalleryLib.ts` with `migrateGalleryLib.test.ts` run by `node --test` via tsx.
-- [ ] T039 [US7] Run the migration in dev: `--plan`, fill in events, `--run`, `--verify`. Record the results in the PR description.
+
+  *(Implemented note: the script lives at `lambda/src/scripts/migrate-gallery.ts` (run from `lambda/` with `npx tsx src/scripts/migrate-gallery.ts --env <env> <mode>`), with helpers in `lambda/src/scripts/migrateGalleryLib.ts`. That package already has the AWS SDK, Jest and CI lint/typecheck, and `sharp`, `tsx` and `@aws-sdk/client-cloudformation` are lambda devDependencies, never bundled into Lambdas. The source bucket is resolved from each legacy URL's domain across all environments, because dev's legacy records point at staging's media. `--cleanup` only deletes files from the environment's own bucket. Working CSVs are gitignored.)*
+- [X] T039 [US7] Run the migration in dev: `--plan`, fill in events, `--run`, `--verify`. Record the results in the PR description. *(Done 2026-10-30: 14 photos migrated into the existing "Beats on the Block" collection (test data, so one event for all), verify passed, re-run skipped all 14, watermark checked visually. `--cleanup` waits for PR B.)*
 - [ ] T040 [US7] *(PR B)* Remove the legacy gallery admin:
   - delete `frontend/components/admin/PhotosTab.tsx`, `PhotoCard.tsx` and their tests, and `frontend/lib/api/adminPhotos.ts` (with its `index.ts` re-export)
   - in `lambda/src/handlers/photos.ts` remove the `/api/gallery` and `/api/admin/photos*` routes, and delete `gallery.ts`, `adminPhotos.ts` and their tests
@@ -571,7 +575,7 @@ The organizer chose one photo library for both the gallery and the store (spec S
 - **Setup (Phase 1)**: none
 - **Foundational (Phase 2)**: depends on Setup; **blocks all stories**
 - **US1 (Phase 3)**: depends on Foundational (includes the 2026-10-06 library rework)
-- **US7 (Phase 3b)**: depends on US1; ships across PRs A–C per its release sequencing
+- **US7 (Phase 3b)**: depends on US1. T036, T038 and T039 are built with the feature; T037, T040 and T041 ship in the switch PR after the feature release and migration; T042 last
 - **US2 (Phase 4)**: depends on Foundational; needs published data from US1 to demo, but its code is independent (it can be tested with seeded DynamoDB items)
 - **US3 (Phase 5)**: depends on US2 (cart context, photo pages) and Foundational
 - **US4 (Phase 6)**: depends on US3 (orders exist)
@@ -634,15 +638,13 @@ Task: "T020 [P] [US1] frontend/lib/store/generateWatermarked.ts + test"
 - **US6**: takedown hardening
 - **Polish**: then merge, which deploys staging; run quickstart §5 before writing live keys
 
-### Suggested PR slicing
+### Release plan (revised 2026-10-30)
 
-1. Phases 1–2 (infra + skeleton)
-2. US1, including the library rework: this is **PR A** of the gallery switch; the public Gallery still uses the legacy table
-3. Migration run (`--run`, `--verify`) on staging and prod, no code PR
-4. US7 gallery switch + legacy admin removal (**PR B**), then `--cleanup` per environment
-5. US2 (includes the Merch → Shop rename)
-6. US3
-7. US4 + US5
-8. US6 + Polish, and the legacy `PhotosTable` removal (**PR C**)
+1. Build every story on `009-photo-store-impl` (draft PR #1373), testing on dev and the PR environment only
+2. Merge the **feature PR**: the Gallery still uses the legacy table, and Stripe live keys are not yet written
+3. Run the gallery migration on staging and prod (organizer fills in events for the 43 prod photos)
+4. Merge the **switch PR** (T037, T040, T041), then `--cleanup` per environment
+5. Write live Stripe keys and run quickstart §5 before announcing
+6. Merge the **table removal PR** (T042)
 
 Each PR passes the Principle XIII gate on its own.

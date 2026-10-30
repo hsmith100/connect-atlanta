@@ -22,7 +22,7 @@ All routes are served by the new **StoreLambda** (`lambda/src/handlers/store.ts`
                 "thumbnailUrl": "https://media.../library/web-thumbs/p1-171.jpg",
                 "eventId": "e1", "sortOrder": 10, "visible": true } ] }
 ```
-`url` is the clean ~2000px web version, never the original.
+`url` is the clean ~2000px web version, never the original. Optional `?eventId=<id>` limits the result to that event's collection; the Events page uses it for past-event galleries.
 
 ### `GET /api/store/collections`
 Published collections, newest event first (FR-009). `photoCount` here is the collection's `forSaleCount`. Used by the Shop page's Event Photos section and by the Gallery lightbox to map `eventId` to a collection (FR-008b).
