@@ -59,7 +59,15 @@ export function CollectionDetail({ adminKey, collection, photographers, onChange
     }
   }, [adminKey, collection.id])
 
-  useEffect(() => { void loadPhotos() }, [loadPhotos])
+  // Initial load: `loading` already starts true, so state is only set when the request settles.
+  useEffect(() => {
+    let cancelled = false
+    getCollectionPhotos(adminKey, collection.id)
+      .then((p) => { if (!cancelled) setPhotos(p) })
+      .catch(() => { if (!cancelled) setError('Could not load photos for this collection.') })
+      .finally(() => { if (!cancelled) setLoading(false) })
+    return () => { cancelled = true }
+  }, [adminKey, collection.id])
 
   async function run(action: () => Promise<void>, success: string) {
     setBusy(true)
