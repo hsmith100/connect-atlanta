@@ -16,7 +16,7 @@
     "@aws-sdk/client-ses": "^3.1165.0",
     "@aws-sdk/lib-dynamodb": "^3.1164.0",
     "@aws-sdk/s3-request-presigner": "^3.1165.0",
-    "google-auth-library": "^11.3.3"
+    "google-auth-library": "^11.3.4"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
